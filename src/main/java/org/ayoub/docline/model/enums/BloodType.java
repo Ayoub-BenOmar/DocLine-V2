@@ -1,4 +1,4 @@
-package org.ayoub.docline.enums;
+package org.ayoub.docline.model.enums;
 
 import lombok.Getter;
 

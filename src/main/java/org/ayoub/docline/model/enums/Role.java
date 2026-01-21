@@ -1,4 +1,4 @@
-package org.ayoub.docline.enums;
+package org.ayoub.docline.model.enums;
 
 public enum Role {
     ROLE_ADMIN,
