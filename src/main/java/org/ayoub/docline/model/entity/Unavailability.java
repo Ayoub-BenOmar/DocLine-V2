@@ -5,18 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.ayoub.docline.model.entity.Doctor;
 
-import java.time.DayOfWeek;
-import java.time.LocalTime;
+import java.time.LocalDate;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "availability")
-public class Availability {
+@Table(name = "unavailability")
+public class Unavailability {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,11 +24,8 @@ public class Availability {
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
 
-    @Enumerated(EnumType.STRING)
-    private DayOfWeek dayOfWeek;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
-    private LocalTime startTime;
-    private LocalTime endTime;
-
-    private boolean isAvailable;
+    private String reason; // e.g., "Holiday", "Sick"
 }

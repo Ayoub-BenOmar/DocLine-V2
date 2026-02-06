@@ -1,0 +1,39 @@
+package org.ayoub.docline.controller.doctor;
+
+import lombok.RequiredArgsConstructor;
+import org.ayoub.docline.model.dto.UnavailabilityDto;
+import org.ayoub.docline.model.entity.Unavailability;
+import org.ayoub.docline.service.DoctorService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/doctor")
+@RequiredArgsConstructor
+public class DoctorController {
+
+    private final DoctorService doctorService;
+
+    @PostMapping("/unavailability")
+    @PreAuthorize("hasAuthority('DOCTOR')")
+    public ResponseEntity<Unavailability> addUnavailability(@RequestBody UnavailabilityDto unavailabilityDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+        
+        return ResponseEntity.ok(doctorService.addUnavailability(unavailabilityDto, currentPrincipalName));
+    }
+
+    @GetMapping("/unavailability")
+    @PreAuthorize("hasAuthority('DOCTOR')")
+    public ResponseEntity<List<Unavailability>> getMyUnavailabilities() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+
+        return ResponseEntity.ok(doctorService.getMyUnavailabilities(currentPrincipalName));
+    }
+}
