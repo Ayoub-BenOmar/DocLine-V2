@@ -3,7 +3,6 @@ package org.ayoub.docline.model.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import org.ayoub.docline.model.enums.BloodType;
 import org.ayoub.docline.model.enums.Gender;
 import org.ayoub.docline.model.enums.Role;

@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import org.ayoub.docline.model.enums.Role;
 import org.ayoub.docline.model.enums.UserStatus;
 
