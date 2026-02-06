@@ -1,7 +1,9 @@
 package org.ayoub.docline.controller.doctor;
 
 import lombok.RequiredArgsConstructor;
+import org.ayoub.docline.model.dto.DoctorProfileDto;
 import org.ayoub.docline.model.dto.UnavailabilityDto;
+import org.ayoub.docline.model.entity.Doctor;
 import org.ayoub.docline.model.entity.Unavailability;
 import org.ayoub.docline.service.DoctorService;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,7 @@ public class DoctorController {
     private final DoctorService doctorService;
 
     @PostMapping("/unavailability")
-    @PreAuthorize("hasAuthority('DOCTOR')")
+    @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
     public ResponseEntity<Unavailability> addUnavailability(@RequestBody UnavailabilityDto unavailabilityDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
@@ -29,11 +31,20 @@ public class DoctorController {
     }
 
     @GetMapping("/unavailability")
-    @PreAuthorize("hasAuthority('DOCTOR')")
+    @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
     public ResponseEntity<List<Unavailability>> getMyUnavailabilities() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
 
         return ResponseEntity.ok(doctorService.getMyUnavailabilities(currentPrincipalName));
+    }
+
+    @PutMapping("/profile")
+    @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
+    public ResponseEntity<Doctor> updateProfile(@RequestBody DoctorProfileDto profileDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+
+        return ResponseEntity.ok(doctorService.updateProfile(profileDto, currentPrincipalName));
     }
 }
