@@ -22,6 +22,7 @@ public class Unavailability {
 
     @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Doctor doctor;
 
     private LocalDate startDate;
