@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
     providedIn: 'root'
@@ -8,7 +9,8 @@ import { Observable, tap } from 'rxjs';
 export class AuthService {
     private apiUrl = 'http://localhost:8080/api';
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient,
+                private router: Router) { }
 
     register(data: any): Observable<any> {
         return this.http.post(`${this.apiUrl}/auth/register`, data);
@@ -40,10 +42,15 @@ export class AuthService {
     }
 
     logout(): void {
-        if (typeof localStorage !== 'undefined') {
+        this.http.post(`${this.apiUrl}/auth/logout`, {}).subscribe({
+            next: () => console.log('Backend logout successful'),
+            error: (err) => console.error('Backend logout failed', err)
+        }).add(() => {
+            // Always run this cleanup logic
             localStorage.removeItem('auth_token');
             localStorage.removeItem('user_role');
-        }
+            this.router.navigate(['/login']);
+        });
     }
 
     isAuthenticated(): boolean {

@@ -29,8 +29,13 @@ export class LoginComponent {
         if (this.loginForm.valid) {
             this.authService.login(this.loginForm.value).subscribe({
                 next: (response) => {
-                    // Redirect based on role or to dashboard
-                    this.router.navigate(['/']);
+                    if (response.role === 'ROLE_ADMIN') {
+                        this.router.navigate(['/admin']);
+                    } else if (response.role === 'ROLE_DOCTOR') {
+                        this.router.navigate(['/doctor']);
+                    } else {
+                        this.router.navigate(['/']);
+                    }
                 },
                 error: (err) => {
                     this.errorMessage = 'Invalid credentials';
