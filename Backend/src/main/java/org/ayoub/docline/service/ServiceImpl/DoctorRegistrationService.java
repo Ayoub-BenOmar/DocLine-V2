@@ -44,6 +44,7 @@ public class DoctorRegistrationService implements UserRegistrationService {
         setCommonUserFields(doctor, request);
 
         doctor.setMedicalLicence(request.getMedicalLicence());
+        doctor.setMedicalDocument(request.getMedicalDocument());
         doctor.setEducation(request.getEducation());
         doctor.setFees(request.getFees());
         doctor.setExperience(request.getExperience());

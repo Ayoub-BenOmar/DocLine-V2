@@ -14,6 +14,10 @@ public class DoctorListingDto {
     private Integer id;
     private String name;
     private String lastName;
+    private String email;
+    private String status;
+    private String medicalLicence;
+    private String medicalDocument;
     private String profilePic;
     private String speciality;
     private String city;

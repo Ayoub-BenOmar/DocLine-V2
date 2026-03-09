@@ -42,6 +42,7 @@ public class RegisterRequest {
 
     // Doctor-specific fields
     private String medicalLicence;
+    private String medicalDocument;
     private String education;
     private BigDecimal fees = BigDecimal.ZERO;
     private Integer experience = 0;
