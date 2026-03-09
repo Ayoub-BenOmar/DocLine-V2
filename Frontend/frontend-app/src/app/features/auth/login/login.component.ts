@@ -27,18 +27,24 @@ export class LoginComponent {
 
     onSubmit() {
         if (this.loginForm.valid) {
+            this.errorMessage = '';
             this.authService.login(this.loginForm.value).subscribe({
                 next: (response) => {
                     if (response.role === 'ROLE_ADMIN') {
-                        this.router.navigate(['/admin']);
+                        this.router.navigate(['/admin/dashboard']);
                     } else if (response.role === 'ROLE_DOCTOR') {
-                        this.router.navigate(['/doctor']);
+                        this.router.navigate(['/doctor/dashboard']);
                     } else {
                         this.router.navigate(['/']);
                     }
                 },
                 error: (err) => {
-                    this.errorMessage = 'Invalid credentials';
+                    console.error('Login error:', err);
+                    if (err.error && err.error.error) {
+                         this.errorMessage = err.error.error;
+                    } else {
+                         this.errorMessage = 'Login failed. Please check your network or credentials.';
+                    }
                 }
             });
         }
