@@ -18,10 +18,12 @@ public class AppointmentResponseDto {
     private AppointmentStatus status;
     private String reason;
     
-    // Doctor details (for patient view)
     private String doctorName;
     private String doctorSpeciality;
     
-    // Patient details (for doctor view)
+    private Integer patientId;
     private String patientName;
+
+    private String doctorNote;
+    private LocalDateTime medicalReportDate;
 }

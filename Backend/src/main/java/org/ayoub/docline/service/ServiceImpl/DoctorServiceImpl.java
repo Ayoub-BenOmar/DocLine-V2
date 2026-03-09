@@ -141,7 +141,10 @@ public class DoctorServiceImpl implements DoctorService {
                 .reason(appointment.getReason())
                 .doctorName(appointment.getDoctor().getFullName())
                 .doctorSpeciality(appointment.getDoctor().getSpeciality() != null ? appointment.getDoctor().getSpeciality().getSpecialiteName() : null)
+                .patientId(appointment.getPatient().getId())
                 .patientName(appointment.getPatient().getFullName())
+                .doctorNote(appointment.getDoctorNote())
+                .medicalReportDate(appointment.getMedicalReportDate())
                 .build();
     }
 }
