@@ -1,8 +1,10 @@
 import { Routes } from '@angular/router';
+import { DoctorLayoutComponent } from './layout/doctor-layout.component';
 
 export const DOCTOR_ROUTES: Routes = [
   {
       path: '',
+      component: DoctorLayoutComponent,
       children: [
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
           {
