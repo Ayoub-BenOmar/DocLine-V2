@@ -29,10 +29,14 @@ export interface Doctor {
     id: number;
     name: string;
     lastName: string;
+    email: string;
     profilePic: string;
     speciality: string;
     city: string;
     fees: number;
+    status: string;
+    medicalLicence: string;
+    medicalDocument: string;
 }
 
 @Injectable({
@@ -49,5 +53,21 @@ export class AdminService {
 
     getAllDoctors(): Observable<Doctor[]> {
         return this.http.get<Doctor[]>(`${this.apiUrl}/doctors`);
+    }
+
+    getPendingDoctors(): Observable<Doctor[]> {
+        return this.http.get<Doctor[]>(`${this.apiUrl}/doctors/pending`);
+    }
+
+    approveDoctor(doctorId: number): Observable<string> {
+        return this.http.put(`${this.apiUrl}/doctors/${doctorId}/approve`, {}, { responseType: 'text' });
+    }
+
+    rejectDoctor(doctorId: number): Observable<string> {
+        return this.http.put(`${this.apiUrl}/doctors/${doctorId}/reject`, {}, { responseType: 'text' });
+    }
+
+    suspendDoctor(doctorId: number): Observable<string> {
+        return this.http.put(`${this.apiUrl}/doctors/${doctorId}/suspend`, {}, { responseType: 'text' });
     }
 }
