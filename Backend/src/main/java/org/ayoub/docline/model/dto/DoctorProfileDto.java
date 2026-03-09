@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class DoctorProfileDto {
     private String name;
     private String lastName;
+    private String email;
     private String phone;
     private String profilePic;
     private Integer cityId;
@@ -19,4 +20,5 @@ public class DoctorProfileDto {
     private java.math.BigDecimal fees;
     private String bio;
     private String officeAddress;
+    private String workingHours;
 }

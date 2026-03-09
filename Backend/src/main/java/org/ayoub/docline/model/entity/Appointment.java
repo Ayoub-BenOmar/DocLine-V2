@@ -37,4 +37,9 @@ public class Appointment {
     private AppointmentStatus status;
 
     private String reason;
+
+    @Column(columnDefinition = "TEXT")
+    private String doctorNote;
+
+    private LocalDateTime medicalReportDate;
 }

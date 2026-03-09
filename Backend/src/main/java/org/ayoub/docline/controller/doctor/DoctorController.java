@@ -1,7 +1,9 @@
 package org.ayoub.docline.controller.doctor;
 
 import lombok.RequiredArgsConstructor;
+import org.ayoub.docline.model.dto.AppointmentResponseDto;
 import org.ayoub.docline.model.dto.DoctorProfileDto;
+import org.ayoub.docline.model.dto.MedicalReportDto;
 import org.ayoub.docline.model.dto.UnavailabilityDto;
 import org.ayoub.docline.model.entity.Doctor;
 import org.ayoub.docline.model.entity.Unavailability;
@@ -46,5 +48,33 @@ public class DoctorController {
         String currentPrincipalName = authentication.getName();
 
         return ResponseEntity.ok(doctorService.updateProfile(profileDto, currentPrincipalName));
+    }
+
+    @GetMapping("/profile")
+    @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
+    public ResponseEntity<DoctorProfileDto> getProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+
+        return ResponseEntity.ok(doctorService.getProfile(currentPrincipalName));
+    }
+
+    @GetMapping("/appointments")
+    @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
+    public ResponseEntity<List<AppointmentResponseDto>> getMyAppointments() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+
+        return ResponseEntity.ok(doctorService.getMyAppointments(currentPrincipalName));
+    }
+
+    @PostMapping("/appointments/{id}/complete")
+    @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
+    public ResponseEntity<String> completeAppointment(@PathVariable Integer id, @RequestBody MedicalReportDto reportDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+
+        doctorService.completeAppointment(id, reportDto, currentPrincipalName);
+        return ResponseEntity.ok("Appointment completed and medical report saved.");
     }
 }

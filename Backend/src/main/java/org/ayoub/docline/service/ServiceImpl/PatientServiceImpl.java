@@ -197,17 +197,11 @@ public class PatientServiceImpl implements PatientService {
             }
         }
         
-        if (updateDto.getBloodType() != null) {
-            try {
-                patient.setBloodType(org.ayoub.docline.model.enums.BloodType.valueOf(updateDto.getBloodType()));
-            } catch (IllegalArgumentException e) {
-                // Ignore invalid
-            }
-        }
-        
+// Medical fields (bloodType, pastIllnesses, etc.) are updated only by doctors during appointments
+
         if (updateDto.getCin() != null) patient.setCin(updateDto.getCin());
         if (updateDto.getAddress() != null) patient.setAddress(updateDto.getAddress());
-        
+
         if (updateDto.getCityId() != null) {
             City city = cityRepository.findById(updateDto.getCityId())
                     .orElseThrow(() -> new IllegalArgumentException("City not found"));
@@ -217,11 +211,7 @@ public class PatientServiceImpl implements PatientService {
         if (updateDto.getInsuranceProvider() != null) patient.setInsuranceProvider(updateDto.getInsuranceProvider());
         if (updateDto.getInsuranceNumber() != null) patient.setInsuranceNumber(updateDto.getInsuranceNumber());
         if (updateDto.getHasInsurance() != null) patient.setHasInsurance(updateDto.getHasInsurance());
-        
-        if (updateDto.getPastIllnesses() != null) patient.setPastIllnesses(updateDto.getPastIllnesses());
-        if (updateDto.getSurgeries() != null) patient.setSurgeries(updateDto.getSurgeries());
-        if (updateDto.getAllergies() != null) patient.setAllergies(updateDto.getAllergies());
-        if (updateDto.getChronic() != null) patient.setChronic(updateDto.getChronic());
+
 
         Patient savedPatient = patientRepository.save(patient);
         return getPatientProfile(savedPatient.getEmail());
