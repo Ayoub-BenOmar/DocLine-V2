@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminService, Patient } from '../services/admin.service';
 
@@ -13,7 +13,7 @@ export class AdminPatientsComponent implements OnInit {
     patients: Patient[] = [];
     loading = true;
 
-    constructor(private adminService: AdminService) { }
+    constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.loadPatients();
@@ -24,10 +24,12 @@ export class AdminPatientsComponent implements OnInit {
             next: (data) => {
                 this.patients = data;
                 this.loading = false;
+                this.cdr.detectChanges(); // Force update
             },
             error: (err) => {
                 console.error('Error loading patients', err);
                 this.loading = false;
+                this.cdr.detectChanges(); // Force update
             }
         });
     }

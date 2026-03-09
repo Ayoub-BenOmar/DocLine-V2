@@ -57,6 +57,13 @@ export class AuthService {
         return !!this.getToken();
     }
 
+    getUserRole(): string | null {
+        if (typeof localStorage !== 'undefined') {
+            return localStorage.getItem('user_role');
+        }
+        return null;
+    }
+
     getCities(): Observable<any[]> {
         return this.http.get<any[]>(`${this.apiUrl}/public/cities`);
     }
