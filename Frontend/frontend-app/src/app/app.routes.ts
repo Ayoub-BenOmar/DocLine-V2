@@ -21,11 +21,13 @@ export const routes: Routes = [
     {
         path: 'admin',
         canActivate: [authGuard],
+        data: { roles: ['ROLE_ADMIN'] },
         loadChildren: () => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES)
     },
     {
         path: 'doctor',
         canActivate: [authGuard],
+        data: { roles: ['ROLE_DOCTOR'] },
         loadChildren: () => import('./features/doctor/doctor.routes').then(m => m.DOCTOR_ROUTES)
     }
 ];
