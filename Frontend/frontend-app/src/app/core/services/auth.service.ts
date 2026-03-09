@@ -19,10 +19,14 @@ export class AuthService {
     login(credentials: any): Observable<any> {
         return this.http.post<any>(`${this.apiUrl}/auth/authenticate`, credentials).pipe(
             tap(response => {
+              console.log('Login response:', response);
                 if (response.token) {
                     this.saveToken(response.token);
-                    // Save other user info if needed
-                    localStorage.setItem('user_role', response.role);
+                    if (typeof localStorage !== 'undefined') {
+                        localStorage.setItem('user_role', response.role);
+                        localStorage.setItem('user_email', response.email);
+                        localStorage.setItem('user_name', response.name);
+                    }
                 }
             })
         );
@@ -42,15 +46,13 @@ export class AuthService {
     }
 
     logout(): void {
-        this.http.post(`${this.apiUrl}/auth/logout`, {}).subscribe({
-            next: () => console.log('Backend logout successful'),
-            error: (err) => console.error('Backend logout failed', err)
-        }).add(() => {
-            // Always run this cleanup logic
+         if (typeof localStorage !== 'undefined') {
             localStorage.removeItem('auth_token');
             localStorage.removeItem('user_role');
-            this.router.navigate(['/login']);
-        });
+            localStorage.removeItem('user_email');
+            localStorage.removeItem('user_name');
+        }
+        this.router.navigate(['/login']);
     }
 
     isAuthenticated(): boolean {
