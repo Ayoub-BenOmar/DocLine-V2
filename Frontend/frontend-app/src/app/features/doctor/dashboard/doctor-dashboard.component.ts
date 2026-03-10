@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DoctorService, DoctorProfileDto, AppointmentResponseDto, UnavailabilityDto, MedicalReportDto } from '../services/doctor.service';
@@ -34,7 +34,7 @@ export class DoctorDashboardComponent implements OnInit {
   showReportModal = false;
   loading = true;
 
-  constructor(private doctorService: DoctorService) {}
+  constructor(private doctorService: DoctorService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -47,10 +47,12 @@ export class DoctorDashboardComponent implements OnInit {
         this.profile = profile;
         this.loadAppointments();
         this.loadUnavailabilities();
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error loading profile', err);
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -59,8 +61,12 @@ export class DoctorDashboardComponent implements OnInit {
     this.doctorService.getMyAppointments().subscribe({
       next: (appointments) => {
         this.appointments = appointments;
+        this.cdr.detectChanges();
       },
-      error: (err) => console.error('Error loading appointments', err)
+      error: (err) => {
+        console.error('Error loading appointments', err);
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -69,10 +75,12 @@ export class DoctorDashboardComponent implements OnInit {
       next: (unavailabilities) => {
         this.unavailabilities = unavailabilities;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error loading unavailabilities', err);
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
