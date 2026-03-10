@@ -10,9 +10,15 @@ export const DOCTOR_ROUTES: Routes = [
           {
               path: 'dashboard',
               loadComponent: () => import('./dashboard/doctor-dashboard.component').then(m => m.DoctorDashboardComponent)
+          },
+          {
+              path: 'appointments',
+              loadComponent: () => import('./appointments/doctor-appointments.component').then(m => m.DoctorAppointmentsComponent)
+          },
+          {
+              path: 'profile',
+              loadComponent: () => import('./profile/doctor-profile.component').then(m => m.DoctorProfileComponent)
           }
       ]
   }
 ];
-
-
