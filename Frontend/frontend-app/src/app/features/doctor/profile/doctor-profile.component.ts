@@ -23,7 +23,6 @@ export class DoctorProfileComponent implements OnInit {
     fees: 0,
     bio: '',
     officeAddress: '',
-    workingHours: '',
     experience: 0
   };
 

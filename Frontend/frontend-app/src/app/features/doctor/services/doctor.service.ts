@@ -13,7 +13,7 @@ export interface DoctorProfileDto {
   fees: number;
   bio: string;
   officeAddress: string;
-  workingHours: string;
+  workingHours?: string;
   experience: number;
 }
 
