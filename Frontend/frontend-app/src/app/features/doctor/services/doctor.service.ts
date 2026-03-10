@@ -14,6 +14,7 @@ export interface DoctorProfileDto {
   bio: string;
   officeAddress: string;
   workingHours: string;
+  experience: number;
 }
 
 export interface UnavailabilityDto {
