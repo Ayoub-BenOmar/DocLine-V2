@@ -9,8 +9,10 @@ import org.ayoub.docline.model.entity.Appointment;
 import org.ayoub.docline.model.entity.Doctor;
 import org.ayoub.docline.model.entity.Patient;
 import org.ayoub.docline.model.entity.Unavailability;
+import org.ayoub.docline.model.entity.City;
 import org.ayoub.docline.model.enums.AppointmentStatus;
 import org.ayoub.docline.repository.AppointmentRepository;
+import org.ayoub.docline.repository.CityRepository;
 import org.ayoub.docline.repository.DoctorRepository;
 import org.ayoub.docline.repository.PatientRepository;
 import org.ayoub.docline.repository.UnavailabilityRepository;
@@ -30,6 +32,7 @@ public class DoctorServiceImpl implements DoctorService {
     private final UnavailabilityRepository unavailabilityRepository;
     private final AppointmentRepository appointmentRepository;
     private final PatientRepository patientRepository;
+    private final CityRepository cityRepository;
 
     @Override
     public Unavailability addUnavailability(UnavailabilityDto unavailabilityDto, String doctorEmail) {
@@ -65,7 +68,15 @@ public class DoctorServiceImpl implements DoctorService {
         if (profileDto.getBio() != null) doctor.setBio(profileDto.getBio());
         if (profileDto.getOfficeAddress() != null) doctor.setOfficeAddress(profileDto.getOfficeAddress());
         if (profileDto.getFees() != null) doctor.setFees(profileDto.getFees());
-        
+        if (profileDto.getWorkingHours() != null) doctor.setWorkingHours(profileDto.getWorkingHours());
+        if (profileDto.getExperience() != null) doctor.setExperience(profileDto.getExperience());
+
+        if (profileDto.getCityId() != null) {
+            City city = cityRepository.findById(profileDto.getCityId())
+                    .orElseThrow(() -> new IllegalArgumentException("City not found"));
+            doctor.setCity(city);
+        }
+
         return doctorRepository.save(doctor);
     }
 
