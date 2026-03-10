@@ -1,0 +1,170 @@
+<div class="p-6">
+  <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+    <h1 class="text-2xl font-bold text-gray-800">My Appointments</h1>
+
+    <!-- Filter Tabs -->
+    <div class="flex bg-gray-100 p-1 rounded-lg">
+      <button (click)="applyFilter('all')"
+        [class]="currentFilter === 'all' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'"
+        class="px-4 py-2 rounded-md text-sm font-medium transition-all">
+        All
+      </button>
+      <button (click)="applyFilter('confirmed')"
+        [class]="currentFilter === 'confirmed' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'"
+        class="px-4 py-2 rounded-md text-sm font-medium transition-all">
+        Confirmed
+      </button>
+      <button (click)="applyFilter('completed')"
+        [class]="currentFilter === 'completed' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'"
+        class="px-4 py-2 rounded-md text-sm font-medium transition-all">
+        Completed
+      </button>
+      <button (click)="applyFilter('cancelled')"
+        [class]="currentFilter === 'cancelled' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'"
+        class="px-4 py-2 rounded-md text-sm font-medium transition-all">
+        Cancelled
+      </button>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center py-20">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && filteredAppointments.length === 0" class="text-center py-20">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No appointments found</h3>
+      <p class="mt-1 text-sm text-gray-500">There are no appointments matching the selected filter.</p>
+    </div>
+
+    <!-- Appointments Table -->
+    <div *ngIf="!loading && filteredAppointments.length > 0" class="overflow-x-auto">
+      <table class="w-full text-left text-sm text-gray-600">
+        <thead class="bg-gray-50 text-gray-700 font-medium border-b border-gray-200">
+          <tr>
+            <th class="py-4 px-6">ID</th>
+            <th class="py-4 px-6">Patient</th>
+            <th class="py-4 px-6">Date & Time</th>
+            <th class="py-4 px-6">Reason</th>
+            <th class="py-4 px-6">Status</th>
+            <th class="py-4 px-6 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr *ngFor="let apt of filteredAppointments" class="hover:bg-gray-50 transition-colors">
+            <td class="py-4 px-6 font-medium text-gray-900">#{{ apt.id }}</td>
+            <td class="py-4 px-6">
+              <div class="font-medium text-gray-900">{{ apt.patientName }}</div>
+              <div class="text-xs text-gray-500">ID: {{ apt.patientId }}</div>
+            </td>
+            <td class="py-4 px-6">
+              <div class="font-medium text-gray-900">{{ apt.dateTime | date:'mediumDate' }}</div>
+              <div class="text-xs text-gray-500">{{ apt.dateTime | date:'shortTime' }}</div>
+            </td>
+            <td class="py-4 px-6 max-w-xs truncate" title="{{ apt.reason }}">
+              {{ apt.reason }}
+            </td>
+            <td class="py-4 px-6">
+              <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + getStatusClass(apt.status)">
+                {{ apt.status }}
+              </span>
+            </td>
+            <td class="py-4 px-6 text-right">
+              <button *ngIf="apt.status === 'CONFIRMED' || apt.status === 'PENDING'"
+                      (click)="openCompleteModal(apt)"
+                      class="text-blue-600 hover:text-blue-900 font-medium">
+                Complete
+              </button>
+              <button *ngIf="apt.status === 'COMPLETED'"
+                      class="text-gray-400 cursor-not-allowed font-medium" disabled>
+                Report Filed
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Complete Appointment Modal -->
+<div *ngIf="showReportModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 transition-opacity">
+  <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto transform transition-all">
+    <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10">
+      <h2 class="text-lg font-bold text-gray-800">Complete Appointment #{{ selectedAppointment?.id }}</h2>
+      <button (click)="closeCompleteModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="p-6 space-y-6">
+      <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+        <h4 class="text-sm font-semibold text-blue-800 mb-1">Patient Information</h4>
+        <p class="text-sm text-blue-900">Patient: <span class="font-bold">{{ selectedAppointment?.patientName }}</span></p>
+        <p class="text-sm text-blue-900">Reason: {{ selectedAppointment?.reason }}</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="col-span-1">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Blood Type</label>
+          <select [(ngModel)]="medicalReport.bloodType" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+              <option value="">Select Blood Type</option>
+              <option value="A_POSITIVE">A+</option>
+              <option value="A_NEGATIVE">A-</option>
+              <option value="B_POSITIVE">B+</option>
+              <option value="B_NEGATIVE">B-</option>
+              <option value="O_POSITIVE">O+</option>
+              <option value="O_NEGATIVE">O-</option>
+              <option value="AB_POSITIVE">AB+</option>
+              <option value="AB_NEGATIVE">AB-</option>
+          </select>
+        </div>
+
+        <div class="col-span-1">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Known Allergies</label>
+          <input type="text" [(ngModel)]="medicalReport.allergies" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="e.g. Penicillin, Peanuts">
+        </div>
+
+        <div class="col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Doctor's Diagnosis & Notes <span class="text-red-500">*</span></label>
+          <textarea [(ngModel)]="medicalReport.doctorNote" rows="4" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Detailed clinical notes..."></textarea>
+        </div>
+
+        <div class="col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Chronic Conditions</label>
+          <input type="text" [(ngModel)]="medicalReport.chronic" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="e.g. Diabetes, Hypertension">
+        </div>
+
+        <div class="col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Surgical History</label>
+          <input type="text" [(ngModel)]="medicalReport.surgeries" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="List any past surgeries">
+        </div>
+
+        <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Past Illnesses</label>
+            <textarea [(ngModel)]="medicalReport.pastIllnesses" rows="2" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Significant past illnesses..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3 rounded-b-xl border-t border-gray-200">
+      <button (click)="closeCompleteModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-white bg-white transition-colors font-medium text-sm shadow-sm">
+        Cancel
+      </button>
+      <button (click)="submitReport()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm shadow-sm flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        Save Report & Complete
+      </button>
+    </div>
+  </div>
+</div>
+

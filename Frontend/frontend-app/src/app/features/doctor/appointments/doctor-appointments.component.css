@@ -1,0 +1,10 @@
+/* Add any specific styles here if needed */
+.fixed.inset-0 {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
