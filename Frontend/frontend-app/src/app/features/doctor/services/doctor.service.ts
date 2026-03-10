@@ -9,7 +9,7 @@ export interface DoctorProfileDto {
   phone: string;
   profilePic: string;
   cityId: number;
-  specialityId: number;
+  specialityId?: number; // Optional as it is not updated
   fees: number;
   bio: string;
   officeAddress: string;
