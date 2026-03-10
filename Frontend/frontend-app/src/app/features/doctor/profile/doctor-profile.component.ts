@@ -23,7 +23,8 @@ export class DoctorProfileComponent implements OnInit {
     fees: 0,
     bio: '',
     officeAddress: '',
-    workingHours: ''
+    workingHours: '',
+    experience: 0
   };
 
   cities: any[] = [];
@@ -43,8 +44,14 @@ export class DoctorProfileComponent implements OnInit {
   }
 
   loadFormData(): void {
-      this.authService.getCities().subscribe(data => this.cities = data);
-      this.authService.getSpecialities().subscribe(data => this.specialities = data);
+      this.authService.getCities().subscribe(data => {
+        this.cities = data;
+        this.cdr.detectChanges();
+      });
+      this.authService.getSpecialities().subscribe(data => {
+        this.specialities = data;
+        this.cdr.detectChanges();
+      });
   }
 
   loadProfile(): void {
@@ -65,15 +72,18 @@ export class DoctorProfileComponent implements OnInit {
 
   saveProfile(): void {
     this.saving = true;
+    this.cdr.detectChanges();
     this.doctorService.updateProfile(this.profile).subscribe({
       next: () => {
         alert('Profile updated successfully');
         this.saving = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error updating profile', err);
         alert('Failed to update profile');
         this.saving = false;
+        this.cdr.detectChanges();
       }
     });
   }

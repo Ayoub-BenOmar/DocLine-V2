@@ -109,6 +109,10 @@
                <input type="number" [(ngModel)]="profile.fees" class="w-full pl-7 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-shadow" placeholder="0.00">
              </div>
            </div>
+           <div>
+             <label class="block text-sm font-medium text-gray-700 mb-1">Experience (Years)</label>
+             <input type="number" [(ngModel)]="profile.experience" min="0" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-shadow" placeholder="e.g. 5">
+           </div>
            <div class="col-span-2">
              <label class="block text-sm font-medium text-gray-700 mb-1">Office Address</label>
              <textarea [(ngModel)]="profile.officeAddress" rows="2" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-shadow"></textarea>
