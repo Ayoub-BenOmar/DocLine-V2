@@ -24,12 +24,12 @@ export class AdminPatientsComponent implements OnInit {
             next: (data) => {
                 this.patients = data;
                 this.loading = false;
-                this.cdr.detectChanges(); // Force update
+                this.cdr.detectChanges();
             },
             error: (err) => {
                 console.error('Error loading patients', err);
                 this.loading = false;
-                this.cdr.detectChanges(); // Force update
+                this.cdr.detectChanges();
             }
         });
     }
