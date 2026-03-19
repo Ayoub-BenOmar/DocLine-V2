@@ -39,7 +39,7 @@ public class DoctorUnavailabilityTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @WithMockUser(username = "doctor@docline.com", authorities = {"DOCTOR"})
+    @WithMockUser(username = "doctor@docline.com", authorities = {"ROLE_DOCTOR"})
     public void testAddUnavailability() throws Exception {
         UnavailabilityDto dto = UnavailabilityDto.builder()
                 .startDate(LocalDate.of(2026, 2, 20))
@@ -64,7 +64,7 @@ public class DoctorUnavailabilityTest {
     }
 
     @Test
-    @WithMockUser(username = "doctor@docline.com", authorities = {"DOCTOR"})
+    @WithMockUser(username = "doctor@docline.com", authorities = {"ROLE_DOCTOR"})
     public void testGetMyUnavailabilities() throws Exception {
         Unavailability unavailability = Unavailability.builder()
                 .id(1)

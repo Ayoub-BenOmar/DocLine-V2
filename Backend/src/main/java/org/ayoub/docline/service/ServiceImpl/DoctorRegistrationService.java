@@ -50,7 +50,6 @@ public class DoctorRegistrationService implements UserRegistrationService {
         doctor.setExperience(request.getExperience());
         doctor.setOfficeAddress(request.getOfficeAddress());
         doctor.setBio(request.getBio());
-        doctor.setWorkingHours(request.getWorkingHours());
 
         if (request.getSpecialityId() != null) {
             Specialty specialty = specialtyRepository.findById(request.getSpecialityId())

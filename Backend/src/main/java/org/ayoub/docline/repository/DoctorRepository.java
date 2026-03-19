@@ -20,20 +20,15 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
 
     List<Doctor> findByStatus(UserStatus status);
 
-    @Query("SELECT d FROM Doctor d WHERE d.speciality.id = :specialityId AND d.status = 'APPROVED'")
+    @Query("SELECT d FROM Doctor d WHERE d.speciality.id = :specialityId AND d.status = 'ACTIVE'")
     List<Doctor> findBySpecialityId(@Param("specialityId") Integer specialityId);
 
-    @Query("SELECT d FROM Doctor d WHERE d.city.id = :cityId AND d.status = 'APPROVED'")
+    @Query("SELECT d FROM Doctor d WHERE d.city.id = :cityId AND d.status = 'ACTIVE'")
     List<Doctor> findByCityId(@Param("cityId") Integer cityId);
 
-    @Query("SELECT d FROM Doctor d WHERE d.status = 'APPROVED'")
+    @Query("SELECT d FROM Doctor d WHERE d.status = 'ACTIVE'")
     List<Doctor> findActiveDoctors();
 
-    @Query("SELECT d FROM Doctor d WHERE " +
-           "(:cityId IS NULL OR d.city.id = :cityId) AND " +
-           "(:specialityId IS NULL OR d.speciality.id = :specialityId) AND " +
-           "d.status = 'APPROVED' AND d.isActivated = true AND d.isSuspended = false")
-    Page<Doctor> findAllByFilters(@Param("cityId") Integer cityId,
-                                  @Param("specialityId") Integer specialityId,
-                                  Pageable pageable);
+    @Query("SELECT d FROM Doctor d WHERE (:cityId IS NULL OR d.city.id = :cityId) AND (:specialityId IS NULL OR d.speciality.id = :specialityId) AND d.status = 'ACTIVE'")
+    Page<Doctor> findAllByFilters(@Param("cityId") Integer cityId, @Param("specialityId") Integer specialityId, Pageable pageable);
 }

@@ -93,6 +93,9 @@ public class DoctorServiceImpl implements DoctorService {
                 .bio(doctor.getBio())
                 .fees(doctor.getFees())
                 .officeAddress(doctor.getOfficeAddress())
+                .experience(doctor.getExperience())
+                .cityId(doctor.getCity() != null ? doctor.getCity().getId() : null)
+                .specialityId(doctor.getSpeciality() != null ? doctor.getSpeciality().getId() : null)
                 .build();
     }
 
