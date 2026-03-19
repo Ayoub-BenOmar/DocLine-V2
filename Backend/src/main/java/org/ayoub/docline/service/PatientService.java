@@ -6,11 +6,13 @@ import org.ayoub.docline.model.dto.DoctorListingDto;
 import org.ayoub.docline.model.dto.PatientProfileDto;
 import org.ayoub.docline.model.dto.PatientProfileUpdateDto;
 import org.ayoub.docline.model.dto.TimeSlotDto;
+import org.springframework.data.domain.Page;
 import java.time.LocalDate;
 import java.util.List;
 
 public interface PatientService {
     List<DoctorListingDto> getAllDoctors();
+    Page<DoctorListingDto> getAllDoctorsPaginated(Integer cityId, Integer specialityId, int page, int size);
     List<DoctorListingDto> searchDoctors(Integer cityId, Integer specialityId, String name);
     List<TimeSlotDto> getAvailableSlots(Integer doctorId, LocalDate date);
     AppointmentResponseDto bookAppointment(AppointmentRequestDto requestDto, String patientEmail);

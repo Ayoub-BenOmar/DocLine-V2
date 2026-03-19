@@ -15,6 +15,9 @@ import org.ayoub.docline.repository.DoctorRepository;
 import org.ayoub.docline.repository.PatientRepository;
 import org.ayoub.docline.repository.UnavailabilityRepository;
 import org.ayoub.docline.service.PatientService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +45,13 @@ public class PatientServiceImpl implements PatientService {
                 .filter(d -> d.getRole() == Role.ROLE_DOCTOR && d.getIsActivated())
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<DoctorListingDto> getAllDoctorsPaginated(Integer cityId, Integer specialityId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return doctorRepository.findAllByFilters(cityId, specialityId, pageable)
+                .map(this::mapToDto);
     }
 
     @Override
@@ -116,9 +126,8 @@ public class PatientServiceImpl implements PatientService {
                 .orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
 
         // 3. Verify Slot Availability (Crucial prevention of double booking)
-        // Re-use logic or check specific slot
-        boolean isSlotTaken = appointmentRepository.findByDoctorId(doctor.getId()).stream()
-                .anyMatch(a -> a.getDateTime().equals(requestDto.getDateTime()) && a.getStatus() != AppointmentStatus.CANCELLED);
+        boolean isSlotTaken = appointmentRepository.existsByDoctorIdAndDateTimeAndStatusNot(
+                doctor.getId(), requestDto.getDateTime(), AppointmentStatus.CANCELLED);
 
         if (isSlotTaken) {
             throw new IllegalStateException("Slot already taken");
