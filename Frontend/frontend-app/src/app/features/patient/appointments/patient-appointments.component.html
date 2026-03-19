@@ -1,0 +1,6 @@
+<div class="patient-appointments">
+    <h1>Book an Appointment</h1>
+    <p *ngIf="!doctorId">Select a doctor to book an appointment</p>
+    <p *ngIf="doctorId">Booking appointment with doctor ID: {{ doctorId }}</p>
+</div>
+
