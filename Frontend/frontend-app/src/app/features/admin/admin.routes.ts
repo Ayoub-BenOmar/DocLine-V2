@@ -22,4 +22,15 @@ export const ADMIN_ROUTES: Routes = [
             {
                 path: 'statistics',
                 loadComponent: () => import('./statistics/admin-statistics.component').then(m => m.AdminStatisticsComponent)
+            },
+            {
+                path: 'cities',
+                loadComponent: () => import('./cities/admin-cities.component').then(m => m.AdminCitiesComponent)
+            },
+            {
+                path: 'specialties',
+                loadComponent: () => import('./specialties/admin-specialties.component').then(m => m.AdminSpecialtiesComponent)
             }
+        ]
+    }
+];
