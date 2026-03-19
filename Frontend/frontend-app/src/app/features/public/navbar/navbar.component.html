@@ -1,0 +1,35 @@
+<nav class="navbar">
+    <div class="navbar-container">
+        <div class="navbar-brand">
+            <a routerLink="/" class="logo">DocLine</a>
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+                    Home
+                </a>
+            </li>
+            <li class="nav-item">
+                <a routerLink="/doctors" class="nav-link">
+                    Doctors
+                </a>
+            </li>
+        </ul>
+
+        <div class="nav-auth">
+            <ng-container *ngIf="!isAuthenticated">
+                <a routerLink="/auth/login" class="btn btn-login">Login</a>
+                <a routerLink="/auth/register" class="btn btn-register">Register</a>
+            </ng-container>
+            <ng-container *ngIf="isAuthenticated">
+                <div class="user-section">
+                    <span class="user-name">{{ userName }}</span>
+                    <a [routerLink]="getRolePath()" class="btn btn-dashboard">Dashboard</a>
+                    <button (click)="logout()" class="btn btn-logout">Logout</button>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</nav>
+
