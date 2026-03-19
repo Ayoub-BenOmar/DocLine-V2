@@ -20,6 +20,12 @@ public interface AdminService {
     CityDto addCity(CityDto cityDto);
     SpecialtyDto addSpecialty(SpecialtyDto specialtyDto);
 
+    void updateCity(Integer id, CityDto cityDto);
+    void deleteCity(Integer id);
+
+    void updateSpecialty(Integer id, SpecialtyDto specialtyDto);
+    void deleteSpecialty(Integer id);
+
     // Statistics
     List<CityStatisticDto> getCityStatistics();
     List<SpecialtyStatisticDto> getSpecialtyStatistics();

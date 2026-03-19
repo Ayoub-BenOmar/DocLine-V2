@@ -128,6 +128,50 @@ public class AdminServiceImpl implements AdminService {
                 .build();
     }
 
+    @Override
+    @Transactional
+    public void updateCity(Integer id, CityDto cityDto) {
+        City city = cityRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("City not found"));
+
+        if (cityDto.getCityName() != null && !cityDto.getCityName().trim().isEmpty()) {
+            city.setCityName(cityDto.getCityName());
+            cityRepository.save(city);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteCity(Integer id) {
+        if (!cityRepository.existsById(id)) {
+            throw new IllegalArgumentException("City not found");
+        }
+        // Assuming cascade delete is handled or not required for simple deletion logic
+        // If doctors/patients depend on it, we might need more logic or handle constraints
+        cityRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void updateSpecialty(Integer id, SpecialtyDto specialtyDto) {
+        Specialty specialty = specialtyRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Specialty not found"));
+
+        if (specialtyDto.getSpecialiteName() != null && !specialtyDto.getSpecialiteName().trim().isEmpty()) {
+            specialty.setSpecialiteName(specialtyDto.getSpecialiteName());
+            specialtyRepository.save(specialty);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteSpecialty(Integer id) {
+        if (!specialtyRepository.existsById(id)) {
+            throw new IllegalArgumentException("Specialty not found");
+        }
+        specialtyRepository.deleteById(id);
+    }
+
     private PatientProfileDto mapToPatientDto(Patient patient) {
         return PatientProfileDto.builder()
                 .id(patient.getId())

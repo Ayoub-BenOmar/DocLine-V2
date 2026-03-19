@@ -66,10 +66,38 @@ public class AdminController {
         return ResponseEntity.ok(adminService.addCity(cityDto));
     }
 
+    @PutMapping("/cities/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<String> updateCity(@PathVariable Integer id, @RequestBody CityDto cityDto) {
+        adminService.updateCity(id, cityDto);
+        return ResponseEntity.ok("City updated successfully");
+    }
+
+    @DeleteMapping("/cities/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<String> deleteCity(@PathVariable Integer id) {
+        adminService.deleteCity(id);
+        return ResponseEntity.ok("City deleted successfully");
+    }
+
     @PostMapping("/specialities")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<SpecialtyDto> addSpecialty(@RequestBody SpecialtyDto specialtyDto) {
         return ResponseEntity.ok(adminService.addSpecialty(specialtyDto));
+    }
+
+    @PutMapping("/specialities/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<String> updateSpecialty(@PathVariable Integer id, @RequestBody SpecialtyDto specialtyDto) {
+        adminService.updateSpecialty(id, specialtyDto);
+        return ResponseEntity.ok("Specialty updated successfully");
+    }
+
+    @DeleteMapping("/specialities/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<String> deleteSpecialty(@PathVariable Integer id) {
+        adminService.deleteSpecialty(id);
+        return ResponseEntity.ok("Specialty deleted successfully");
     }
 
     @GetMapping("/cities/statistics")
