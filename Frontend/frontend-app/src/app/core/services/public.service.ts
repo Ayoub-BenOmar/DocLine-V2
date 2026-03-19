@@ -17,21 +17,20 @@ export interface Doctor {
     name: string;
     lastName: string;
     email: string;
-    phone: string;
+    status: string;
+    medicalLicence: string;
+    medicalDocument: string;
     profilePic: string;
-    bio: string;
-    officeAddress: string;
+    speciality: string;
+    city: string;
     fees: number;
-    experience: number;
-    city: City;
-    specialty: Specialty;
 }
 
 export interface DoctorsPage {
     content: Doctor[];
     totalElements: number;
     totalPages: number;
-    currentPage: number;
+    number: number;
     size: number;
 }
 
@@ -64,4 +63,6 @@ export class PublicService {
         return this.http.get<Specialty[]>(`${this.apiUrl}/specialities`);
     }
 }
+
+
 
