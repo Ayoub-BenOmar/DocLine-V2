@@ -36,11 +36,10 @@
 
                             <div class="doctor-info">
                                 <h3 class="doctor-name">{{ doctor.name }} {{ doctor.lastName }}</h3>
-                                <p class="doctor-specialty">{{ doctor.specialty?.specialiteName }}</p>
-                                <p class="doctor-location">📍 {{ doctor.city?.cityName }}</p>
-                                <p class="doctor-experience">Experience: {{ doctor.experience }} years</p>
+                                <p class="doctor-specialty">{{ doctor.speciality }}</p>
+                                <p class="doctor-location">📍 {{ doctor.city }}</p>
+                                <p class="doctor-status" [class.approved]="doctor.status === 'APPROVED'">{{ doctor.status }}</p>
                                 <p class="doctor-fees">Fees: ${{ doctor.fees }}</p>
-                                <p class="doctor-bio" *ngIf="doctor.bio">{{ doctor.bio }}</p>
                             </div>
 
                             <div class="doctor-actions">
@@ -71,4 +70,5 @@
         </div>
     </div>
 </div>
+
 
