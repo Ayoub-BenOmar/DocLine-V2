@@ -39,6 +39,16 @@ export interface Doctor {
     medicalDocument: string;
 }
 
+export interface City {
+    id?: number;
+    cityName: string;
+}
+
+export interface Specialty {
+    id?: number;
+    specialiteName: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -69,5 +79,13 @@ export class AdminService {
 
     suspendDoctor(doctorId: number): Observable<string> {
         return this.http.put(`${this.apiUrl}/doctors/${doctorId}/suspend`, {}, { responseType: 'text' });
+    }
+
+    addCity(city: City): Observable<City> {
+        return this.http.post<City>(`${this.apiUrl}/cities`, city);
+    }
+
+    addSpecialty(specialty: Specialty): Observable<Specialty> {
+        return this.http.post<Specialty>(`${this.apiUrl}/specialities`, specialty);
     }
 }
