@@ -88,4 +88,20 @@ export class AdminService {
     addSpecialty(specialty: Specialty): Observable<Specialty> {
         return this.http.post<Specialty>(`${this.apiUrl}/specialities`, specialty);
     }
+
+    getAllCities(): Observable<City[]> {
+        return this.http.get<City[]>(`${this.apiUrl}/cities`);
+    }
+
+    getAllSpecialties(): Observable<Specialty[]> {
+        return this.http.get<Specialty[]>(`${this.apiUrl}/specialities`);
+    }
+
+    getCityStatistics(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/cities/statistics`);
+    }
+
+    getSpecialtyStatistics(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/specialities/statistics`);
+    }
 }
