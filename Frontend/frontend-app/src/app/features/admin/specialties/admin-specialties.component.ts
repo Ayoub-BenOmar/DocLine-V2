@@ -1,0 +1,107 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { AdminService, Specialty } from '../services/admin.service';
+
+@Component({
+    selector: 'app-admin-specialties',
+    standalone: true,
+    imports: [CommonModule, FormsModule],
+    templateUrl: './admin-specialties.component.html',
+    styleUrl: './admin-specialties.component.css'
+})
+export class AdminSpecialtiesComponent implements OnInit {
+    specialties: Specialty[] = [];
+    newSpecialtyName = '';
+    editingId: number | null = null;
+    editingName = '';
+
+    loading = true;
+    error = '';
+    message = '';
+    messageType: 'success' | 'error' = 'success';
+    addingSpecialty = false;
+
+    constructor(private adminService: AdminService) { }
+
+    ngOnInit(): void {
+        this.loadSpecialties();
+    }
+
+    loadSpecialties(): void {
+        this.loading = true;
+        this.adminService.getAllSpecialties().subscribe({
+            next: (data) => {
+                this.specialties = data;
+                this.loading = false;
+            },
+            error: (err) => {
+                console.error('Error loading specialties:', err);
+                this.error = 'Failed to load specialties';
+                this.loading = false;
+            }
+        });
+    }
+
+    addSpecialty(): void {
+        if (!this.newSpecialtyName.trim()) {
+            this.showMessage('❌ Please enter a specialty name', 'error');
+            return;
+        }
+
+        this.addingSpecialty = true;
+        const newSpecialty: Specialty = { specialiteName: this.newSpecialtyName };
+
+        this.adminService.addSpecialty(newSpecialty).subscribe({
+            next: (response) => {
+                this.specialties.push(response);
+                this.newSpecialtyName = '';
+                this.addingSpecialty = false;
+                this.showMessage('✅ Specialty added successfully!', 'success');
+            },
+            error: (err) => {
+                console.error('Error adding specialty:', err);
+                this.addingSpecialty = false;
+                this.showMessage('❌ Failed to add specialty', 'error');
+            }
+        });
+    }
+
+    startEdit(specialty: Specialty): void {
+        this.editingId = specialty.id;
+        this.editingName = specialty.specialiteName;
+    }
+
+    cancelEdit(): void {
+        this.editingId = null;
+        this.editingName = '';
+    }
+
+    saveEdit(specialty: Specialty): void {
+        if (!this.editingName.trim()) {
+            this.showMessage('❌ Specialty name cannot be empty', 'error');
+            return;
+        }
+
+        specialty.specialiteName = this.editingName;
+        this.editingId = null;
+        this.showMessage('✅ Specialty updated', 'success');
+    }
+
+    deleteSpecialty(specialty: Specialty): void {
+        if (confirm(`Are you sure you want to delete "${specialty.specialiteName}"?`)) {
+            const index = this.specialties.indexOf(specialty);
+            if (index > -1) {
+                this.specialties.splice(index, 1);
+                this.showMessage('✅ Specialty deleted', 'success');
+            }
+        }
+    }
+
+    private showMessage(msg: string, type: 'success' | 'error'): void {
+        this.message = msg;
+        this.messageType = type;
+        setTimeout(() => this.message = '', 4000);
+    }
+}
+

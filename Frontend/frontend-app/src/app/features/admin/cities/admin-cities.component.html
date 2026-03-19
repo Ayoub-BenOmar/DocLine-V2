@@ -1,0 +1,65 @@
+<div class="p-6">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">🏙️ Manage Cities</h1>
+
+    <!-- Message Alert -->
+    <div *ngIf="message" [ngClass]="{'bg-green-100 border-green-400 text-green-700': messageType === 'success', 'bg-red-100 border-red-400 text-red-700': messageType === 'error'}" class="border px-4 py-3 rounded mb-6">
+        {{ message }}
+    </div>
+
+    <!-- Add City Form -->
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
+        <h2 class="text-xl font-bold mb-4 text-gray-800">➕ Add New City</h2>
+        <div class="flex gap-3">
+            <input
+                type="text"
+                [(ngModel)]="newCityName"
+                placeholder="Enter city name"
+                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                (keyup.enter)="addCity()"
+            >
+            <button
+                (click)="addCity()"
+                [disabled]="addingCity"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition disabled:opacity-50"
+            >
+                {{ addingCity ? 'Adding...' : 'Add City' }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="text-center py-12">
+        <p class="text-gray-600">⏳ Loading cities...</p>
+    </div>
+
+    <!-- Cities Table -->
+    <div *ngIf="!loading && cities.length > 0" class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <h2 class="text-xl font-bold mb-4 text-gray-800">📊 All Cities</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b-2 border-gray-200">
+                        <th class="text-left py-3 px-4 font-bold text-gray-700">City Name</th>
+                        <th class="text-center py-3 px-4 font-bold text-gray-700">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let city of cities" class="border-b border-gray-100 hover:bg-gray-50">
+                        <td class="py-3 px-4">
+                            <span class="font-medium text-gray-800">{{ city.cityName }}</span>
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            <button (click)="startEdit(city)" class="bg-blue-500 text-white px-3 py-1 rounded text-sm mr-2">✏️ Edit</button>
+                            <button (click)="deleteCity(city)" class="bg-red-500 text-white px-3 py-1 rounded text-sm">🗑️ Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && cities.length === 0" class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 text-center">
+        <p class="text-gray-500">No cities yet</p>
+    </div>
+</div>
