@@ -5,6 +5,8 @@ import org.ayoub.docline.model.dto.CityDto;
 import org.ayoub.docline.model.dto.DoctorListingDto;
 import org.ayoub.docline.model.dto.PatientProfileDto;
 import org.ayoub.docline.model.dto.SpecialtyDto;
+import org.ayoub.docline.model.dto.CityStatisticDto;
+import org.ayoub.docline.model.dto.SpecialtyStatisticDto;
 import org.ayoub.docline.model.entity.City;
 import org.ayoub.docline.model.entity.Doctor;
 import org.ayoub.docline.model.entity.Patient;
@@ -161,5 +163,25 @@ public class AdminServiceImpl implements AdminService {
                 .city(doctor.getCity() != null ? doctor.getCity().getCityName() : null)
                 .fees(doctor.getFees())
                 .build();
+    }
+
+    @Override
+    public List<CityStatisticDto> getCityStatistics() {
+        return cityRepository.findAll().stream()
+                .map(city -> CityStatisticDto.builder()
+                        .cityName(city.getCityName())
+                        .doctorCount(city.getDoctors() != null ? city.getDoctors().size() : 0)
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SpecialtyStatisticDto> getSpecialtyStatistics() {
+        return specialtyRepository.findAll().stream()
+                .map(specialty -> SpecialtyStatisticDto.builder()
+                        .specialiteName(specialty.getSpecialiteName())
+                        .doctorCount(specialty.getDoctors() != null ? specialty.getDoctors().size() : 0)
+                        .build())
+                .collect(Collectors.toList());
     }
 }

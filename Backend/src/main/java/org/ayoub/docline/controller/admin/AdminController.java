@@ -5,6 +5,8 @@ import org.ayoub.docline.model.dto.DoctorListingDto;
 import org.ayoub.docline.model.dto.PatientProfileDto;
 import org.ayoub.docline.model.dto.CityDto;
 import org.ayoub.docline.model.dto.SpecialtyDto;
+import org.ayoub.docline.model.dto.CityStatisticDto;
+import org.ayoub.docline.model.dto.SpecialtyStatisticDto;
 import org.ayoub.docline.service.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -68,5 +70,17 @@ public class AdminController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<SpecialtyDto> addSpecialty(@RequestBody SpecialtyDto specialtyDto) {
         return ResponseEntity.ok(adminService.addSpecialty(specialtyDto));
+    }
+
+    @GetMapping("/cities/statistics")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<List<CityStatisticDto>> getCityStatistics() {
+        return ResponseEntity.ok(adminService.getCityStatistics());
+    }
+
+    @GetMapping("/specialities/statistics")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<List<SpecialtyStatisticDto>> getSpecialtyStatistics() {
+        return ResponseEntity.ok(adminService.getSpecialtyStatistics());
     }
 }

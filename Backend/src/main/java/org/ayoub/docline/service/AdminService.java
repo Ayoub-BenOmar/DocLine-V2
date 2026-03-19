@@ -4,6 +4,8 @@ import org.ayoub.docline.model.dto.CityDto;
 import org.ayoub.docline.model.dto.SpecialtyDto;
 import org.ayoub.docline.model.dto.DoctorListingDto;
 import org.ayoub.docline.model.dto.PatientProfileDto;
+import org.ayoub.docline.model.dto.CityStatisticDto;
+import org.ayoub.docline.model.dto.SpecialtyStatisticDto;
 import java.util.List;
 
 public interface AdminService {
@@ -17,4 +19,8 @@ public interface AdminService {
     // City & Specialty Management
     CityDto addCity(CityDto cityDto);
     SpecialtyDto addSpecialty(SpecialtyDto specialtyDto);
+
+    // Statistics
+    List<CityStatisticDto> getCityStatistics();
+    List<SpecialtyStatisticDto> getSpecialtyStatistics();
 }
