@@ -34,6 +34,8 @@ export class LoginComponent {
                         this.router.navigate(['/admin/dashboard']);
                     } else if (response.role === 'ROLE_DOCTOR') {
                         this.router.navigate(['/doctor/dashboard']);
+                    } else if (response.role === 'ROLE_PATIENT') {
+                        this.router.navigate(['/patient/dashboard']);
                     } else {
                         this.router.navigate(['/']);
                     }
