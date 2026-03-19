@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { PublicService, City, Specialty, Doctor } from '../../../core/services/public.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -38,9 +39,29 @@ export class DoctorsComponent implements OnInit {
 
     ngOnInit(): void {
         this.checkAuth();
-        this.loadCities();
-        this.loadSpecialties();
-        this.loadDoctors();
+        this.loading = true;
+
+        // Load cities, specialties, and doctors in parallel
+        forkJoin({
+            cities: this.publicService.getAllCities(),
+            specialties: this.publicService.getAllSpecialties(),
+            doctors: this.publicService.getAllDoctors(undefined, undefined, 0, this.pageSize)
+        }).subscribe({
+            next: (result) => {
+                console.log('All data loaded successfully:', result);
+                this.cities = result.cities;
+                this.specialties = result.specialties;
+                this.doctors = result.doctors.content;
+                this.totalPages = result.doctors.totalPages;
+                this.loading = false;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error loading data:', err);
+                this.loading = false;
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     checkAuth(): void {
@@ -48,32 +69,9 @@ export class DoctorsComponent implements OnInit {
         this.userRole = this.authService.getUserRole();
     }
 
-    loadCities(): void {
-        this.publicService.getAllCities().subscribe({
-            next: (data) => {
-                this.cities = data;
-                this.cdr.detectChanges();
-            },
-            error: (err) => {
-                console.error('Error loading cities', err);
-            }
-        });
-    }
-
-    loadSpecialties(): void {
-        this.publicService.getAllSpecialties().subscribe({
-            next: (data) => {
-                this.specialties = data;
-                this.cdr.detectChanges();
-            },
-            error: (err) => {
-                console.error('Error loading specialties', err);
-            }
-        });
-    }
-
     loadDoctors(): void {
         this.loading = true;
+        console.log('Loading doctors with filters:', { cityId: this.selectedCityId, specialtyId: this.selectedSpecialtyId, page: this.currentPage });
         this.publicService.getAllDoctors(
             this.selectedCityId || undefined,
             this.selectedSpecialtyId || undefined,
@@ -81,14 +79,16 @@ export class DoctorsComponent implements OnInit {
             this.pageSize
         ).subscribe({
             next: (data) => {
+                console.log('Doctors loaded successfully:', data);
                 this.doctors = data.content;
                 this.totalPages = data.totalPages;
                 this.loading = false;
                 this.cdr.detectChanges();
             },
             error: (err) => {
-                console.error('Error loading doctors', err);
+                console.error('Error loading doctors:', err);
                 this.loading = false;
+                this.doctors = [];
                 this.cdr.detectChanges();
             }
         });
