@@ -68,7 +68,7 @@ export class AdminSpecialtiesComponent implements OnInit {
     }
 
     startEdit(specialty: Specialty): void {
-        this.editingId = specialty.id;
+        this.editingId = specialty.id ?? null;
         this.editingName = specialty.specialiteName;
     }
 

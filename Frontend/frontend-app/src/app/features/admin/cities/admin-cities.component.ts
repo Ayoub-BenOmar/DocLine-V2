@@ -68,7 +68,7 @@ export class AdminCitiesComponent implements OnInit {
     }
 
     startEdit(city: City): void {
-        this.editingId = city.id;
+        this.editingId = city.id ?? null;
         this.editingName = city.cityName;
     }
 
