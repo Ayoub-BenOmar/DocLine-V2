@@ -18,7 +18,9 @@ public interface AdminService {
 
     // City & Specialty Management
     CityDto addCity(CityDto cityDto);
+    List<CityDto> getAllCities();
     SpecialtyDto addSpecialty(SpecialtyDto specialtyDto);
+    List<SpecialtyDto> getAllSpecialties();
 
     void updateCity(Integer id, CityDto cityDto);
     void deleteCity(Integer id);

@@ -129,6 +129,24 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public List<CityDto> getAllCities() {
+        return cityRepository.findAll().stream()
+                .map(city -> CityDto.builder()
+                        .id(city.getId())
+                        .cityName(city.getCityName())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SpecialtyDto> getAllSpecialties() {
+        return specialtyRepository.findAll().stream()
+                .map(specialty -> SpecialtyDto.builder()
+                        .id(specialty.getId())
+                        .specialiteName(specialty.getSpecialiteName())
+                        .build())
+                .collect(Collectors.toList());
+    }    @Override
     @Transactional
     public void updateCity(Integer id, CityDto cityDto) {
         City city = cityRepository.findById(id)

@@ -66,6 +66,12 @@ public class AdminController {
         return ResponseEntity.ok(adminService.addCity(cityDto));
     }
 
+    @GetMapping("/cities")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<List<CityDto>> getAllCities() {
+        return ResponseEntity.ok(adminService.getAllCities());
+    }
+
     @PutMapping("/cities/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> updateCity(@PathVariable Integer id, @RequestBody CityDto cityDto) {
@@ -84,6 +90,12 @@ public class AdminController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<SpecialtyDto> addSpecialty(@RequestBody SpecialtyDto specialtyDto) {
         return ResponseEntity.ok(adminService.addSpecialty(specialtyDto));
+    }
+
+    @GetMapping("/specialities")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<List<SpecialtyDto>> getAllSpecialties() {
+        return ResponseEntity.ok(adminService.getAllSpecialties());
     }
 
     @PutMapping("/specialities/{id}")
