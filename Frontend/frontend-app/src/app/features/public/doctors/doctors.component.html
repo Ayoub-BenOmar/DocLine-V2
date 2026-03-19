@@ -60,12 +60,15 @@
                 </ng-container>
 
                 <div *ngIf="doctors.length === 0" class="no-doctors">
-                    <p>No doctors found matching your criteria.</p>
+                    <p>❌ No doctors found or unable to load data</p>
+                    <p style="font-size: 14px; color: #999;">Make sure the backend server is running on http://localhost:8080</p>
+                    <button (click)="loadDoctors()" class="btn btn-primary" style="margin-top: 15px;">🔄 Retry Loading</button>
                 </div>
             </ng-container>
 
             <div *ngIf="loading" class="loading">
-                <p>Loading doctors...</p>
+                <p>⏳ Loading doctors...</p>
+                <p style="font-size: 14px; color: #999;">If this takes too long, please ensure the backend is running</p>
             </div>
         </div>
     </div>
