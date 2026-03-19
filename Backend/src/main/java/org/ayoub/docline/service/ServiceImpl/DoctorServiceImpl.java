@@ -68,7 +68,6 @@ public class DoctorServiceImpl implements DoctorService {
         if (profileDto.getBio() != null) doctor.setBio(profileDto.getBio());
         if (profileDto.getOfficeAddress() != null) doctor.setOfficeAddress(profileDto.getOfficeAddress());
         if (profileDto.getFees() != null) doctor.setFees(profileDto.getFees());
-        if (profileDto.getWorkingHours() != null) doctor.setWorkingHours(profileDto.getWorkingHours());
         if (profileDto.getExperience() != null) doctor.setExperience(profileDto.getExperience());
 
         if (profileDto.getCityId() != null) {
@@ -94,7 +93,6 @@ public class DoctorServiceImpl implements DoctorService {
                 .bio(doctor.getBio())
                 .fees(doctor.getFees())
                 .officeAddress(doctor.getOfficeAddress())
-                .workingHours(doctor.getWorkingHours())
                 .build();
     }
 

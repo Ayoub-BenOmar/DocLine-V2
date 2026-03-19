@@ -43,8 +43,6 @@ public class Doctor extends User {
     @Column(name = "bio", columnDefinition = "TEXT")
     private String bio;
 
-    @Column(name = "working_hours", columnDefinition = "TEXT")
-    private String workingHours;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 50)

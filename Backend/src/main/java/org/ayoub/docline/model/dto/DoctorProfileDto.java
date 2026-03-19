@@ -21,5 +21,4 @@ public class DoctorProfileDto {
     private Integer experience;
     private String bio;
     private String officeAddress;
-    private String workingHours;
 }
