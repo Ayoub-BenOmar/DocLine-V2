@@ -1,19 +1,18 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
-}
-    }
-    ngOnInit(): void {
+@Component({
+    selector: 'app-patient-profile',
+    standalone: true,
+    imports: [CommonModule, RouterModule],
+    templateUrl: './patient-profile.component.html',
+    styleUrl: './patient-profile.component.css'
+})
+export class PatientProfileComponent implements OnInit {
 
     constructor() { }
 
-export class PatientProfileComponent implements OnInit {
-})
-    styleUrl: './patient-profile.component.css'
-    templateUrl: './patient-profile.component.html',
-    imports: [CommonModule, RouterModule],
-    standalone: true,
-    selector: 'app-patient-profile',
-@Component({
-
-import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+    ngOnInit(): void {
+    }
+}
