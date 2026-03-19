@@ -83,18 +83,35 @@ export class AdminSpecialtiesComponent implements OnInit {
             return;
         }
 
-        specialty.specialiteName = this.editingName;
-        this.editingId = null;
-        this.showMessage('✅ Specialty updated', 'success');
+        const updatedSpecialty: Specialty = { ...specialty, specialiteName: this.editingName };
+        this.adminService.updateSpecialty(specialty.id!, updatedSpecialty).subscribe({
+            next: () => {
+                specialty.specialiteName = this.editingName;
+                this.editingId = null;
+                this.showMessage('✅ Specialty updated successfully', 'success');
+            },
+            error: (err) => {
+                console.error('Error updating specialty:', err);
+                this.showMessage('❌ Failed to update specialty', 'error');
+            }
+        });
     }
 
     deleteSpecialty(specialty: Specialty): void {
         if (confirm(`Are you sure you want to delete "${specialty.specialiteName}"?`)) {
-            const index = this.specialties.indexOf(specialty);
-            if (index > -1) {
-                this.specialties.splice(index, 1);
-                this.showMessage('✅ Specialty deleted', 'success');
-            }
+            this.adminService.deleteSpecialty(specialty.id!).subscribe({
+                next: () => {
+                    const index = this.specialties.indexOf(specialty);
+                    if (index > -1) {
+                        this.specialties.splice(index, 1);
+                    }
+                    this.showMessage('✅ Specialty deleted successfully', 'success');
+                },
+                error: (err) => {
+                    console.error('Error deleting specialty:', err);
+                    this.showMessage('❌ Failed to delete specialty', 'error');
+                }
+            });
         }
     }
 

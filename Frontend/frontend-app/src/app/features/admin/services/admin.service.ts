@@ -104,4 +104,20 @@ export class AdminService {
     getSpecialtyStatistics(): Observable<any[]> {
         return this.http.get<any[]>(`${this.apiUrl}/specialities/statistics`);
     }
+
+    updateCity(id: number, city: City): Observable<string> {
+        return this.http.put<string>(`${this.apiUrl}/cities/${id}`, city);
+    }
+
+    deleteCity(id: number): Observable<string> {
+        return this.http.delete<string>(`${this.apiUrl}/cities/${id}`);
+    }
+
+    updateSpecialty(id: number, specialty: Specialty): Observable<string> {
+        return this.http.put<string>(`${this.apiUrl}/specialities/${id}`, specialty);
+    }
+
+    deleteSpecialty(id: number): Observable<string> {
+        return this.http.delete<string>(`${this.apiUrl}/specialities/${id}`);
+    }
 }

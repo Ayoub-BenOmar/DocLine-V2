@@ -46,11 +46,26 @@
                 <tbody>
                     <tr *ngFor="let city of cities" class="border-b border-gray-100 hover:bg-gray-50">
                         <td class="py-3 px-4">
-                            <span class="font-medium text-gray-800">{{ city.cityName }}</span>
+                            <ng-container *ngIf="editingId !== city.id">
+                                <span class="font-medium text-gray-800">{{ city.cityName }}</span>
+                            </ng-container>
+                            <ng-container *ngIf="editingId === city.id">
+                                <input
+                                    type="text"
+                                    [(ngModel)]="editingName"
+                                    class="px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                            </ng-container>
                         </td>
                         <td class="py-3 px-4 text-center">
-                            <button (click)="startEdit(city)" class="bg-blue-500 text-white px-3 py-1 rounded text-sm mr-2">✏️ Edit</button>
-                            <button (click)="deleteCity(city)" class="bg-red-500 text-white px-3 py-1 rounded text-sm">🗑️ Delete</button>
+                            <ng-container *ngIf="editingId !== city.id">
+                                <button (click)="startEdit(city)" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm mr-2 transition">✏️ Edit</button>
+                                <button (click)="deleteCity(city)" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition">🗑️ Delete</button>
+                            </ng-container>
+                            <ng-container *ngIf="editingId === city.id">
+                                <button (click)="saveEdit(city)" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm mr-2 transition">💾 Save</button>
+                                <button (click)="cancelEdit()" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm transition">❌ Cancel</button>
+                            </ng-container>
                         </td>
                     </tr>
                 </tbody>

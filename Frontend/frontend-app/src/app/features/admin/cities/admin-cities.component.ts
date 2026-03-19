@@ -83,19 +83,35 @@ export class AdminCitiesComponent implements OnInit {
             return;
         }
 
-        // For now, we'll just update the UI. In a real app, you'd need a backend update endpoint
-        city.cityName = this.editingName;
-        this.editingId = null;
-        this.showMessage('✅ City updated', 'success');
+        const updatedCity: City = { ...city, cityName: this.editingName };
+        this.adminService.updateCity(city.id!, updatedCity).subscribe({
+            next: () => {
+                city.cityName = this.editingName;
+                this.editingId = null;
+                this.showMessage('✅ City updated successfully', 'success');
+            },
+            error: (err) => {
+                console.error('Error updating city:', err);
+                this.showMessage('❌ Failed to update city', 'error');
+            }
+        });
     }
 
     deleteCity(city: City): void {
         if (confirm(`Are you sure you want to delete "${city.cityName}"?`)) {
-            const index = this.cities.indexOf(city);
-            if (index > -1) {
-                this.cities.splice(index, 1);
-                this.showMessage('✅ City deleted', 'success');
-            }
+            this.adminService.deleteCity(city.id!).subscribe({
+                next: () => {
+                    const index = this.cities.indexOf(city);
+                    if (index > -1) {
+                        this.cities.splice(index, 1);
+                    }
+                    this.showMessage('✅ City deleted successfully', 'success');
+                },
+                error: (err) => {
+                    console.error('Error deleting city:', err);
+                    this.showMessage('❌ Failed to delete city', 'error');
+                }
+            });
         }
     }
 
