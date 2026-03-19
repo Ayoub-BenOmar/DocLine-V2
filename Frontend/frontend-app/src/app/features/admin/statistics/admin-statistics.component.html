@@ -1,0 +1,135 @@
+<div class="p-6">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">📊 Cities & Specialties Statistics</h1>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-12">
+        <p class="text-gray-600">⏳ Loading statistics...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !loading" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+        <p>❌ {{ error }}</p>
+    </div>
+
+    <!-- Content -->
+    <div *ngIf="!loading" class="space-y-8">
+        <!-- Top 3 Cities Section -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">🏙️ Top 3 Cities with Most Doctors</h2>
+
+            <div *ngIf="getTopCities().length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div *ngFor="let city of getTopCities(); let i = index" class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border border-blue-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold text-gray-800">{{ city.cityName }}</h3>
+                        <span class="text-3xl font-bold text-blue-600">{{ i + 1 }}</span>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-4xl font-bold text-blue-600">{{ city.doctorCount }}</span>
+                        <span class="text-gray-600 font-medium">doctors</span>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-blue-200">
+                        <div class="w-full bg-blue-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" [style.width]="(city.doctorCount / (getTopCities()[0].doctorCount || 1) * 100) + '%'"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="getTopCities().length === 0" class="text-gray-500 text-center py-8">
+                <p>No cities with doctors yet</p>
+            </div>
+        </div>
+
+        <!-- Top 3 Specialties Section -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">🏥 Top 3 Specialties with Most Doctors</h2>
+
+            <div *ngIf="getTopSpecialties().length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div *ngFor="let specialty of getTopSpecialties(); let i = index" class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-6 border border-purple-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold text-gray-800">{{ specialty.specialiteName }}</h3>
+                        <span class="text-3xl font-bold text-purple-600">{{ i + 1 }}</span>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-4xl font-bold text-purple-600">{{ specialty.doctorCount }}</span>
+                        <span class="text-gray-600 font-medium">doctors</span>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-purple-200">
+                        <div class="w-full bg-purple-200 rounded-full h-2">
+                            <div class="bg-purple-600 h-2 rounded-full" [style.width]="(specialty.doctorCount / (getTopSpecialties()[0].doctorCount || 1) * 100) + '%'"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="getTopSpecialties().length === 0" class="text-gray-500 text-center py-8">
+                <p>No specialties with doctors yet</p>
+            </div>
+        </div>
+
+        <!-- All Cities Table -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">📋 All Cities Overview</h2>
+
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b-2 border-gray-200">
+                            <th class="text-left py-3 px-4 font-bold text-gray-700">City Name</th>
+                            <th class="text-center py-3 px-4 font-bold text-gray-700">Doctors Count</th>
+                            <th class="text-left py-3 px-4 font-bold text-gray-700">Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let city of cities" class="border-b border-gray-100 hover:bg-gray-50 transition">
+                            <td class="py-3 px-4 font-medium text-gray-800">{{ city.cityName }}</td>
+                            <td class="py-3 px-4 text-center">
+                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-semibold">{{ getTotalDoctorsInCity(city.cityName) }}</span>
+                            </td>
+                            <td class="py-3 px-4">
+                                <div class="w-48 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-blue-600 h-2 rounded-full" [style.width]="(getTotalDoctorsInCity(city.cityName) / (cityStatistics[0]?.doctorCount || 1) * 100) + '%'"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="cities.length === 0" class="border-b border-gray-100">
+                            <td colspan="3" class="py-8 px-4 text-center text-gray-500">No cities available</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- All Specialties Table -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">📋 All Specialties Overview</h2>
+
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b-2 border-gray-200">
+                            <th class="text-left py-3 px-4 font-bold text-gray-700">Specialty Name</th>
+                            <th class="text-center py-3 px-4 font-bold text-gray-700">Doctors Count</th>
+                            <th class="text-left py-3 px-4 font-bold text-gray-700">Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let specialty of specialties" class="border-b border-gray-100 hover:bg-gray-50 transition">
+                            <td class="py-3 px-4 font-medium text-gray-800">{{ specialty.specialiteName }}</td>
+                            <td class="py-3 px-4 text-center">
+                                <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full font-semibold">{{ getTotalDoctorsInSpecialty(specialty.specialiteName) }}</span>
+                            </td>
+                            <td class="py-3 px-4">
+                                <div class="w-48 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-purple-600 h-2 rounded-full" [style.width]="(getTotalDoctorsInSpecialty(specialty.specialiteName) / (specialtyStatistics[0]?.doctorCount || 1) * 100) + '%'"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="specialties.length === 0" class="border-b border-gray-100">
+                            <td colspan="3" class="py-8 px-4 text-center text-gray-500">No specialties available</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
