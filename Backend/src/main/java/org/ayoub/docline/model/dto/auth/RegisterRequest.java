@@ -50,7 +50,6 @@ public class RegisterRequest {
     private Integer specialityId;
     private Integer cityId;
     private String bio;
-    private String workingHours;
     private String languages;
     private String clinicPhone;
 
