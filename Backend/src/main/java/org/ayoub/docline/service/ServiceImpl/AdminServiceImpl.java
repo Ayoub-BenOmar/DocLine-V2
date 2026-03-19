@@ -1,14 +1,20 @@
 package org.ayoub.docline.service.ServiceImpl;
 
 import lombok.RequiredArgsConstructor;
+import org.ayoub.docline.model.dto.CityDto;
 import org.ayoub.docline.model.dto.DoctorListingDto;
 import org.ayoub.docline.model.dto.PatientProfileDto;
+import org.ayoub.docline.model.dto.SpecialtyDto;
+import org.ayoub.docline.model.entity.City;
 import org.ayoub.docline.model.entity.Doctor;
 import org.ayoub.docline.model.entity.Patient;
+import org.ayoub.docline.model.entity.Specialty;
 import org.ayoub.docline.model.entity.User;
 import org.ayoub.docline.model.enums.Role;
 import org.ayoub.docline.model.enums.UserStatus;
+import org.ayoub.docline.repository.CityRepository;
 import org.ayoub.docline.repository.DoctorRepository;
+import org.ayoub.docline.repository.SpecialtyRepository;
 import org.ayoub.docline.repository.UserRepository;
 import org.ayoub.docline.service.AdminService;
 import org.springframework.stereotype.Service;
@@ -23,6 +29,8 @@ public class AdminServiceImpl implements AdminService {
 
     private final UserRepository userRepository;
     private final DoctorRepository doctorRepository;
+    private final CityRepository cityRepository;
+    private final SpecialtyRepository specialtyRepository;
 
     @Override
     public List<PatientProfileDto> getAllPatients() {
@@ -82,6 +90,40 @@ public class AdminServiceImpl implements AdminService {
             doctor.setIsActivated(false);
         }
         doctorRepository.save(doctor);
+    }
+
+    @Override
+    @Transactional
+    public CityDto addCity(CityDto cityDto) {
+        if (cityDto.getCityName() == null || cityDto.getCityName().trim().isEmpty()) {
+            throw new IllegalArgumentException("City name cannot be empty");
+        }
+
+        City city = new City();
+        city.setCityName(cityDto.getCityName());
+        City savedCity = cityRepository.save(city);
+
+        return CityDto.builder()
+                .id(savedCity.getId())
+                .cityName(savedCity.getCityName())
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public SpecialtyDto addSpecialty(SpecialtyDto specialtyDto) {
+        if (specialtyDto.getSpecialiteName() == null || specialtyDto.getSpecialiteName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Specialty name cannot be empty");
+        }
+
+        Specialty specialty = new Specialty();
+        specialty.setSpecialiteName(specialtyDto.getSpecialiteName());
+        Specialty savedSpecialty = specialtyRepository.save(specialty);
+
+        return SpecialtyDto.builder()
+                .id(savedSpecialty.getId())
+                .specialiteName(savedSpecialty.getSpecialiteName())
+                .build();
     }
 
     private PatientProfileDto mapToPatientDto(Patient patient) {

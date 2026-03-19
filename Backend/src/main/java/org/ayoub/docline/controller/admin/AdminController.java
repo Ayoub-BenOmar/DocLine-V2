@@ -3,6 +3,8 @@ package org.ayoub.docline.controller.admin;
 import lombok.RequiredArgsConstructor;
 import org.ayoub.docline.model.dto.DoctorListingDto;
 import org.ayoub.docline.model.dto.PatientProfileDto;
+import org.ayoub.docline.model.dto.CityDto;
+import org.ayoub.docline.model.dto.SpecialtyDto;
 import org.ayoub.docline.service.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -54,5 +56,17 @@ public class AdminController {
     public ResponseEntity<String> suspendDoctor(@PathVariable Integer doctorId) {
         adminService.suspendDoctor(doctorId);
         return ResponseEntity.ok("Doctor suspension status toggled successfully");
+    }
+
+    @PostMapping("/cities")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<CityDto> addCity(@RequestBody CityDto cityDto) {
+        return ResponseEntity.ok(adminService.addCity(cityDto));
+    }
+
+    @PostMapping("/specialities")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<SpecialtyDto> addSpecialty(@RequestBody SpecialtyDto specialtyDto) {
+        return ResponseEntity.ok(adminService.addSpecialty(specialtyDto));
     }
 }
