@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService, Specialty } from '../services/admin.service';
@@ -22,7 +22,7 @@ export class AdminSpecialtiesComponent implements OnInit {
     messageType: 'success' | 'error' = 'success';
     addingSpecialty = false;
 
-    constructor(private adminService: AdminService) { }
+    constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.loadSpecialties();
@@ -34,11 +34,13 @@ export class AdminSpecialtiesComponent implements OnInit {
             next: (data) => {
                 this.specialties = data;
                 this.loading = false;
+                this.cdr.detectChanges();
             },
             error: (err) => {
                 console.error('Error loading specialties:', err);
                 this.error = 'Failed to load specialties';
                 this.loading = false;
+                this.cdr.detectChanges();
             }
         });
     }
@@ -57,11 +59,13 @@ export class AdminSpecialtiesComponent implements OnInit {
                 this.specialties.push(response);
                 this.newSpecialtyName = '';
                 this.addingSpecialty = false;
+                this.cdr.detectChanges();
                 this.showMessage('✅ Specialty added successfully!', 'success');
             },
             error: (err) => {
                 console.error('Error adding specialty:', err);
                 this.addingSpecialty = false;
+                this.cdr.detectChanges();
                 this.showMessage('❌ Failed to add specialty', 'error');
             }
         });
@@ -70,11 +74,13 @@ export class AdminSpecialtiesComponent implements OnInit {
     startEdit(specialty: Specialty): void {
         this.editingId = specialty.id ?? null;
         this.editingName = specialty.specialiteName;
+        this.cdr.detectChanges();
     }
 
     cancelEdit(): void {
         this.editingId = null;
         this.editingName = '';
+        this.cdr.detectChanges();
     }
 
     saveEdit(specialty: Specialty): void {
@@ -88,10 +94,12 @@ export class AdminSpecialtiesComponent implements OnInit {
             next: () => {
                 specialty.specialiteName = this.editingName;
                 this.editingId = null;
+                this.cdr.detectChanges();
                 this.showMessage('✅ Specialty updated successfully', 'success');
             },
             error: (err) => {
                 console.error('Error updating specialty:', err);
+                this.cdr.detectChanges();
                 this.showMessage('❌ Failed to update specialty', 'error');
             }
         });
@@ -105,10 +113,12 @@ export class AdminSpecialtiesComponent implements OnInit {
                     if (index > -1) {
                         this.specialties.splice(index, 1);
                     }
+                    this.cdr.detectChanges();
                     this.showMessage('✅ Specialty deleted successfully', 'success');
                 },
                 error: (err) => {
                     console.error('Error deleting specialty:', err);
+                    this.cdr.detectChanges();
                     this.showMessage('❌ Failed to delete specialty', 'error');
                 }
             });
@@ -118,7 +128,11 @@ export class AdminSpecialtiesComponent implements OnInit {
     private showMessage(msg: string, type: 'success' | 'error'): void {
         this.message = msg;
         this.messageType = type;
-        setTimeout(() => this.message = '', 4000);
+        this.cdr.detectChanges();
+        setTimeout(() => {
+            this.message = '';
+            this.cdr.detectChanges();
+        }, 4000);
     }
 }
 

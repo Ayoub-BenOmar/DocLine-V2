@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService, City } from '../services/admin.service';
@@ -22,7 +22,7 @@ export class AdminCitiesComponent implements OnInit {
     messageType: 'success' | 'error' = 'success';
     addingCity = false;
 
-    constructor(private adminService: AdminService) { }
+    constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.loadCities();
@@ -34,11 +34,13 @@ export class AdminCitiesComponent implements OnInit {
             next: (data) => {
                 this.cities = data;
                 this.loading = false;
+                this.cdr.detectChanges();
             },
             error: (err) => {
                 console.error('Error loading cities:', err);
                 this.error = 'Failed to load cities';
                 this.loading = false;
+                this.cdr.detectChanges();
             }
         });
     }
@@ -57,11 +59,13 @@ export class AdminCitiesComponent implements OnInit {
                 this.cities.push(response);
                 this.newCityName = '';
                 this.addingCity = false;
+                this.cdr.detectChanges();
                 this.showMessage('✅ City added successfully!', 'success');
             },
             error: (err) => {
                 console.error('Error adding city:', err);
                 this.addingCity = false;
+                this.cdr.detectChanges();
                 this.showMessage('❌ Failed to add city', 'error');
             }
         });
@@ -70,11 +74,13 @@ export class AdminCitiesComponent implements OnInit {
     startEdit(city: City): void {
         this.editingId = city.id ?? null;
         this.editingName = city.cityName;
+        this.cdr.detectChanges();
     }
 
     cancelEdit(): void {
         this.editingId = null;
         this.editingName = '';
+        this.cdr.detectChanges();
     }
 
     saveEdit(city: City): void {
@@ -88,10 +94,12 @@ export class AdminCitiesComponent implements OnInit {
             next: () => {
                 city.cityName = this.editingName;
                 this.editingId = null;
+                this.cdr.detectChanges();
                 this.showMessage('✅ City updated successfully', 'success');
             },
             error: (err) => {
                 console.error('Error updating city:', err);
+                this.cdr.detectChanges();
                 this.showMessage('❌ Failed to update city', 'error');
             }
         });
@@ -105,10 +113,12 @@ export class AdminCitiesComponent implements OnInit {
                     if (index > -1) {
                         this.cities.splice(index, 1);
                     }
+                    this.cdr.detectChanges();
                     this.showMessage('✅ City deleted successfully', 'success');
                 },
                 error: (err) => {
                     console.error('Error deleting city:', err);
+                    this.cdr.detectChanges();
                     this.showMessage('❌ Failed to delete city', 'error');
                 }
             });
@@ -118,7 +128,11 @@ export class AdminCitiesComponent implements OnInit {
     private showMessage(msg: string, type: 'success' | 'error'): void {
         this.message = msg;
         this.messageType = type;
-        setTimeout(() => this.message = '', 4000);
+        this.cdr.detectChanges();
+        setTimeout(() => {
+            this.message = '';
+            this.cdr.detectChanges();
+        }, 4000);
     }
 }
 

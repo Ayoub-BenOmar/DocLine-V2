@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminService, City, Specialty } from '../services/admin.service';
 
@@ -28,7 +28,7 @@ export class AdminStatisticsComponent implements OnInit {
     loading = true;
     error = '';
 
-    constructor(private adminService: AdminService) { }
+    constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.loadStatistics();
@@ -42,24 +42,28 @@ export class AdminStatisticsComponent implements OnInit {
         this.adminService.getAllCities().subscribe({
             next: (cities) => {
                 this.cities = cities;
+                this.cdr.detectChanges();
                 this.loadCityStats();
             },
             error: (err) => {
                 console.error('Error loading cities:', err);
                 this.error = 'Failed to load cities';
                 this.loading = false;
+                this.cdr.detectChanges();
             }
         });
 
         this.adminService.getAllSpecialties().subscribe({
             next: (specialties) => {
                 this.specialties = specialties;
+                this.cdr.detectChanges();
                 this.loadSpecialtyStats();
             },
             error: (err) => {
                 console.error('Error loading specialties:', err);
                 this.error = 'Failed to load specialties';
                 this.loading = false;
+                this.cdr.detectChanges();
             }
         });
     }
@@ -68,11 +72,13 @@ export class AdminStatisticsComponent implements OnInit {
         this.adminService.getCityStatistics().subscribe({
             next: (stats) => {
                 this.cityStatistics = stats.sort((a, b) => b.doctorCount - a.doctorCount);
+                this.cdr.detectChanges();
                 this.checkLoadingComplete();
             },
             error: (err) => {
                 console.error('Error loading city statistics:', err);
                 this.cityStatistics = [];
+                this.cdr.detectChanges();
                 this.checkLoadingComplete();
             }
         });
@@ -82,11 +88,13 @@ export class AdminStatisticsComponent implements OnInit {
         this.adminService.getSpecialtyStatistics().subscribe({
             next: (stats) => {
                 this.specialtyStatistics = stats.sort((a, b) => b.doctorCount - a.doctorCount);
+                this.cdr.detectChanges();
                 this.checkLoadingComplete();
             },
             error: (err) => {
                 console.error('Error loading specialty statistics:', err);
                 this.specialtyStatistics = [];
+                this.cdr.detectChanges();
                 this.checkLoadingComplete();
             }
         });
@@ -95,6 +103,7 @@ export class AdminStatisticsComponent implements OnInit {
     private checkLoadingComplete(): void {
         if (this.cities.length > 0 && this.specialties.length > 0) {
             this.loading = false;
+            this.cdr.detectChanges();
         }
     }
 
