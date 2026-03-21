@@ -37,15 +37,15 @@ export class PatientAppointmentsComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
+        this.loadAppointments();
+
         this.route.queryParams.subscribe(params => {
             if (params['doctorId']) {
-                this.doctorId = parseInt(params['doctorId']);
-                // Open modal for booking
-                this.openBookingModal(this.doctorId);
+                const doctorId = parseInt(params['doctorId']);
+                console.log('Opening booking modal for doctor:', doctorId);
+                this.openBookingModal(doctorId);
             }
         });
-
-        this.loadAppointments();
     }
 
     loadAppointments(): void {
@@ -100,6 +100,7 @@ export class PatientAppointmentsComponent implements OnInit {
     }
 
     openBookingModal(doctorId: number): void {
+        console.log('openBookingModal called with doctorId:', doctorId);
         // Mock doctor data - will be fetched from backend
         this.selectedDoctor = {
             id: doctorId,
@@ -109,6 +110,7 @@ export class PatientAppointmentsComponent implements OnInit {
         };
         this.showBookingModal = true;
         this.resetBookingForm();
+        console.log('Modal opened, showBookingModal:', this.showBookingModal);
         this.cdr.detectChanges();
     }
 
