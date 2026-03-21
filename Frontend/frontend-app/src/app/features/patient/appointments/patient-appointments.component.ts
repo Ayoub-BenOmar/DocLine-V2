@@ -46,28 +46,22 @@ export class PatientAppointmentsComponent implements OnInit {
         this.loading = true;
         this.cdr.detectChanges();
 
-        // Load real appointments from backend
         this.patientService.getAppointments().subscribe({
             next: (appointments) => {
                 console.log('Appointments loaded:', appointments);
                 const now = new Date();
 
-                // Map appointments to match template requirements
                 const mappedAppointments = appointments.map((apt: any) => {
                     const aptDate = new Date(apt.dateTime);
                     return {
                         ...apt,
-                        // Format date and time for display
                         date: aptDate.toLocaleDateString(),
                         time: aptDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                        // Map specific fields
                         speciality: apt.doctorSpeciality,
-                        // Keep original date object for filtering
                         dateTimeObj: aptDate
                     };
                 });
 
-                // Separate into upcoming and past
                 this.upcomingAppointments = mappedAppointments.filter((apt: any) => apt.dateTimeObj >= now);
                 this.pastAppointments = mappedAppointments.filter((apt: any) => apt.dateTimeObj < now);
 
@@ -87,7 +81,6 @@ export class PatientAppointmentsComponent implements OnInit {
     openBookingModal(doctorId: number): void {
         console.log('openBookingModal called with doctorId:', doctorId);
 
-        // Fetch doctor details from backend
         this.publicService.getAllDoctors().subscribe({
             next: (data: any) => {
                 const doctor = data.content.find((d: any) => d.id === doctorId);
@@ -100,7 +93,6 @@ export class PatientAppointmentsComponent implements OnInit {
                         fees: doctor.fees
                     };
                 } else {
-                    // Fallback if doctor not found
                     this.selectedDoctor = {
                         id: doctorId,
                         name: 'Dr. John Smith',
@@ -115,7 +107,6 @@ export class PatientAppointmentsComponent implements OnInit {
             },
             error: (err) => {
                 console.error('Error fetching doctor:', err);
-                // Use mock data as fallback
                 this.selectedDoctor = {
                     id: doctorId,
                     name: 'Dr. John Smith',
@@ -147,7 +138,6 @@ export class PatientAppointmentsComponent implements OnInit {
     onDateSelected(): void {
         if (!this.bookingData.selectedDate) return;
 
-        // Validate that selected date is a weekday
         if (!this.isWeekday(this.bookingData.selectedDate)) {
             alert('❌ Please select a weekday (Monday-Friday)');
             this.bookingData.selectedDate = '';
@@ -162,7 +152,6 @@ export class PatientAppointmentsComponent implements OnInit {
 
         console.log('Fetching slots for doctor:', this.selectedDoctor.id, 'Date:', this.bookingData.selectedDate);
 
-        // Fetch available slots from backend
         this.patientService.getDoctorSlots(this.selectedDoctor.id, this.bookingData.selectedDate).subscribe({
             next: (slots: any[]) => {
                 console.log('Raw slots response:', slots);
@@ -178,8 +167,6 @@ export class PatientAppointmentsComponent implements OnInit {
                     return;
                 }
 
-                // Convert backend TimeSlotDto to UI format
-                // Filter and format only 9:00 AM - 12:00 PM slots
                 this.availableSlots = slots
                     .map((slot: any) => {
                         console.log('Processing slot:', slot);
@@ -196,7 +183,6 @@ export class PatientAppointmentsComponent implements OnInit {
                         };
                     })
                     .filter((slot: any) => {
-                        // Filter only 9:00 AM to 12:00 PM
                         const time = new Date(slot.start);
                         const hours = time.getHours();
                         return hours >= 9 && hours < 12;
@@ -246,22 +232,18 @@ export class PatientAppointmentsComponent implements OnInit {
         this.bookingLoading = true;
         this.cdr.detectChanges();
 
-        // Find the selected slot to get the exact start time
         const selectedSlot = this.availableSlots.find((slot: any) => slot.time === this.bookingData.selectedTime);
         let dateTimeStr: string;
 
         if (selectedSlot && selectedSlot.start) {
-            // Use the exact start time from the slot
             dateTimeStr = selectedSlot.start;
         } else {
-            // Fallback: parse the time and combine with date
             const timeRegex = /(\d+):(\d+)\s*(AM|PM)/i;
             const match = this.bookingData.selectedTime.match(timeRegex);
             let hours = parseInt(match![1]);
             const minutes = parseInt(match![2]);
             const period = match![3].toUpperCase();
 
-            // Convert to 24-hour format
             if (period === 'PM' && hours !== 12) hours += 12;
             if (period === 'AM' && hours === 12) hours = 0;
 
@@ -278,7 +260,6 @@ export class PatientAppointmentsComponent implements OnInit {
 
         console.log('Booking appointment:', appointmentData);
 
-        // Call API to book appointment
         this.patientService.bookAppointment(appointmentData).subscribe({
             next: (response) => {
                 console.log('Appointment booked:', response);
@@ -310,7 +291,6 @@ export class PatientAppointmentsComponent implements OnInit {
     }
 
     rescheduleAppointment(appointment: any): void {
-        // Open modal to reschedule
         this.openBookingModal(appointment.doctorId);
     }
 
@@ -344,42 +324,37 @@ export class PatientAppointmentsComponent implements OnInit {
         }
     }
 
-    // Helper to get minimum date (today, but if weekend then next Monday)
     getMinDate(): string {
         const today = new Date();
         const dayOfWeek = today.getDay();
 
-        // If Saturday (6) or Sunday (0), move to next Monday
         if (dayOfWeek === 0) {
-            today.setDate(today.getDate() + 1); // Sunday -> Monday
+            today.setDate(today.getDate() + 1);
         } else if (dayOfWeek === 6) {
-            today.setDate(today.getDate() + 2); // Saturday -> Monday
+            today.setDate(today.getDate() + 2);
         }
 
         return today.toISOString().split('T')[0];
     }
 
-    // Helper to get maximum date (90 days from now, only weekdays)
     getMaxDate(): string {
         const maxDate = new Date();
         maxDate.setDate(maxDate.getDate() + 90);
 
-        // If it lands on weekend, move to Friday of that week
         const dayOfWeek = maxDate.getDay();
         if (dayOfWeek === 0) {
-            maxDate.setDate(maxDate.getDate() - 2); // Sunday -> Friday
+            maxDate.setDate(maxDate.getDate() - 2);
         } else if (dayOfWeek === 6) {
-            maxDate.setDate(maxDate.getDate() - 1); // Saturday -> Friday
+            maxDate.setDate(maxDate.getDate() - 1);
         }
 
         return maxDate.toISOString().split('T')[0];
     }
 
-    // Check if a date is a weekday (Monday-Friday)
     isWeekday(dateStr: string): boolean {
         const date = new Date(dateStr);
         const dayOfWeek = date.getDay();
-        return dayOfWeek >= 1 && dayOfWeek <= 5; // Monday = 1, Friday = 5
+        return dayOfWeek >= 1 && dayOfWeek <= 5;
     }
 }
 
