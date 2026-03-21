@@ -6,6 +6,7 @@ import { forkJoin } from 'rxjs';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { PublicService, City, Specialty, Doctor } from '../../../core/services/public.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { PatientService } from '../../patient/services/patient.service';
 
 @Component({
     selector: 'app-doctors',
@@ -30,9 +31,23 @@ export class DoctorsComponent implements OnInit {
     isAuthenticated = false;
     userRole: string | null = null;
 
+    // Booking Modal
+    showBookingModal = false;
+    selectedDoctor: any = null;
+    availableSlots: any[] = [];
+    bookingData = {
+        selectedDate: '',
+        selectedTime: '',
+        reason: ''
+    };
+    bookingLoading = false;
+    slotsLoading = false;
+
+
     constructor(
         private publicService: PublicService,
         private authService: AuthService,
+        private patientService: PatientService,
         private router: Router,
         private cdr: ChangeDetectorRef
     ) { }
@@ -110,8 +125,164 @@ export class DoctorsComponent implements OnInit {
             return;
         }
 
-        // Navigate to appointment booking for this doctor
-        this.router.navigate(['/patient/appointments'], { queryParams: { doctorId: doctor.id } });
+        // Open booking modal
+        this.openBookingModal(doctor);
+    }
+
+    openBookingModal(doctor: Doctor): void {
+        console.log('Opening booking modal for:', doctor);
+        this.selectedDoctor = doctor;
+        this.showBookingModal = true;
+        this.resetBookingForm();
+        this.cdr.detectChanges();
+    }
+
+    closeBookingModal(): void {
+        this.showBookingModal = false;
+        this.resetBookingForm();
+        this.cdr.detectChanges();
+    }
+
+    resetBookingForm(): void {
+        this.bookingData = {
+            selectedDate: '',
+            selectedTime: '',
+            reason: ''
+        };
+        this.availableSlots = [];
+    }
+
+    // Modal Logic & Helpers
+    getMinDate(): string {
+        const today = new Date();
+        const dayOfWeek = today.getDay();
+        // If Saturday (6) or Sunday (0), move to next Monday
+        if (dayOfWeek === 0) today.setDate(today.getDate() + 1);
+        else if (dayOfWeek === 6) today.setDate(today.getDate() + 2);
+        return today.toISOString().split('T')[0];
+    }
+
+    getMaxDate(): string {
+        const maxDate = new Date();
+        maxDate.setDate(maxDate.getDate() + 90);
+        const dayOfWeek = maxDate.getDay();
+        if (dayOfWeek === 0) maxDate.setDate(maxDate.getDate() - 2);
+        else if (dayOfWeek === 6) maxDate.setDate(maxDate.getDate() - 1);
+        return maxDate.toISOString().split('T')[0];
+    }
+
+    isWeekday(dateStr: string): boolean {
+        const date = new Date(dateStr);
+        const dayOfWeek = date.getDay();
+        return dayOfWeek >= 1 && dayOfWeek <= 5;
+    }
+
+    onDateSelected(): void {
+        if (!this.bookingData.selectedDate) return;
+
+        if (!this.isWeekday(this.bookingData.selectedDate)) {
+            alert('❌ Please select a weekday (Monday-Friday)');
+            this.bookingData.selectedDate = '';
+            this.cdr.detectChanges();
+            return;
+        }
+
+        this.slotsLoading = true;
+        this.availableSlots = [];
+        this.bookingData.selectedTime = '';
+        this.cdr.detectChanges();
+
+        this.patientService.getDoctorSlots(this.selectedDoctor.id, this.bookingData.selectedDate).subscribe({
+            next: (slots: any[]) => {
+                if (!Array.isArray(slots)) {
+                    this.availableSlots = [];
+                    this.slotsLoading = false;
+                    alert('⚠️ Unexpected response format');
+                    this.cdr.detectChanges();
+                    return;
+                }
+
+                // Filter and format only 9:00 AM - 12:00 PM slots
+                this.availableSlots = slots
+                    .map((slot: any) => {
+                        const startTime = new Date(slot.start).toLocaleTimeString('en-US', {
+                            hour: '2-digit', minute: '2-digit', hour12: true
+                        });
+                        return { time: startTime, available: slot.isAvailable, start: slot.start, raw: slot };
+                    })
+                    .filter((slot: any) => {
+                        const time = new Date(slot.start);
+                        const hours = time.getHours();
+                        return hours >= 9 && hours < 12;
+                    });
+
+                if (this.availableSlots.length === 0) {
+                    alert('⚠️ No avail slots (Mon-Fri 9-12) for this date');
+                }
+                this.slotsLoading = false;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error loading slots:', err);
+                this.availableSlots = [];
+                this.slotsLoading = false;
+                alert('❌ Failed to load slots: ' + (err.error?.message || err.message));
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    bookAppointment(): void {
+        if (!this.bookingData.selectedDate || !this.bookingData.selectedTime || !this.bookingData.reason) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        this.bookingLoading = true;
+        this.cdr.detectChanges();
+
+        // Use exact start time from slot if available
+        const selectedSlot = this.availableSlots.find((slot: any) => slot.time === this.bookingData.selectedTime);
+        let dateTimeStr: string;
+
+        if (selectedSlot && selectedSlot.start) {
+            dateTimeStr = selectedSlot.start;
+        } else {
+            // Fallback parsing
+            const timeRegex = /(\d+):(\d+)\s*(AM|PM)/i;
+            const match = this.bookingData.selectedTime.match(timeRegex);
+            let hours = parseInt(match![1]);
+            const minutes = parseInt(match![2]);
+            const period = match![3].toUpperCase();
+            if (period === 'PM' && hours !== 12) hours += 12;
+            if (period === 'AM' && hours === 12) hours = 0;
+            const appointmentDate = new Date(this.bookingData.selectedDate);
+            appointmentDate.setHours(hours, minutes, 0);
+            dateTimeStr = appointmentDate.toISOString();
+        }
+
+        const appointmentData = {
+            doctorId: this.selectedDoctor.id,
+            dateTime: dateTimeStr,
+            reason: this.bookingData.reason
+        };
+
+        this.patientService.bookAppointment(appointmentData).subscribe({
+            next: (response) => {
+                console.log('Appointment booked:', response);
+                this.bookingLoading = false;
+                alert('✅ Appointment booked successfully!');
+                this.closeBookingModal();
+                this.cdr.detectChanges();
+                // Optionally refresh something?
+            },
+            error: (err) => {
+                console.error('Error booking appointment:', err);
+                this.bookingLoading = false;
+                alert('❌ Failed to book: ' + (err.error?.message || 'Unknown error'));
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     previousPage(): void {

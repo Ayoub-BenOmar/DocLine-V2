@@ -40,14 +40,6 @@ export class PatientAppointmentsComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadAppointments();
-
-        this.route.queryParams.subscribe(params => {
-            if (params['doctorId']) {
-                const doctorId = parseInt(params['doctorId']);
-                console.log('Opening booking modal for doctor:', doctorId);
-                this.openBookingModal(doctorId);
-            }
-        });
     }
 
     loadAppointments(): void {
