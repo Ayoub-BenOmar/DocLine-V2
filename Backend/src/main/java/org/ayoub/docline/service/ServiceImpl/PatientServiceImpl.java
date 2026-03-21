@@ -66,6 +66,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<TimeSlotDto> getAvailableSlots(Integer doctorId, LocalDate date) {
         List<TimeSlotDto> slots = new ArrayList<>();
 
@@ -84,8 +85,11 @@ public class PatientServiceImpl implements PatientService {
             return slots;
         }
 
-        List<Appointment> bookedAppointments = appointmentRepository.findByDoctorId(doctorId).stream()
-                .filter(a -> a.getDateTime().toLocalDate().equals(date))
+        LocalDateTime dayStart = date.atStartOfDay();
+        LocalDateTime dayEnd = date.atTime(LocalTime.MAX);
+
+        List<Appointment> bookedAppointments = appointmentRepository.findByDoctorIdAndDateTimeBetween(doctorId, dayStart, dayEnd)
+                .stream()
                 .filter(a -> a.getStatus() != AppointmentStatus.CANCELLED)
                 .collect(Collectors.toList());
 
