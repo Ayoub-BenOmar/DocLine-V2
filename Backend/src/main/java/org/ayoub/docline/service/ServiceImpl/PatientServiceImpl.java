@@ -98,9 +98,8 @@ public class PatientServiceImpl implements PatientService {
             boolean isBooked = bookedAppointments.stream()
                     .anyMatch(a -> a.getDateTime().equals(slotStart));
 
-            if (!isBooked) {
-                slots.add(new TimeSlotDto(slotStart, slotEnd, true));
-            }
+            // Add slot regardless of booking status (with isAvailable flag)
+            slots.add(new TimeSlotDto(slotStart, slotEnd, !isBooked));
 
             current = next;
         }

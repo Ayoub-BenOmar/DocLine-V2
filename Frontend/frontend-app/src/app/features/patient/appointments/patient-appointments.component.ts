@@ -151,15 +151,29 @@ export class PatientAppointmentsComponent implements OnInit {
         this.bookingData.selectedTime = '';
         this.cdr.detectChanges();
 
+        console.log('Fetching slots for doctor:', this.selectedDoctor.id, 'Date:', this.bookingData.selectedDate);
+
         // Fetch available slots from backend
         this.patientService.getDoctorSlots(this.selectedDoctor.id, this.bookingData.selectedDate).subscribe({
             next: (slots: any[]) => {
-                console.log('Slots loaded from backend:', slots);
+                console.log('Raw slots response:', slots);
+                console.log('Response type:', typeof slots);
+                console.log('Is array:', Array.isArray(slots));
+
+                if (!Array.isArray(slots)) {
+                    console.error('Slots response is not an array:', slots);
+                    this.availableSlots = [];
+                    this.slotsLoading = false;
+                    alert('⚠️ Unexpected response format');
+                    this.cdr.detectChanges();
+                    return;
+                }
 
                 // Convert backend TimeSlotDto to UI format
                 // Filter and format only 9:00 AM - 12:00 PM slots
                 this.availableSlots = slots
                     .map((slot: any) => {
+                        console.log('Processing slot:', slot);
                         const startTime = new Date(slot.start).toLocaleTimeString('en-US', {
                             hour: '2-digit',
                             minute: '2-digit',
@@ -189,10 +203,26 @@ export class PatientAppointmentsComponent implements OnInit {
                 this.cdr.detectChanges();
             },
             error: (err) => {
-                console.error('Error loading slots:', err);
+                console.error('Error loading slots - Full error:', err);
+                console.error('Error status:', err.status);
+                console.error('Error message:', err.message);
+                console.error('Error response:', err.error);
+
                 this.availableSlots = [];
                 this.slotsLoading = false;
-                alert('❌ Failed to load available slots');
+
+                let errorMsg = '❌ Failed to load available slots';
+                if (err.status === 401) {
+                    errorMsg = '❌ Authentication failed. Please login again.';
+                } else if (err.status === 400) {
+                    errorMsg = '❌ Invalid date format. Please select another date.';
+                } else if (err.status === 404) {
+                    errorMsg = '❌ Doctor not found.';
+                } else if (err.error?.message) {
+                    errorMsg = '❌ ' + err.error.message;
+                }
+
+                alert(errorMsg);
                 this.cdr.detectChanges();
             }
         });

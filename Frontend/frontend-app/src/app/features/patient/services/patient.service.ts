@@ -37,7 +37,9 @@ export class PatientService {
 
     // Get doctor available slots
     getDoctorSlots(doctorId: number, date: string): Observable<any[]> {
-        return this.http.get<any[]>(`${this.apiUrl}/doctors/${doctorId}/slots?date=${date}`);
+        const url = `${this.apiUrl}/doctors/${doctorId}/slots?date=${date}`;
+        console.log('Calling getDoctorSlots - URL:', url);
+        return this.http.get<any[]>(url);
     }
 
     // Book appointment
