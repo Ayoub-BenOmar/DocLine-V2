@@ -42,6 +42,11 @@ export class PatientService {
         return this.http.get<any[]>(url);
     }
 
+    // Get doctor unavailability
+    getDoctorUnavailability(doctorId: number): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/doctors/${doctorId}/unavailability`);
+    }
+
     // Book appointment
     bookAppointment(data: any): Observable<any> {
         return this.http.post(`${this.apiUrl}/appointments`, data);

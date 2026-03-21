@@ -35,6 +35,7 @@ export class DoctorsComponent implements OnInit {
     showBookingModal = false;
     selectedDoctor: any = null;
     availableSlots: any[] = [];
+    doctorUnavailabilities: any[] = [];
     bookingData = {
         selectedDate: '',
         selectedTime: '',
@@ -134,6 +135,21 @@ export class DoctorsComponent implements OnInit {
         this.selectedDoctor = doctor;
         this.showBookingModal = true;
         this.resetBookingForm();
+        this.doctorUnavailabilities = [];
+
+        // Fetch Unavailability
+        this.patientService.getDoctorUnavailability(doctor.id).subscribe({
+            next: (data) => {
+                this.doctorUnavailabilities = data;
+                console.log('Doctor unavailabilities:', this.doctorUnavailabilities);
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error fetching unavailabilities', err);
+                this.cdr.detectChanges();
+            }
+        });
+
         this.cdr.detectChanges();
     }
 
@@ -173,20 +189,52 @@ export class DoctorsComponent implements OnInit {
 
     isWeekday(dateStr: string): boolean {
         const date = new Date(dateStr);
-        const dayOfWeek = date.getDay();
+        const dayOfWeek = date.getUTCDay(); // Use UTC day to avoid timezone shifts
         return dayOfWeek >= 1 && dayOfWeek <= 5;
     }
 
     onDateSelected(): void {
         if (!this.bookingData.selectedDate) return;
 
+        // 1. Check Weekday
         if (!this.isWeekday(this.bookingData.selectedDate)) {
             alert('❌ Please select a weekday (Monday-Friday)');
             this.bookingData.selectedDate = '';
+            this.availableSlots = [];
             this.cdr.detectChanges();
             return;
         }
 
+        // 2. Check Doctor Unavailability (Holidays/Emergency)
+        const selectedDateStr = this.bookingData.selectedDate;
+
+        const isUnavailable = this.doctorUnavailabilities.some((u: any) => {
+            // Handle if startDate/endDate are strings (YYYY-MM-DD)
+            if (typeof u.startDate === 'string' && typeof u.endDate === 'string') {
+                return selectedDateStr >= u.startDate && selectedDateStr <= u.endDate;
+            }
+
+            // Fallback if they are timestamps or other formats
+            const start = new Date(u.startDate);
+            start.setHours(0,0,0,0);
+            const end = new Date(u.endDate);
+            end.setHours(0,0,0,0);
+
+            const selected = new Date(selectedDateStr);
+            selected.setHours(0,0,0,0);
+
+            return selected >= start && selected <= end;
+        });
+
+        if (isUnavailable) {
+            alert('🚫 Doctor is unavailable on this date (Holiday/Emergency). Please choose another date.');
+            this.bookingData.selectedDate = '';
+            this.availableSlots = [];
+            this.cdr.detectChanges();
+            return;
+        }
+
+        // 3. Fetch Slots
         this.slotsLoading = true;
         this.availableSlots = [];
         this.bookingData.selectedTime = '';
@@ -217,7 +265,10 @@ export class DoctorsComponent implements OnInit {
                     });
 
                 if (this.availableSlots.length === 0) {
-                    alert('⚠️ No avail slots (Mon-Fri 9-12) for this date');
+                    // This case usually happens if all slots are filtered out or none returned.
+                    // If backend returns booked slots as unavailable, they should appear here but disabled.
+                    // If the list is truly empty, maybe it's fully booked or something else.
+                    console.log('No slots found for date:', this.bookingData.selectedDate);
                 }
                 this.slotsLoading = false;
                 this.cdr.detectChanges();
