@@ -1,12 +1,13 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { PatientService } from '../services/patient.service';
 
 @Component({
     selector: 'app-patient-appointments',
     standalone: true,
-    imports: [CommonModule, RouterModule],
+    imports: [CommonModule, RouterModule, FormsModule],
     templateUrl: './patient-appointments.component.html',
     styleUrl: './patient-appointments.component.css'
 })
@@ -17,6 +18,18 @@ export class PatientAppointmentsComponent implements OnInit {
     loading = true;
     activeTab: 'upcoming' | 'past' = 'upcoming';
 
+    // Modal data
+    showBookingModal = false;
+    selectedDoctor: any = null;
+    availableSlots: any[] = [];
+    bookingData = {
+        selectedDate: '',
+        selectedTime: '',
+        reason: ''
+    };
+    bookingLoading = false;
+    slotsLoading = false;
+
     constructor(
         private route: ActivatedRoute,
         private patientService: PatientService,
@@ -26,7 +39,9 @@ export class PatientAppointmentsComponent implements OnInit {
     ngOnInit(): void {
         this.route.queryParams.subscribe(params => {
             if (params['doctorId']) {
-                this.doctorId = params['doctorId'];
+                this.doctorId = parseInt(params['doctorId']);
+                // Open modal for booking
+                this.openBookingModal(this.doctorId);
             }
         });
 
@@ -84,6 +99,93 @@ export class PatientAppointmentsComponent implements OnInit {
         this.cdr.detectChanges();
     }
 
+    openBookingModal(doctorId: number): void {
+        // Mock doctor data - will be fetched from backend
+        this.selectedDoctor = {
+            id: doctorId,
+            name: 'Dr. John Smith',
+            speciality: 'Cardiology',
+            fees: 150
+        };
+        this.showBookingModal = true;
+        this.resetBookingForm();
+        this.cdr.detectChanges();
+    }
+
+    closeBookingModal(): void {
+        this.showBookingModal = false;
+        this.resetBookingForm();
+        this.cdr.detectChanges();
+    }
+
+    resetBookingForm(): void {
+        this.bookingData = {
+            selectedDate: '',
+            selectedTime: '',
+            reason: ''
+        };
+        this.availableSlots = [];
+    }
+
+    onDateSelected(): void {
+        if (!this.bookingData.selectedDate) return;
+
+        this.slotsLoading = true;
+        this.availableSlots = [];
+        this.bookingData.selectedTime = '';
+        this.cdr.detectChanges();
+
+        // Mock available slots - will call backend API
+        setTimeout(() => {
+            this.availableSlots = [
+                { time: '09:00 AM', available: true },
+                { time: '09:30 AM', available: true },
+                { time: '10:00 AM', available: false },
+                { time: '10:30 AM', available: true },
+                { time: '11:00 AM', available: true },
+                { time: '11:30 AM', available: true },
+                { time: '12:00 PM', available: false }
+            ];
+            this.slotsLoading = false;
+            this.cdr.detectChanges();
+        }, 500);
+    }
+
+    bookAppointment(): void {
+        if (!this.bookingData.selectedDate || !this.bookingData.selectedTime || !this.bookingData.reason) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        this.bookingLoading = true;
+        this.cdr.detectChanges();
+
+        const appointmentData = {
+            doctorId: this.selectedDoctor.id,
+            date: this.bookingData.selectedDate,
+            time: this.bookingData.selectedTime,
+            reason: this.bookingData.reason
+        };
+
+        // Call API to book appointment
+        this.patientService.bookAppointment(appointmentData).subscribe({
+            next: (response) => {
+                console.log('Appointment booked:', response);
+                this.bookingLoading = false;
+                alert('✅ Appointment booked successfully!');
+                this.closeBookingModal();
+                this.loadAppointments();
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error booking appointment:', err);
+                this.bookingLoading = false;
+                alert('❌ Failed to book appointment');
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
     switchTab(tab: 'upcoming' | 'past'): void {
         this.activeTab = tab;
         this.cdr.detectChanges();
@@ -97,8 +199,8 @@ export class PatientAppointmentsComponent implements OnInit {
     }
 
     rescheduleAppointment(appointment: any): void {
-        // Navigate to booking page with doctor ID
-        console.log('Rescheduling appointment with doctor:', appointment.id);
+        // Open modal to reschedule
+        this.openBookingModal(appointment.id);
     }
 
     getStatusColor(status: string): string {
@@ -129,6 +231,19 @@ export class PatientAppointmentsComponent implements OnInit {
             default:
                 return '❓';
         }
+    }
+
+    // Helper to get minimum date (today)
+    getMinDate(): string {
+        const today = new Date();
+        return today.toISOString().split('T')[0];
+    }
+
+    // Helper to get maximum date (90 days from now)
+    getMaxDate(): string {
+        const maxDate = new Date();
+        maxDate.setDate(maxDate.getDate() + 90);
+        return maxDate.toISOString().split('T')[0];
     }
 }
 
