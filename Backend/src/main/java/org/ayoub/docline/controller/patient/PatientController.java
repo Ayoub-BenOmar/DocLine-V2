@@ -31,10 +31,21 @@ public class PatientController {
     }
 
     @GetMapping("/doctors/{id}/slots")
-    public ResponseEntity<List<TimeSlotDto>> getDoctorSlots(
+    public ResponseEntity<?> getDoctorSlots(
             @PathVariable Integer id,
             @RequestParam String date) {
-        return ResponseEntity.ok(patientService.getAvailableSlots(id, java.time.LocalDate.parse(date)));
+        try {
+            return ResponseEntity.ok(patientService.getAvailableSlots(id, java.time.LocalDate.parse(date)));
+        } catch (java.time.format.DateTimeParseException e) {
+            java.util.Map<String, String> error = new java.util.HashMap<>();
+            error.put("message", "Invalid date format. Use YYYY-MM-DD");
+            return ResponseEntity.badRequest().body(error);
+        } catch (Exception e) {
+            e.printStackTrace();
+            java.util.Map<String, String> error = new java.util.HashMap<>();
+            error.put("message", "Error fetching slots: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(error);
+        }
     }
 
     @PostMapping("/appointments")
