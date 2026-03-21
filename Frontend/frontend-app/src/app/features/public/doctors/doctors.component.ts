@@ -256,7 +256,16 @@ export class DoctorsComponent implements OnInit {
                         const startTime = new Date(slot.start).toLocaleTimeString('en-US', {
                             hour: '2-digit', minute: '2-digit', hour12: true
                         });
-                        return { time: startTime, available: slot.isAvailable, start: slot.start, raw: slot };
+                        console.log('Processing slot:', slot);
+                        // Check for 'available' or 'isAvailable' property
+                        const isSlotAvailable = slot.available !== undefined ? slot.available : slot.isAvailable;
+
+                        return {
+                            time: startTime,
+                            available: isSlotAvailable,
+                            start: slot.start,
+                            raw: slot
+                        };
                     })
                     .filter((slot: any) => {
                         const time = new Date(slot.start);
@@ -308,7 +317,7 @@ export class DoctorsComponent implements OnInit {
             if (period === 'PM' && hours !== 12) hours += 12;
             if (period === 'AM' && hours === 12) hours = 0;
             const appointmentDate = new Date(this.bookingData.selectedDate);
-            appointmentDate.setHours(hours, minutes, 0);
+            appointmentDate.setHours(hours, minutes, 0, 0);
             dateTimeStr = appointmentDate.toISOString();
         }
 
