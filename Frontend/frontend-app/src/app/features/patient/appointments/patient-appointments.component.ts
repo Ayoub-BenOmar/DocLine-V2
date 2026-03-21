@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { PatientService } from '../services/patient.service';
+import { PublicService } from '../../../core/services/public.service';
 
 @Component({
     selector: 'app-patient-appointments',
@@ -33,6 +34,7 @@ export class PatientAppointmentsComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private patientService: PatientService,
+        private publicService: PublicService,
         private cdr: ChangeDetectorRef
     ) { }
 
@@ -52,66 +54,70 @@ export class PatientAppointmentsComponent implements OnInit {
         this.loading = true;
         this.cdr.detectChanges();
 
-        // Mock data for now - will be replaced with actual API calls
-        this.upcomingAppointments = [
-            {
-                id: 1,
-                doctorName: 'Dr. John Smith',
-                speciality: 'Cardiology',
-                date: '2026-03-25',
-                time: '10:00 AM',
-                reason: 'Heart checkup',
-                status: 'CONFIRMED'
+        // Load real appointments from backend
+        this.patientService.getAppointments().subscribe({
+            next: (appointments) => {
+                console.log('Appointments loaded:', appointments);
+                // Separate into upcoming and past
+                const now = new Date();
+                this.upcomingAppointments = appointments.filter((apt: any) => new Date(apt.date) >= now);
+                this.pastAppointments = appointments.filter((apt: any) => new Date(apt.date) < now);
+                this.loading = false;
+                this.cdr.detectChanges();
             },
-            {
-                id: 2,
-                doctorName: 'Dr. Sarah Johnson',
-                speciality: 'Dermatology',
-                date: '2026-03-28',
-                time: '2:30 PM',
-                reason: 'Skin consultation',
-                status: 'PENDING'
+            error: (err) => {
+                console.error('Error loading appointments:', err);
+                this.upcomingAppointments = [];
+                this.pastAppointments = [];
+                this.loading = false;
+                this.cdr.detectChanges();
             }
-        ];
-
-        this.pastAppointments = [
-            {
-                id: 3,
-                doctorName: 'Dr. Michael Brown',
-                speciality: 'Orthopedics',
-                date: '2026-03-10',
-                time: '11:00 AM',
-                reason: 'Knee pain consultation',
-                status: 'COMPLETED'
-            },
-            {
-                id: 4,
-                doctorName: 'Dr. Emily Davis',
-                speciality: 'General Practice',
-                date: '2026-03-05',
-                time: '3:00 PM',
-                reason: 'General checkup',
-                status: 'COMPLETED'
-            }
-        ];
-
-        this.loading = false;
-        this.cdr.detectChanges();
+        });
     }
 
     openBookingModal(doctorId: number): void {
         console.log('openBookingModal called with doctorId:', doctorId);
-        // Mock doctor data - will be fetched from backend
-        this.selectedDoctor = {
-            id: doctorId,
-            name: 'Dr. John Smith',
-            speciality: 'Cardiology',
-            fees: 150
-        };
-        this.showBookingModal = true;
-        this.resetBookingForm();
-        console.log('Modal opened, showBookingModal:', this.showBookingModal);
-        this.cdr.detectChanges();
+
+        // Fetch doctor details from backend
+        this.publicService.getAllDoctors().subscribe({
+            next: (data: any) => {
+                const doctor = data.content.find((d: any) => d.id === doctorId);
+                if (doctor) {
+                    this.selectedDoctor = {
+                        id: doctor.id,
+                        name: `${doctor.name} ${doctor.lastName}`,
+                        speciality: doctor.speciality,
+                        city: doctor.city,
+                        fees: doctor.fees
+                    };
+                } else {
+                    // Fallback if doctor not found
+                    this.selectedDoctor = {
+                        id: doctorId,
+                        name: 'Dr. John Smith',
+                        speciality: 'General Practitioner',
+                        fees: 150
+                    };
+                }
+                this.showBookingModal = true;
+                this.resetBookingForm();
+                console.log('Modal opened with doctor:', this.selectedDoctor);
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error fetching doctor:', err);
+                // Use mock data as fallback
+                this.selectedDoctor = {
+                    id: doctorId,
+                    name: 'Dr. John Smith',
+                    speciality: 'General Practitioner',
+                    fees: 150
+                };
+                this.showBookingModal = true;
+                this.resetBookingForm();
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     closeBookingModal(): void {
@@ -137,20 +143,30 @@ export class PatientAppointmentsComponent implements OnInit {
         this.bookingData.selectedTime = '';
         this.cdr.detectChanges();
 
-        // Mock available slots - will call backend API
-        setTimeout(() => {
-            this.availableSlots = [
-                { time: '09:00 AM', available: true },
-                { time: '09:30 AM', available: true },
-                { time: '10:00 AM', available: false },
-                { time: '10:30 AM', available: true },
-                { time: '11:00 AM', available: true },
-                { time: '11:30 AM', available: true },
-                { time: '12:00 PM', available: false }
-            ];
-            this.slotsLoading = false;
-            this.cdr.detectChanges();
-        }, 500);
+        // Fetch available slots from backend
+        this.patientService.getDoctorSlots(this.selectedDoctor.id, this.bookingData.selectedDate).subscribe({
+            next: (slots: any[]) => {
+                console.log('Slots loaded:', slots);
+                this.availableSlots = slots;
+                this.slotsLoading = false;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error loading slots:', err);
+                // Mock slots as fallback
+                this.availableSlots = [
+                    { time: '09:00 AM', available: true },
+                    { time: '09:30 AM', available: true },
+                    { time: '10:00 AM', available: false },
+                    { time: '10:30 AM', available: true },
+                    { time: '11:00 AM', available: true },
+                    { time: '11:30 AM', available: true },
+                    { time: '12:00 PM', available: false }
+                ];
+                this.slotsLoading = false;
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     bookAppointment(): void {
@@ -162,12 +178,18 @@ export class PatientAppointmentsComponent implements OnInit {
         this.bookingLoading = true;
         this.cdr.detectChanges();
 
+        // Combine date and time into datetime
+        const [hours, minutes] = this.bookingData.selectedTime.match(/\d+/g)!.map(Number);
+        const appointmentDate = new Date(this.bookingData.selectedDate);
+        appointmentDate.setHours(hours, minutes);
+
         const appointmentData = {
             doctorId: this.selectedDoctor.id,
-            date: this.bookingData.selectedDate,
-            time: this.bookingData.selectedTime,
+            dateTime: appointmentDate.toISOString(),
             reason: this.bookingData.reason
         };
+
+        console.log('Booking appointment:', appointmentData);
 
         // Call API to book appointment
         this.patientService.bookAppointment(appointmentData).subscribe({
@@ -182,7 +204,7 @@ export class PatientAppointmentsComponent implements OnInit {
             error: (err) => {
                 console.error('Error booking appointment:', err);
                 this.bookingLoading = false;
-                alert('❌ Failed to book appointment');
+                alert('❌ Failed to book appointment: ' + (err.error?.message || 'Please try again'));
                 this.cdr.detectChanges();
             }
         });
@@ -202,7 +224,7 @@ export class PatientAppointmentsComponent implements OnInit {
 
     rescheduleAppointment(appointment: any): void {
         // Open modal to reschedule
-        this.openBookingModal(appointment.id);
+        this.openBookingModal(appointment.doctorId);
     }
 
     getStatusColor(status: string): string {

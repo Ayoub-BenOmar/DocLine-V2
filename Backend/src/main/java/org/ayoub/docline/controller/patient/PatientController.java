@@ -45,6 +45,14 @@ public class PatientController {
 
         return ResponseEntity.ok(patientService.bookAppointment(requestDto, currentPrincipalName));
     }
+
+    @GetMapping("/appointments")
+    @PreAuthorize("hasAuthority('ROLE_PATIENT')")
+    public ResponseEntity<List<AppointmentResponseDto>> getAppointments() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+        return ResponseEntity.ok(patientService.getPatientAppointments(currentPrincipalName));
+    }
     @GetMapping("/profile")
     @PreAuthorize("hasAuthority('ROLE_PATIENT')")
     public ResponseEntity<org.ayoub.docline.model.dto.PatientProfileDto> getProfile() {

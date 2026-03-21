@@ -234,4 +234,14 @@ public class PatientServiceImpl implements PatientService {
                 .fees(doctor.getFees())
                 .build();
     }
+
+    @Override
+    public List<AppointmentResponseDto> getPatientAppointments(String email) {
+        Patient patient = patientRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Patient not found"));
+
+        return appointmentRepository.findByPatientId(patient.getId()).stream()
+                .map(this::mapToAppointmentDto)
+                .collect(Collectors.toList());
+    }
 }

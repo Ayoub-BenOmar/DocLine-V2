@@ -20,6 +20,11 @@ export class PatientService {
         return this.http.put(`${this.apiUrl}/profile`, data);
     }
 
+    // Get patient appointments
+    getAppointments(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/appointments`);
+    }
+
     // Search doctors
     searchDoctors(cityId?: number, specialityId?: number, name?: string): Observable<any[]> {
         let params = '';

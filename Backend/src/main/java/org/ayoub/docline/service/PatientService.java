@@ -16,7 +16,8 @@ public interface PatientService {
     List<DoctorListingDto> searchDoctors(Integer cityId, Integer specialityId, String name);
     List<TimeSlotDto> getAvailableSlots(Integer doctorId, LocalDate date);
     AppointmentResponseDto bookAppointment(AppointmentRequestDto requestDto, String patientEmail);
-    
+    List<AppointmentResponseDto> getPatientAppointments(String email);
+
     // Profile Management
     PatientProfileDto getPatientProfile(String email);
     PatientProfileDto updatePatientProfile(String email, PatientProfileUpdateDto updateDto);
