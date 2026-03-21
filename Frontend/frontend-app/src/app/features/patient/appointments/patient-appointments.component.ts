@@ -138,6 +138,14 @@ export class PatientAppointmentsComponent implements OnInit {
     onDateSelected(): void {
         if (!this.bookingData.selectedDate) return;
 
+        // Validate that selected date is a weekday
+        if (!this.isWeekday(this.bookingData.selectedDate)) {
+            alert('❌ Please select a weekday (Monday-Friday)');
+            this.bookingData.selectedDate = '';
+            this.cdr.detectChanges();
+            return;
+        }
+
         this.slotsLoading = true;
         this.availableSlots = [];
         this.bookingData.selectedTime = '';
@@ -147,37 +155,44 @@ export class PatientAppointmentsComponent implements OnInit {
         this.patientService.getDoctorSlots(this.selectedDoctor.id, this.bookingData.selectedDate).subscribe({
             next: (slots: any[]) => {
                 console.log('Slots loaded from backend:', slots);
+
                 // Convert backend TimeSlotDto to UI format
-                this.availableSlots = slots.map((slot: any) => {
-                    // Format: start is "2026-03-25T09:00:00", extract time part
-                    const startTime = new Date(slot.start).toLocaleTimeString('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true
+                // Filter and format only 9:00 AM - 12:00 PM slots
+                this.availableSlots = slots
+                    .map((slot: any) => {
+                        const startTime = new Date(slot.start).toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+                        return {
+                            time: startTime,
+                            available: slot.isAvailable,
+                            start: slot.start,
+                            raw: slot
+                        };
+                    })
+                    .filter((slot: any) => {
+                        // Filter only 9:00 AM to 12:00 PM
+                        const time = new Date(slot.start);
+                        const hours = time.getHours();
+                        return hours >= 9 && hours < 12;
                     });
-                    return {
-                        time: startTime,
-                        available: slot.isAvailable,
-                        start: slot.start
-                    };
-                });
-                console.log('Formatted slots:', this.availableSlots);
+
+                console.log('Formatted and filtered slots:', this.availableSlots);
+
+                if (this.availableSlots.length === 0) {
+                    alert('⚠️ No available slots for this date');
+                }
+
                 this.slotsLoading = false;
                 this.cdr.detectChanges();
             },
             error: (err) => {
                 console.error('Error loading slots:', err);
-                // Mock slots as fallback
-                this.availableSlots = [
-                    { time: '09:00 AM', available: true, start: null },
-                    { time: '09:30 AM', available: true, start: null },
-                    { time: '10:00 AM', available: false, start: null },
-                    { time: '10:30 AM', available: true, start: null },
-                    { time: '11:00 AM', available: true, start: null },
-                    { time: '11:30 AM', available: true, start: null },
-                    { time: '12:00 PM', available: false, start: null }
-                ];
+                this.availableSlots = [];
                 this.slotsLoading = false;
+                alert('❌ Failed to load available slots');
                 this.cdr.detectChanges();
             }
         });
@@ -290,17 +305,42 @@ export class PatientAppointmentsComponent implements OnInit {
         }
     }
 
-    // Helper to get minimum date (today)
+    // Helper to get minimum date (today, but if weekend then next Monday)
     getMinDate(): string {
         const today = new Date();
+        const dayOfWeek = today.getDay();
+
+        // If Saturday (6) or Sunday (0), move to next Monday
+        if (dayOfWeek === 0) {
+            today.setDate(today.getDate() + 1); // Sunday -> Monday
+        } else if (dayOfWeek === 6) {
+            today.setDate(today.getDate() + 2); // Saturday -> Monday
+        }
+
         return today.toISOString().split('T')[0];
     }
 
-    // Helper to get maximum date (90 days from now)
+    // Helper to get maximum date (90 days from now, only weekdays)
     getMaxDate(): string {
         const maxDate = new Date();
         maxDate.setDate(maxDate.getDate() + 90);
+
+        // If it lands on weekend, move to Friday of that week
+        const dayOfWeek = maxDate.getDay();
+        if (dayOfWeek === 0) {
+            maxDate.setDate(maxDate.getDate() - 2); // Sunday -> Friday
+        } else if (dayOfWeek === 6) {
+            maxDate.setDate(maxDate.getDate() - 1); // Saturday -> Friday
+        }
+
         return maxDate.toISOString().split('T')[0];
+    }
+
+    // Check if a date is a weekday (Monday-Friday)
+    isWeekday(dateStr: string): boolean {
+        const date = new Date(dateStr);
+        const dayOfWeek = date.getDay();
+        return dayOfWeek >= 1 && dayOfWeek <= 5; // Monday = 1, Friday = 5
     }
 }
 
