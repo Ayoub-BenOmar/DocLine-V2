@@ -6,6 +6,7 @@ import org.ayoub.docline.model.dto.AppointmentResponseDto;
 import org.ayoub.docline.model.dto.DoctorListingDto;
 import org.ayoub.docline.model.dto.TimeSlotDto;
 import org.ayoub.docline.model.entity.Appointment;
+import org.ayoub.docline.model.entity.Unavailability;
 import org.ayoub.docline.service.PatientService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -28,6 +29,16 @@ public class PatientController {
             @RequestParam(required = false) Integer specialityId,
             @RequestParam(required = false) String name) {
         return ResponseEntity.ok(patientService.searchDoctors(cityId, specialityId, name));
+    }
+
+    @GetMapping("/doctors/{id}")
+    public ResponseEntity<DoctorListingDto> getDoctorById(@PathVariable Integer id) {
+        return ResponseEntity.ok(patientService.getDoctorById(id));
+    }
+
+    @GetMapping("/doctors/{id}/unavailability")
+    public ResponseEntity<List<Unavailability>> getDoctorUnavailability(@PathVariable Integer id) {
+        return ResponseEntity.ok(patientService.getDoctorUnavailability(id));
     }
 
     @GetMapping("/doctors/{id}/slots")

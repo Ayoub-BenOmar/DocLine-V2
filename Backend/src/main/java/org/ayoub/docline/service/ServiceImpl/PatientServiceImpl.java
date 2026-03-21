@@ -40,6 +40,18 @@ public class PatientServiceImpl implements PatientService {
     private final org.ayoub.docline.repository.CityRepository cityRepository;
 
     @Override
+    public DoctorListingDto getDoctorById(Integer doctorId) {
+        Doctor doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
+        return mapToDto(doctor);
+    }
+
+    @Override
+    public List<Unavailability> getDoctorUnavailability(Integer doctorId) {
+        return unavailabilityRepository.findByDoctorId(doctorId);
+    }
+
+    @Override
     public List<DoctorListingDto> getAllDoctors() {
         return doctorRepository.findAll().stream()
                 .filter(d -> d.getRole() == Role.ROLE_DOCTOR && d.getIsActivated())
@@ -70,6 +82,7 @@ public class PatientServiceImpl implements PatientService {
     public List<TimeSlotDto> getAvailableSlots(Integer doctorId, LocalDate date) {
         List<TimeSlotDto> slots = new ArrayList<>();
 
+        // 1. Basic Business Rule: Mon-Fri, 09:00 - 12:00
         if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
             return slots; // Empty list for weekends
         }
@@ -77,14 +90,13 @@ public class PatientServiceImpl implements PatientService {
         LocalTime startTime = LocalTime.of(9, 0);
         LocalTime endTime = LocalTime.of(12, 0);
 
-        List<Unavailability> unavailabilities = unavailabilityRepository.findByDoctorId(doctorId);
-        boolean isDayOff = unavailabilities.stream()
-                .anyMatch(u -> !date.isBefore(u.getStartDate()) && !date.isAfter(u.getEndDate()));
-
-        if (isDayOff) {
-            return slots;
+        // 2. Check Unavailability (Holidays/Sick) using optimized query
+        List<Unavailability> unavailabilities = unavailabilityRepository.findByDoctorIdAndDate(doctorId, date);
+        if (!unavailabilities.isEmpty()) {
+            return slots; // Empty list if doctor is on holiday/sick leave for this date
         }
 
+        // 3. Get Existing Appointments
         LocalDateTime dayStart = date.atStartOfDay();
         LocalDateTime dayEnd = date.atTime(LocalTime.MAX);
 
@@ -102,7 +114,6 @@ public class PatientServiceImpl implements PatientService {
             boolean isBooked = bookedAppointments.stream()
                     .anyMatch(a -> a.getDateTime().equals(slotStart));
 
-            // Add slot regardless of booking status (with isAvailable flag)
             slots.add(new TimeSlotDto(slotStart, slotEnd, !isBooked));
 
             current = next;
