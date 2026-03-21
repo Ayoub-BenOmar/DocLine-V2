@@ -69,7 +69,6 @@ public class PatientServiceImpl implements PatientService {
     public List<TimeSlotDto> getAvailableSlots(Integer doctorId, LocalDate date) {
         List<TimeSlotDto> slots = new ArrayList<>();
 
-        // 1. Basic Business Rule: Mon-Fri, 09:00 - 12:00
         if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
             return slots; // Empty list for weekends
         }
@@ -77,24 +76,19 @@ public class PatientServiceImpl implements PatientService {
         LocalTime startTime = LocalTime.of(9, 0);
         LocalTime endTime = LocalTime.of(12, 0);
 
-        // 2. Check Unavailability (Holidays/Sick)
         List<Unavailability> unavailabilities = unavailabilityRepository.findByDoctorId(doctorId);
         boolean isDayOff = unavailabilities.stream()
                 .anyMatch(u -> !date.isBefore(u.getStartDate()) && !date.isAfter(u.getEndDate()));
 
         if (isDayOff) {
-            return slots; // Empty list if doctor is on holiday
+            return slots;
         }
 
-        // 3. Get Existing Appointments
-        // We need a repository method for this. Assuming findByDoctorIdAndDate or similar
-        // For now, let's fetch roughly and filter (Optimization needed later)
         List<Appointment> bookedAppointments = appointmentRepository.findByDoctorId(doctorId).stream()
                 .filter(a -> a.getDateTime().toLocalDate().equals(date))
                 .filter(a -> a.getStatus() != AppointmentStatus.CANCELLED)
                 .collect(Collectors.toList());
 
-        // 4. Generate Slots
         LocalTime current = startTime;
         while (current.isBefore(endTime)) {
             LocalDateTime slotStart = LocalDateTime.of(date, current);
@@ -117,15 +111,12 @@ public class PatientServiceImpl implements PatientService {
     @Override
     @Transactional
     public AppointmentResponseDto bookAppointment(AppointmentRequestDto requestDto, String patientEmail) {
-        // 1. Find Patient
         Patient patient = patientRepository.findByEmail(patientEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Patient not found"));
 
-        // 2. Find Doctor
         Doctor doctor = doctorRepository.findById(requestDto.getDoctorId())
                 .orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
 
-        // 3. Verify Slot Availability (Crucial prevention of double booking)
         boolean isSlotTaken = appointmentRepository.existsByDoctorIdAndDateTimeAndStatusNot(
                 doctor.getId(), requestDto.getDateTime(), AppointmentStatus.CANCELLED);
 
@@ -133,7 +124,6 @@ public class PatientServiceImpl implements PatientService {
             throw new IllegalStateException("Slot already taken");
         }
 
-        // 4. Create Appointment
         Appointment appointment = Appointment.builder()
                 .patient(patient)
                 .doctor(doctor)
