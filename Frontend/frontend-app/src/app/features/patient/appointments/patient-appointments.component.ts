@@ -146,8 +146,22 @@ export class PatientAppointmentsComponent implements OnInit {
         // Fetch available slots from backend
         this.patientService.getDoctorSlots(this.selectedDoctor.id, this.bookingData.selectedDate).subscribe({
             next: (slots: any[]) => {
-                console.log('Slots loaded:', slots);
-                this.availableSlots = slots;
+                console.log('Slots loaded from backend:', slots);
+                // Convert backend TimeSlotDto to UI format
+                this.availableSlots = slots.map((slot: any) => {
+                    // Format: start is "2026-03-25T09:00:00", extract time part
+                    const startTime = new Date(slot.start).toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+                    return {
+                        time: startTime,
+                        available: slot.isAvailable,
+                        start: slot.start
+                    };
+                });
+                console.log('Formatted slots:', this.availableSlots);
                 this.slotsLoading = false;
                 this.cdr.detectChanges();
             },
@@ -155,13 +169,13 @@ export class PatientAppointmentsComponent implements OnInit {
                 console.error('Error loading slots:', err);
                 // Mock slots as fallback
                 this.availableSlots = [
-                    { time: '09:00 AM', available: true },
-                    { time: '09:30 AM', available: true },
-                    { time: '10:00 AM', available: false },
-                    { time: '10:30 AM', available: true },
-                    { time: '11:00 AM', available: true },
-                    { time: '11:30 AM', available: true },
-                    { time: '12:00 PM', available: false }
+                    { time: '09:00 AM', available: true, start: null },
+                    { time: '09:30 AM', available: true, start: null },
+                    { time: '10:00 AM', available: false, start: null },
+                    { time: '10:30 AM', available: true, start: null },
+                    { time: '11:00 AM', available: true, start: null },
+                    { time: '11:30 AM', available: true, start: null },
+                    { time: '12:00 PM', available: false, start: null }
                 ];
                 this.slotsLoading = false;
                 this.cdr.detectChanges();
@@ -178,14 +192,33 @@ export class PatientAppointmentsComponent implements OnInit {
         this.bookingLoading = true;
         this.cdr.detectChanges();
 
-        // Combine date and time into datetime
-        const [hours, minutes] = this.bookingData.selectedTime.match(/\d+/g)!.map(Number);
-        const appointmentDate = new Date(this.bookingData.selectedDate);
-        appointmentDate.setHours(hours, minutes);
+        // Find the selected slot to get the exact start time
+        const selectedSlot = this.availableSlots.find((slot: any) => slot.time === this.bookingData.selectedTime);
+        let dateTimeStr: string;
+
+        if (selectedSlot && selectedSlot.start) {
+            // Use the exact start time from the slot
+            dateTimeStr = selectedSlot.start;
+        } else {
+            // Fallback: parse the time and combine with date
+            const timeRegex = /(\d+):(\d+)\s*(AM|PM)/i;
+            const match = this.bookingData.selectedTime.match(timeRegex);
+            let hours = parseInt(match![1]);
+            const minutes = parseInt(match![2]);
+            const period = match![3].toUpperCase();
+
+            // Convert to 24-hour format
+            if (period === 'PM' && hours !== 12) hours += 12;
+            if (period === 'AM' && hours === 12) hours = 0;
+
+            const appointmentDate = new Date(this.bookingData.selectedDate);
+            appointmentDate.setHours(hours, minutes, 0);
+            dateTimeStr = appointmentDate.toISOString();
+        }
 
         const appointmentData = {
             doctorId: this.selectedDoctor.id,
-            dateTime: appointmentDate.toISOString(),
+            dateTime: dateTimeStr,
             reason: this.bookingData.reason
         };
 

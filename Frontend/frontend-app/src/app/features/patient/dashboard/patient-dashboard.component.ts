@@ -25,13 +25,27 @@ export class PatientDashboardComponent implements OnInit {
     loadDashboard(): void {
         this.loading = true;
         this.cdr.detectChanges();
-        // Appointments will be loaded from the backend when the service is ready
-        // For now, showing placeholder data
-        this.upcomingAppointments = [];
-        this.pastAppointments = [];
-        this.totalAppointments = 0;
-        this.loading = false;
-        this.cdr.detectChanges();
+
+        // Load appointments from backend
+        this.patientService.getAppointments().subscribe({
+            next: (appointments) => {
+                console.log('Dashboard appointments loaded:', appointments);
+                const now = new Date();
+                this.upcomingAppointments = appointments.filter((apt: any) => new Date(apt.dateTime) >= now).slice(0, 3);
+                this.pastAppointments = appointments.filter((apt: any) => new Date(apt.dateTime) < now);
+                this.totalAppointments = appointments.length;
+                this.loading = false;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error loading appointments:', err);
+                this.upcomingAppointments = [];
+                this.pastAppointments = [];
+                this.totalAppointments = 0;
+                this.loading = false;
+                this.cdr.detectChanges();
+            }
+        });
     }
 }
 
