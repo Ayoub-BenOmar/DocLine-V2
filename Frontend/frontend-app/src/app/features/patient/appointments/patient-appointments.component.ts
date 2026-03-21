@@ -50,10 +50,27 @@ export class PatientAppointmentsComponent implements OnInit {
         this.patientService.getAppointments().subscribe({
             next: (appointments) => {
                 console.log('Appointments loaded:', appointments);
-                // Separate into upcoming and past
                 const now = new Date();
-                this.upcomingAppointments = appointments.filter((apt: any) => new Date(apt.date) >= now);
-                this.pastAppointments = appointments.filter((apt: any) => new Date(apt.date) < now);
+
+                // Map appointments to match template requirements
+                const mappedAppointments = appointments.map((apt: any) => {
+                    const aptDate = new Date(apt.dateTime);
+                    return {
+                        ...apt,
+                        // Format date and time for display
+                        date: aptDate.toLocaleDateString(),
+                        time: aptDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        // Map specific fields
+                        speciality: apt.doctorSpeciality,
+                        // Keep original date object for filtering
+                        dateTimeObj: aptDate
+                    };
+                });
+
+                // Separate into upcoming and past
+                this.upcomingAppointments = mappedAppointments.filter((apt: any) => apt.dateTimeObj >= now);
+                this.pastAppointments = mappedAppointments.filter((apt: any) => apt.dateTimeObj < now);
+
                 this.loading = false;
                 this.cdr.detectChanges();
             },
