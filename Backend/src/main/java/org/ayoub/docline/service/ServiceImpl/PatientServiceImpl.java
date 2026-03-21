@@ -192,7 +192,6 @@ public class PatientServiceImpl implements PatientService {
         Patient patient = patientRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Patient not found"));
 
-        // Update fields if they are not null
         if (updateDto.getName() != null) patient.setName(updateDto.getName());
         if (updateDto.getLastName() != null) patient.setLastName(updateDto.getLastName());
         if (updateDto.getPhone() != null) patient.setPhone(updateDto.getPhone());
@@ -202,11 +201,8 @@ public class PatientServiceImpl implements PatientService {
             try {
                 patient.setGender(org.ayoub.docline.model.enums.Gender.valueOf(updateDto.getGender()));
             } catch (IllegalArgumentException e) {
-                // Ignore invalid gender or handle error
             }
         }
-        
-// Medical fields (bloodType, pastIllnesses, etc.) are updated only by doctors during appointments
 
         if (updateDto.getCin() != null) patient.setCin(updateDto.getCin());
         if (updateDto.getAddress() != null) patient.setAddress(updateDto.getAddress());
