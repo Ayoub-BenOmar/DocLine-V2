@@ -63,8 +63,12 @@ export class PatientAppointmentsComponent implements OnInit {
                     };
                 });
 
-                this.upcomingAppointments = mappedAppointments.filter((apt: any) => apt.dateTimeObj >= now);
-                this.pastAppointments = mappedAppointments.filter((apt: any) => apt.dateTimeObj < now);
+                this.upcomingAppointments = mappedAppointments.filter((apt: any) =>
+                    apt.dateTimeObj >= now && apt.status !== 'COMPLETED' && apt.status !== 'CANCELLED'
+                );
+                this.pastAppointments = mappedAppointments.filter((apt: any) =>
+                    apt.dateTimeObj < now || apt.status === 'COMPLETED' || apt.status === 'CANCELLED'
+                );
 
                 this.loading = false;
                 this.cdr.detectChanges();
