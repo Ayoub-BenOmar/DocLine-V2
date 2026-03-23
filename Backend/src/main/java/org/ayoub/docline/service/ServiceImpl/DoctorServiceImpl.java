@@ -111,7 +111,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     @Transactional
-    public void completeAppointment(Integer appointmentId, MedicalReportDto reportDto, String doctorEmail) {
+    public AppointmentResponseDto completeAppointment(Integer appointmentId, MedicalReportDto reportDto, String doctorEmail) {
         Doctor doctor = doctorRepository.findByEmail(doctorEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
 
@@ -126,7 +126,7 @@ public class DoctorServiceImpl implements DoctorService {
         appointment.setStatus(AppointmentStatus.COMPLETED);
         appointment.setDoctorNote(reportDto.getDoctorNote());
         appointment.setMedicalReportDate(LocalDateTime.now());
-        appointmentRepository.save(appointment);
+        Appointment savedAppointment = appointmentRepository.save(appointment);
 
         // Update Patient Medical Information
         Patient patient = appointment.getPatient();
@@ -143,6 +143,8 @@ public class DoctorServiceImpl implements DoctorService {
         if (reportDto.getChronic() != null) patient.setChronic(reportDto.getChronic());
 
         patientRepository.save(patient);
+
+        return mapToAppointmentDto(savedAppointment);
     }
 
     private AppointmentResponseDto mapToAppointmentDto(Appointment appointment) {
@@ -155,6 +157,11 @@ public class DoctorServiceImpl implements DoctorService {
                 .doctorSpeciality(appointment.getDoctor().getSpeciality() != null ? appointment.getDoctor().getSpeciality().getSpecialiteName() : null)
                 .patientId(appointment.getPatient().getId())
                 .patientName(appointment.getPatient().getFullName())
+                .patientBloodType(appointment.getPatient().getBloodType() != null ? appointment.getPatient().getBloodType().name() : null)
+                .patientPastIllnesses(appointment.getPatient().getPastIllnesses())
+                .patientSurgeries(appointment.getPatient().getSurgeries())
+                .patientAllergies(appointment.getPatient().getAllergies())
+                .patientChronic(appointment.getPatient().getChronic())
                 .doctorNote(appointment.getDoctorNote())
                 .medicalReportDate(appointment.getMedicalReportDate())
                 .build();

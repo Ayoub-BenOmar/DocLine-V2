@@ -70,11 +70,10 @@ public class DoctorController {
 
     @PostMapping("/appointments/{id}/complete")
     @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
-    public ResponseEntity<String> completeAppointment(@PathVariable Integer id, @RequestBody MedicalReportDto reportDto) {
+    public ResponseEntity<AppointmentResponseDto> completeAppointment(@PathVariable Integer id, @RequestBody MedicalReportDto reportDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
 
-        doctorService.completeAppointment(id, reportDto, currentPrincipalName);
-        return ResponseEntity.ok("Appointment completed and medical report saved.");
+        return ResponseEntity.ok(doctorService.completeAppointment(id, reportDto, currentPrincipalName));
     }
 }

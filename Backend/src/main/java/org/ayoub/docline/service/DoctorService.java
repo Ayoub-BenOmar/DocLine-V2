@@ -15,5 +15,5 @@ public interface DoctorService {
     Doctor updateProfile(DoctorProfileDto profileDto, String doctorEmail);
     DoctorProfileDto getProfile(String doctorEmail);
     List<AppointmentResponseDto> getMyAppointments(String doctorEmail);
-    void completeAppointment(Integer appointmentId, MedicalReportDto reportDto, String doctorEmail);
+    AppointmentResponseDto completeAppointment(Integer appointmentId, MedicalReportDto reportDto, String doctorEmail);
 }

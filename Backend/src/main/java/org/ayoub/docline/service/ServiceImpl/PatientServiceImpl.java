@@ -159,6 +159,13 @@ public class PatientServiceImpl implements PatientService {
                 .doctorName(appointment.getDoctor().getFullName())
                 .doctorSpeciality(appointment.getDoctor().getSpeciality() != null ? appointment.getDoctor().getSpeciality().getSpecialiteName() : null)
                 .patientName(appointment.getPatient().getFullName())
+                .patientBloodType(appointment.getPatient().getBloodType() != null ? appointment.getPatient().getBloodType().name() : null)
+                .patientPastIllnesses(appointment.getPatient().getPastIllnesses())
+                .patientSurgeries(appointment.getPatient().getSurgeries())
+                .patientAllergies(appointment.getPatient().getAllergies())
+                .patientChronic(appointment.getPatient().getChronic())
+                .doctorNote(appointment.getDoctorNote())
+                .medicalReportDate(appointment.getMedicalReportDate())
                 .build();
     }
 

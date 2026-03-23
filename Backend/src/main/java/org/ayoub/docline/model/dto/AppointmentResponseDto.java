@@ -26,4 +26,11 @@ public class AppointmentResponseDto {
 
     private String doctorNote;
     private LocalDateTime medicalReportDate;
+
+    // Patient Medical History
+    private String patientBloodType;
+    private String patientPastIllnesses;
+    private String patientSurgeries;
+    private String patientAllergies;
+    private String patientChronic;
 }
