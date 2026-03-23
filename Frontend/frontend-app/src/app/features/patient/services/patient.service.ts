@@ -2,6 +2,26 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface AppointmentResponseDto {
+    id: number;
+    dateTime: string;
+    status: string;
+    reason: string;
+    doctorName: string;
+    doctorSpeciality: string;
+    patientId: number;
+    patientName: string;
+    doctorNote: string;
+    medicalReportDate: string;
+
+    // Patient Medical History
+    patientBloodType?: string;
+    patientPastIllnesses?: string;
+    patientSurgeries?: string;
+    patientAllergies?: string;
+    patientChronic?: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -21,8 +41,8 @@ export class PatientService {
     }
 
     // Get patient appointments
-    getAppointments(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.apiUrl}/appointments`);
+    getAppointments(): Observable<AppointmentResponseDto[]> {
+        return this.http.get<AppointmentResponseDto[]>(`${this.apiUrl}/appointments`);
     }
 
     // Search doctors

@@ -41,6 +41,13 @@ export interface AppointmentResponseDto {
   patientName: string;
   doctorNote: string;
   medicalReportDate: string;
+
+  // Patient Medical History
+  patientBloodType?: string;
+  patientPastIllnesses?: string;
+  patientSurgeries?: string;
+  patientAllergies?: string;
+  patientChronic?: string;
 }
 
 export interface MedicalReportDto {
@@ -80,8 +87,8 @@ export class DoctorService {
     return this.http.get<AppointmentResponseDto[]>(`${this.apiUrl}/appointments`);
   }
 
-  completeAppointment(appointmentId: number, reportDto: MedicalReportDto): Observable<string> {
-    return this.http.post(`${this.apiUrl}/appointments/${appointmentId}/complete`, reportDto, { responseType: 'text' });
+  completeAppointment(appointmentId: number, reportDto: MedicalReportDto): Observable<AppointmentResponseDto> {
+    return this.http.post<AppointmentResponseDto>(`${this.apiUrl}/appointments/${appointmentId}/complete`, reportDto);
   }
 }
 
