@@ -1,90 +1,139 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { Router, RouterModule } from '@angular/router';
+import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 
 @Component({
-    selector: 'app-register',
-    standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, RouterModule],
-    templateUrl: './register.component.html',
+  selector: 'app-register',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule, NavbarComponent],
+  templateUrl: './register.component.html',
+  styleUrl: './register.component.html'
 })
 export class RegisterComponent implements OnInit {
-    registerForm: FormGroup;
-    errorMessage: string = '';
-    cities: any[] = [];
-    specialities: any[] = [];
-    isDoctor: boolean = false;
+  firstName: string = '';
+  lastName: string = '';
+  email: string = '';
+  password: string = '';
+  confirmPassword: string = '';
+  userRole: string = 'patient';
+  showPassword: boolean = false;
+  showConfirmPassword: boolean = false;
+  loading: boolean = false;
+  currentBenefitIndex: number = 0;
+  specialityId: string = '';
+  cityId: string = '';
+  medicalLicence: string = '';
+  cities: any[] = [];
+  specialities: any[] = [];
 
-    constructor(
-        private fb: FormBuilder,
-        private authService: AuthService,
-        private router: Router
-    ) {
-        this.registerForm = this.fb.group({
-            role: ['ROLE_PATIENT', Validators.required],
-            name: ['', Validators.required],
-            lastName: ['', Validators.required],
-            email: ['', [Validators.required, Validators.email]],
-            phone: ['', [Validators.required, Validators.pattern('^(\\+212|0)[5-7][0-9]{8}$')]],
-            password: ['', [Validators.required, Validators.minLength(8)]],
-            confirmPassword: ['', Validators.required],
+  benefits = [
+    {
+      icon: '🏥',
+      title: 'Healthcare Platform',
+      description: 'Connect with healthcare providers easily'
+    },
+    {
+      icon: '📋',
+      title: 'Medical Records',
+      description: 'Secure storage for all your medical documents'
+    },
+    {
+      icon: '👨‍⚕️',
+      title: '50K+ Providers',
+      description: 'Access to thousands of verified professionals'
+    },
+    {
+      icon: '🎯',
+      title: 'Personalized Care',
+      description: 'Customized healthcare solutions for you'
+    }
+  ];
 
-            // Doctor specific
-            medicalLicence: [''],
-            specialityId: [null],
-            cityId: [null],
-            education: [''] // "Medical Doc" logic mapping to education or just extra field
-        }, { validators: this.passwordMatchValidator });
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.rotateBenefits();
+  }
+
+  ngOnInit(): void {
+    this.loadCitiesAndSpecialities();
+  }
+
+  loadCitiesAndSpecialities(): void {
+    this.authService.getCities().subscribe({
+      next: (data) => {
+        this.cities = data;
+      },
+      error: (err) => {
+        console.error('Error loading cities:', err);
+      }
+    });
+
+    this.authService.getSpecialities().subscribe({
+      next: (data) => {
+        this.specialities = data;
+      },
+      error: (err) => {
+        console.error('Error loading specialities:', err);
+      }
+    });
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  rotateBenefits(): void {
+    setInterval(() => {
+      this.currentBenefitIndex = (this.currentBenefitIndex + 1) % this.benefits.length;
+    }, 5000);
+  }
+
+  selectBenefit(index: number): void {
+    this.currentBenefitIndex = index;
+  }
+
+  onRegister(): void {
+    if (this.password !== this.confirmPassword) {
+      console.log('Passwords do not match');
+      return;
     }
 
-    ngOnInit(): void {
-        this.authService.getCities().subscribe(data => this.cities = data);
-        this.authService.getSpecialities().subscribe(data => this.specialities = data);
-
-        this.registerForm.get('role')?.valueChanges.subscribe(role => {
-            this.isDoctor = role === 'ROLE_DOCTOR';
-            this.updateValidators();
-        });
+    if (!this.email || !this.password || !this.firstName || !this.lastName) {
+      console.log('Please fill in all fields');
+      return;
     }
 
-    passwordMatchValidator(g: FormGroup) {
-        return g.get('password')?.value === g.get('confirmPassword')?.value
-            ? null : { mismatch: true };
-    }
+    this.loading = true;
 
-    updateValidators() {
-        const medicalLicenceControl = this.registerForm.get('medicalLicence');
-        const specialityControl = this.registerForm.get('specialityId');
-        const cityControl = this.registerForm.get('cityId');
+    const registerData = {
+      name: this.firstName,
+      lastName: this.lastName,
+      email: this.email,
+      password: this.password,
+      confirmPassword: this.confirmPassword,
+      role: this.userRole === 'doctor' ? 'ROLE_DOCTOR' : 'ROLE_PATIENT'
+    };
 
-        if (this.isDoctor) {
-            medicalLicenceControl?.setValidators([Validators.required]);
-            specialityControl?.setValidators([Validators.required]);
-            cityControl?.setValidators([Validators.required]);
-        } else {
-            medicalLicenceControl?.clearValidators();
-            specialityControl?.clearValidators();
-            cityControl?.clearValidators();
-        }
-        medicalLicenceControl?.updateValueAndValidity();
-        specialityControl?.updateValueAndValidity();
-        cityControl?.updateValueAndValidity();
-    }
-
-    onSubmit() {
-        if (this.registerForm.valid) {
-            this.authService.register(this.registerForm.value).subscribe({
-                next: (response) => {
-                    this.router.navigate(['/login']);
-                },
-                error: (err) => {
-                    this.errorMessage = err.error?.message || 'Registration failed';
-                }
-            });
-        } else {
-            this.registerForm.markAllAsTouched();
-        }
-    }
+    this.authService.register(registerData).subscribe({
+      next: (response: any) => {
+        this.loading = false;
+        console.log('Registration successful:', response);
+        this.router.navigate(['/auth/login']);
+      },
+      error: (err: any) => {
+        this.loading = false;
+        console.error('Registration failed:', err);
+      }
+    });
+  }
 }
+

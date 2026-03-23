@@ -1,54 +1,105 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router, RouterModule } from '@angular/router';
+import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, RouterModule],
+    imports: [CommonModule, FormsModule, RouterModule, NavbarComponent],
     templateUrl: './login.component.html',
 })
 export class LoginComponent {
-    loginForm: FormGroup;
-    errorMessage: string = '';
+    email = '';
+    password = '';
+    showPassword = false;
+    loading = false;
+    errorMessage = '';
+    currentBenefitIndex = 0;
+
+    benefits = [
+      {
+        icon: '🔒',
+        title: 'Secure & Encrypted',
+        description: 'End-to-end encryption protects all your data'
+      },
+      {
+        icon: '⚡',
+        title: '24/7 Support',
+        description: 'Our team is always ready to help you'
+      },
+      {
+        icon: '🌍',
+        title: 'Global Access',
+        description: 'Access your account from anywhere in the world'
+      },
+      {
+        icon: '✅',
+        title: '99.9% Uptime',
+        description: 'Reliable service you can depend on'
+      }
+    ];
 
     constructor(
-        private fb: FormBuilder,
         private authService: AuthService,
         private router: Router
     ) {
-        this.loginForm = this.fb.group({
-            email: ['', [Validators.required, Validators.email]],
-            password: ['', Validators.required]
-        });
+        this.rotateBenefits();
     }
 
-    onSubmit() {
-        if (this.loginForm.valid) {
-            this.errorMessage = '';
-            this.authService.login(this.loginForm.value).subscribe({
-                next: (response) => {
-                    if (response.role === 'ROLE_ADMIN') {
-                        this.router.navigate(['/admin/dashboard']);
-                    } else if (response.role === 'ROLE_DOCTOR') {
-                        this.router.navigate(['/doctor/dashboard']);
-                    } else if (response.role === 'ROLE_PATIENT') {
-                        this.router.navigate(['/patient/dashboard']);
-                    } else {
-                        this.router.navigate(['/']);
-                    }
-                },
-                error: (err) => {
-                    console.error('Login error:', err);
-                    if (err.error && err.error.error) {
-                         this.errorMessage = err.error.error;
-                    } else {
-                         this.errorMessage = 'Login failed. Please check your network or credentials.';
-                    }
-                }
-            });
+    togglePasswordVisibility(): void {
+        this.showPassword = !this.showPassword;
+    }
+
+    rotateBenefits(): void {
+        setInterval(() => {
+            this.currentBenefitIndex = (this.currentBenefitIndex + 1) % this.benefits.length;
+        }, 5000);
+    }
+
+    selectBenefit(index: number): void {
+        this.currentBenefitIndex = index;
+    }
+
+    onLogin(): void {
+        if (!this.email || !this.password) {
+            this.errorMessage = 'Please fill in all fields!';
+            return;
         }
+
+        this.loading = true;
+        this.errorMessage = '';
+
+        this.authService.login({
+            email: this.email,
+            password: this.password
+        }).subscribe({
+            next: (response: any) => {
+                this.loading = false;
+                if (response.role === 'ROLE_ADMIN') {
+                    this.router.navigate(['/admin/dashboard']);
+                } else if (response.role === 'ROLE_DOCTOR') {
+                    this.router.navigate(['/doctor/dashboard']);
+                } else if (response.role === 'ROLE_PATIENT') {
+                    this.router.navigate(['/patient/dashboard']);
+                } else {
+                    this.router.navigate(['/']);
+                }
+            },
+            error: (err: any) => {
+                this.loading = false;
+                console.error('Login error:', err);
+                if (err.error && err.error.error) {
+                    this.errorMessage = err.error.error;
+                } else {
+                    this.errorMessage = 'Login failed. Please check your credentials.';
+                }
+            }
+        });
     }
 }
+
+
+

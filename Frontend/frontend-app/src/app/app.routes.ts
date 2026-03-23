@@ -14,6 +14,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent)
     },
     {
+        path: 'auth',
+        redirectTo: 'auth/login'
+    },
+    {
         path: '',
         loadChildren: () => import('./features/public/public.routes').then(m => m.PUBLIC_ROUTES)
     },
