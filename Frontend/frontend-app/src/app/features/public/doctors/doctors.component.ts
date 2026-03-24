@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
-import { NavbarComponent } from '../navbar/navbar.component';
+import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
+import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { PublicService, City, Specialty, Doctor } from '../../../core/services/public.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { PatientService } from '../../patient/services/patient.service';
@@ -11,7 +12,7 @@ import { PatientService } from '../../patient/services/patient.service';
 @Component({
     selector: 'app-doctors',
     standalone: true,
-    imports: [CommonModule, FormsModule, RouterModule, NavbarComponent],
+    imports: [CommonModule, FormsModule, RouterModule, NavbarComponent, FooterComponent],
     templateUrl: './doctors.component.html',
     styleUrl: './doctors.component.css'
 })
@@ -30,6 +31,9 @@ export class DoctorsComponent implements OnInit {
     loading = true;
     isAuthenticated = false;
     userRole: string | null = null;
+
+    // Selection for Sidebar
+    viewedDoctor: Doctor | null = null;
 
     // Booking Modal
     showBookingModal = false;
@@ -56,6 +60,7 @@ export class DoctorsComponent implements OnInit {
     ngOnInit(): void {
         this.checkAuth();
         this.loading = true;
+        this.cdr.detectChanges();
 
         // Load cities, specialties, and doctors in parallel
         forkJoin({
@@ -70,6 +75,7 @@ export class DoctorsComponent implements OnInit {
                 this.doctors = result.doctors.content;
                 this.totalPages = result.doctors.totalPages;
                 this.loading = false;
+                this.selectFirstDoctor();
                 this.cdr.detectChanges();
             },
             error: (err) => {
@@ -87,6 +93,7 @@ export class DoctorsComponent implements OnInit {
 
     loadDoctors(): void {
         this.loading = true;
+        this.cdr.detectChanges();
         console.log('Loading doctors with filters:', { cityId: this.selectedCityId, specialtyId: this.selectedSpecialtyId, page: this.currentPage });
         this.publicService.getAllDoctors(
             this.selectedCityId || undefined,
@@ -99,6 +106,7 @@ export class DoctorsComponent implements OnInit {
                 this.doctors = data.content;
                 this.totalPages = data.totalPages;
                 this.loading = false;
+                this.selectFirstDoctor();
                 this.cdr.detectChanges();
             },
             error: (err) => {
@@ -113,6 +121,20 @@ export class DoctorsComponent implements OnInit {
     onFilterChange(): void {
         this.currentPage = 0;
         this.loadDoctors();
+        this.cdr.detectChanges();
+    }
+
+    selectDoctor(doctor: Doctor): void {
+        this.viewedDoctor = doctor;
+        this.cdr.detectChanges();
+    }
+
+    private selectFirstDoctor(): void {
+        if (this.doctors && this.doctors.length > 0) {
+            this.viewedDoctor = this.doctors[0];
+        } else {
+            this.viewedDoctor = null;
+        }
     }
 
     takeAppointment(doctor: Doctor): void {
@@ -359,4 +381,3 @@ export class DoctorsComponent implements OnInit {
         }
     }
 }
-

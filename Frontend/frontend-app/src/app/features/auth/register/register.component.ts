@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
@@ -54,7 +54,8 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     this.rotateBenefits();
   }
@@ -67,6 +68,7 @@ export class RegisterComponent implements OnInit {
     this.authService.getCities().subscribe({
       next: (data) => {
         this.cities = data;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error loading cities:', err);
@@ -76,6 +78,7 @@ export class RegisterComponent implements OnInit {
     this.authService.getSpecialities().subscribe({
       next: (data) => {
         this.specialities = data;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error loading specialities:', err);
@@ -94,11 +97,8 @@ export class RegisterComponent implements OnInit {
   rotateBenefits(): void {
     setInterval(() => {
       this.currentBenefitIndex = (this.currentBenefitIndex + 1) % this.benefits.length;
+      this.cdr.detectChanges();
     }, 5000);
-  }
-
-  selectBenefit(index: number): void {
-    this.currentBenefitIndex = index;
   }
 
   onRegister(): void {
@@ -107,33 +107,42 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    if (!this.email || !this.password || !this.firstName || !this.lastName) {
-      console.log('Please fill in all fields');
-      return;
-    }
-
     this.loading = true;
+    this.cdr.detectChanges();
 
-    const registerData = {
+    const requestData: any = {
       name: this.firstName,
       lastName: this.lastName,
       email: this.email,
       password: this.password,
-      confirmPassword: this.confirmPassword,
-      role: this.userRole === 'doctor' ? 'ROLE_DOCTOR' : 'ROLE_PATIENT'
+      role: this.userRole === 'doctor' ? 'DOCTOR' : 'PATIENT'
     };
 
-    this.authService.register(registerData).subscribe({
-      next: (response: any) => {
+    if (this.userRole === 'doctor') {
+        requestData.specialityId = this.specialityId ? Number(this.specialityId) : null;
+        requestData.cityId = this.cityId ? Number(this.cityId) : null;
+        requestData.medicalLicence = this.medicalLicence;
+    }
+
+    console.log('Register attempt with:', requestData);
+
+    this.authService.register(requestData).subscribe({
+      next: (response) => {
         this.loading = false;
+        this.cdr.detectChanges();
         console.log('Registration successful:', response);
         this.router.navigate(['/auth/login']);
       },
-      error: (err: any) => {
+      error: (err) => {
         this.loading = false;
+        this.cdr.detectChanges();
         console.error('Registration failed:', err);
       }
     });
   }
-}
 
+  selectBenefit(index: number): void {
+    this.currentBenefitIndex = index;
+    this.cdr.detectChanges();
+  }
+}

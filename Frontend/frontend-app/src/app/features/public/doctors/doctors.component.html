@@ -1,80 +1,147 @@
-<div class="doctors-container">
-    <app-navbar></app-navbar>
+<div class="doctors-page-wrapper">
+  <app-navbar></app-navbar>
 
-    <div class="doctors-content">
-        <div class="filters-section">
-            <h2>Find a Doctor</h2>
+  <div class="doctors-layout">
 
-            <div class="filters">
-                <div class="filter-group">
-                    <label for="cityFilter">Filter by City:</label>
-                    <select id="cityFilter" [(ngModel)]="selectedCityId" (change)="onFilterChange()" class="filter-select">
-                        <option [value]="null">All Cities</option>
-                        <option *ngFor="let city of cities" [value]="city.id">{{ city.cityName }}</option>
-                    </select>
-                </div>
+    <!-- LEFT SIDEBAR: Filters & Selection Details -->
+    <aside class="doctors-sidebar">
 
-                <div class="filter-group">
-                    <label for="specialtyFilter">Filter by Specialty:</label>
-                    <select id="specialtyFilter" [(ngModel)]="selectedSpecialtyId" (change)="onFilterChange()" class="filter-select">
-                        <option [value]="null">All Specialties</option>
-                        <option *ngFor="let specialty of specialties" [value]="specialty.id">{{ specialty.specialiteName }}</option>
-                    </select>
-                </div>
-            </div>
+      <!-- Filters Card -->
+      <div class="sidebar-card filter-card">
+        <h2 class="sidebar-title">Find Your Specialist</h2>
+        <div class="filters-vertical">
+          <div class="filter-group">
+            <label for="cityFilter">City</label>
+            <select id="cityFilter" [(ngModel)]="selectedCityId" (change)="onFilterChange()" class="premium-select">
+              <option [ngValue]="null">All Cities</option>
+              <option *ngFor="let city of cities" [ngValue]="city.id">{{ city.cityName }}</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="specialtyFilter">Specialty</label>
+            <select id="specialtyFilter" [(ngModel)]="selectedSpecialtyId" (change)="onFilterChange()" class="premium-select">
+              <option [ngValue]="null">All Specialties</option>
+              <option *ngFor="let specialty of specialties" [ngValue]="specialty.id">{{ specialty.specialiteName }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Doctor Selected Details -->
+      <div class="sidebar-card detail-card" *ngIf="viewedDoctor">
+        <div class="detail-header">
+          <div class="detail-img-wrap">
+            <img *ngIf="viewedDoctor.profilePic" [src]="viewedDoctor.profilePic" [alt]="viewedDoctor.name">
+            <div *ngIf="!viewedDoctor.profilePic" class="detail-avatar-fallback">👨‍⚕️</div>
+          </div>
+          <div class="detail-name-wrap">
+            <h3 class="detail-name">{{ viewedDoctor.name }} {{ viewedDoctor.lastName }}</h3>
+            <span class="detail-spec-tag">{{ viewedDoctor.speciality }}</span>
+          </div>
         </div>
 
-        <div class="doctors-list">
-            <ng-container *ngIf="!loading">
-                <ng-container *ngIf="doctors.length > 0">
-                    <div class="doctors-grid">
-                        <div *ngFor="let doctor of doctors" class="doctor-card">
-                            <div class="doctor-image">
-                                <img *ngIf="doctor.profilePic" [src]="doctor.profilePic" [alt]="doctor.name">
-                                <div *ngIf="!doctor.profilePic" class="doctor-avatar">👨‍⚕️</div>
-                            </div>
+        <div class="detail-body">
+          <div class="detail-info-item">
+            <span class="detail-icon">
+              <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="#2caea9"><path fill="#2caea9" fill-rule="evenodd" d="M4.5 21C4.5 10.23 13.23 1.5 24 1.5S43.5 10.23 43.5 21c0 6.987-3.606 12.865-7.526 17.203c-3.932 4.351-8.326 7.316-10.237 8.506a3.26 3.26 0 0 1-3.474 0c-1.91-1.19-6.305-4.155-10.237-8.506C8.106 33.865 4.5 27.987 4.5 21M24 29a8 8 0 1 0 0-16a8 8 0 0 0 0 16" clip-rule="evenodd"/></svg>
+            </span>
+            <span>{{ viewedDoctor.city }}</span>
+          </div>
+          <div class="detail-info-item">
+            <span class="detail-icon">
+              <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="#2caea9"><path fill="#2caea9" fill-rule="evenodd" d="M8.079 33.133c3.25.178 8.458.367 15.921.367s12.67-.189 15.921-.367c3.188-.174 5.85-2.49 6.174-5.776c.217-2.2.405-5.284.405-9.357s-.188-7.157-.405-9.357c-.324-3.287-2.986-5.602-6.174-5.776C36.671 2.689 31.463 2.5 24 2.5s-12.67.189-15.921.367c-3.188.174-5.85 2.49-6.174 5.776c-.217 2.2-.405 5.284-.405 9.357s.188 7.157.405 9.357c.324 3.287 2.986 5.602 6.174 5.776M24 8.455a1.5 1.5 0 0 1 1.5 1.5v.917a9 9 0 0 1 2.001.606c.494.216.979.467 1.409.794c.644.492.774 1.46.281 2.104a1.5 1.5 0 0 1-2.093.287c-.877-.638-2.02-.922-3.098-.922c-.719 0-1.419.224-1.906.556c-.499.339-.594.646-.594.8c0 .361.156.555.467.724c.616.335 1.341.474 2.037.607l.403.079c.92.187 2.11.429 3.06.946c1.262.687 2.033 1.91 2.033 3.359c0 1.478-.905 2.6-1.906 3.28a6.3 6.3 0 0 1-2.094.903v.96a1.5 1.5 0 1 1-3 0v-.918c-1.19-.211-2.442-.66-3.412-1.401a1.5 1.5 0 0 1 1.814-2.39c.868.631 2.044.923 3.098.923c.716 0 1.419-.225 1.906-.557c.499-.339.594-.646.594-.8c0-.361-.156-.555-.467-.724c-.616-.335-1.34-.474-2.036-.607l-.404-.079c-.919-.187-2.11-.429-3.06-.946c-1.262-.687-2.033-1.91-2.033-3.359c0-1.478.905-2.6 1.906-3.28a6.3 6.3 0 0 1 2.094-.903v-.959a1.5 1.5 0 0 1 1.5-1.5m13 7.5a2 2 0 1 0 0 4h1a2 2 0 0 0 0-4zm-29 2a2 2 0 0 1 2-2h1a2 2 0 1 1 0 4h-1a2 2 0 0 1-2-2m3.635 24.72a1.5 1.5 0 0 1 1.987-.743c.402.183.857.298 1.35.323c2.115.107 5.09.201 9.028.201s6.914-.094 9.029-.201c.493-.025.947-.14 1.35-.323a1.5 1.5 0 0 1 1.243 2.73a6.7 6.7 0 0 1-2.441.59c-2.17.11-5.195.204-9.18.204c-3.986 0-7.012-.095-9.18-.205a6.7 6.7 0 0 1-2.442-.589a1.5 1.5 0 0 1-.744-1.987m-4.393-6.657a1.5 1.5 0 0 1 2.074-.442a3.7 3.7 0 0 0 1.82.578c2.759.151 6.979.3 12.864.3s10.105-.149 12.864-.3a3.7 3.7 0 0 0 1.82-.578a1.5 1.5 0 0 1 1.632 2.517a6.7 6.7 0 0 1-3.288 1.057c-2.817.154-7.092.305-13.028.305s-10.21-.151-13.028-.305a6.7 6.7 0 0 1-3.288-1.057a1.5 1.5 0 0 1-.442-2.075" clip-rule="evenodd"/></svg>
+            </span>
+            <span>Consultation Fee: <strong>${{ viewedDoctor.fees }}</strong></span>
+          </div>
+          <div class="detail-info-item">
+            <span class="detail-icon">
+              <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="#2caea9"><path fill="#2caea9" fill-rule="evenodd" d="M18 1.5C11.096 1.5 5.5 7.096 5.5 14a12.47 12.47 0 0 0 4.46 9.571c-4.204 2.33-7.277 6.433-8.184 11.3c-.226 1.21.001 2.41.69 3.368c.689.96 1.757 1.559 2.988 1.718c2.186.283 5.973.543 12.546.543c2.439 0 4.494-.036 6.226-.095A15.86 15.86 0 0 1 22.5 33.2c0-1.56.076-2.96.169-4.088c.222-2.706 1.771-5.441 4.55-6.67A12.46 12.46 0 0 0 30.499 14c0-6.904-5.596-12.5-12.5-12.5m18 23c-2.862 0-4.85.14-6.226.318c-2.478.32-3.933 2.323-4.115 4.54A47 47 0 0 0 25.5 33.2c0 4.58 2.42 8.92 6.57 11.057c1.21.623 2.674 1.243 3.93 1.243s2.72-.62 3.93-1.243c4.15-2.136 6.57-6.478 6.57-11.057c0-1.463-.072-2.781-.159-3.842c-.182-2.217-1.637-4.22-4.115-4.54C40.85 24.64 38.862 24.5 36 24.5m4.837 4.755a1.5 1.5 0 0 1 .408 2.082l-4.706 7a1.5 1.5 0 0 1-2.37.155l-3.294-3.733a1.5 1.5 0 0 1 2.25-1.985l2.008 2.277l3.622-5.388a1.5 1.5 0 0 1 2.082-.408" clip-rule="evenodd"/></svg>
+            </span>
+            <span>Verified Professional</span>
+          </div>
 
-                            <div class="doctor-info">
-                                <h3 class="doctor-name">{{ doctor.name }} {{ doctor.lastName }}</h3>
-                                <p class="doctor-specialty">{{ doctor.speciality }}</p>
-                                <p class="doctor-location">📍 {{ doctor.city }}</p>
-                                <p class="doctor-status" [class.approved]="doctor.status === 'APPROVED'">{{ doctor.status }}</p>
-                                <p class="doctor-fees">Fees: ${{ doctor.fees }}</p>
-                            </div>
-
-                            <div class="doctor-actions">
-                                <button (click)="takeAppointment(doctor)" class="btn btn-primary">Take Appointment</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pagination">
-                        <button [disabled]="currentPage === 0" (click)="previousPage()" class="btn btn-pagination">
-                            ← Previous
-                        </button>
-                        <span class="page-info">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
-                        <button [disabled]="currentPage === totalPages - 1" (click)="nextPage()" class="btn btn-pagination">
-                            Next →
-                        </button>
-                    </div>
-                </ng-container>
-
-                <div *ngIf="doctors.length === 0" class="no-doctors">
-                    <p>❌ No doctors found or unable to load data</p>
-                    <p style="font-size: 14px; color: #999;">Make sure the backend server is running on http://localhost:8080</p>
-                    <button (click)="loadDoctors()" class="btn btn-primary" style="margin-top: 15px;">🔄 Retry Loading</button>
-                </div>
-            </ng-container>
-
-            <div *ngIf="loading" class="loading">
-                <p>⏳ Loading doctors...</p>
-                <p style="font-size: 14px; color: #999;">If this takes too long, please ensure the backend is running</p>
-            </div>
+          <div class="detail-status-pill" [class.status-approved]="viewedDoctor.status === 'APPROVED'">
+            {{ viewedDoctor.status }}
+          </div>
         </div>
-    </div>
+
+        <div class="detail-actions">
+          <button (click)="takeAppointment(viewedDoctor)" class="btn-book-now">Book Appointment</button>
+        </div>
+      </div>
+
+      <!-- No Selection Placeholder -->
+      <div class="sidebar-card placeholder-card" *ngIf="!viewedDoctor && !loading">
+        <p>Select a doctor to view their profile and book an appointment.</p>
+      </div>
+
+    </aside>
+
+    <!-- RIGHT MAIN: Wide Grid of Doctors -->
+    <main class="doctors-main">
+
+      <!-- List Header -->
+      <div class="results-header">
+        <div class="results-count">
+          <span>Found <strong>{{ doctors.length }}</strong> Specialists</span>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Searching for specialists...</p>
+      </div>
+
+      <!-- Grid -->
+      <div *ngIf="!loading && doctors.length > 0" class="doctors-wide-grid">
+        <div *ngFor="let doctor of doctors"
+             class="doctor-mini-card"
+             [class.active-card]="viewedDoctor?.id === doctor.id"
+             (click)="selectDoctor(doctor)">
+
+          <div class="card-img-side">
+            <img [src]="doctor.profilePic || '/doctor profile.png'" [alt]="doctor.name">
+          </div>
+
+          <div class="card-info-side">
+            <h4 class="card-name">{{ doctor.name }} {{ doctor.lastName }}</h4>
+            <p class="card-spec">{{ doctor.speciality }}</p>
+            <div class="card-meta">
+              <span style="display: flex; align-items: center; gap: 4px;">
+                <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="#2caea9"><path fill="#2caea9" fill-rule="evenodd" d="M4.5 21C4.5 10.23 13.23 1.5 24 1.5S43.5 10.23 43.5 21c0 6.987-3.606 12.865-7.526 17.203c-3.932 4.351-8.326 7.316-10.237 8.506a3.26 3.26 0 0 1-3.474 0c-1.91-1.19-6.305-4.155-10.237-8.506C8.106 33.865 4.5 27.987 4.5 21M24 29a8 8 0 1 0 0-16a8 8 0 0 0 0 16" clip-rule="evenodd"/></svg>
+                {{ doctor.city }}
+              </span>
+              <span class="card-fees" style="display: flex; align-items: center; gap: 4px;">
+                <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="#2caea9"><path fill="#2caea9" fill-rule="evenodd" d="M8.079 33.133c3.25.178 8.458.367 15.921.367s12.67-.189 15.921-.367c3.188-.174 5.85-2.49 6.174-5.776c.217-2.2.405-5.284.405-9.357s-.188-7.157-.405-9.357c-.324-3.287-2.986-5.602-6.174-5.776C36.671 2.689 31.463 2.5 24 2.5s-12.67.189-15.921.367c-3.188.174-5.85 2.49-6.174 5.776c-.217 2.2-.405 5.284-.405 9.357s.188 7.157.405 9.357c.324 3.287 2.986 5.602 6.174 5.776M24 8.455a1.5 1.5 0 0 1 1.5 1.5v.917a9 9 0 0 1 2.001.606c.494.216.979.467 1.409.794c.644.492.774 1.46.281 2.104a1.5 1.5 0 0 1-2.093.287c-.877-.638-2.02-.922-3.098-.922c-.719 0-1.419.224-1.906.556c-.499.339-.594.646-.594.8c0 .361.156.555.467.724c.616.335 1.341.474 2.037.607l.403.079c.92.187 2.11.429 3.06.946c1.262.687 2.033 1.91 2.033 3.359c0 1.478-.905 2.6-1.906 3.28a6.3 6.3 0 0 1-2.094.903v.96a1.5 1.5 0 1 1-3 0v-.918c-1.19-.211-2.442-.66-3.412-1.401a1.5 1.5 0 0 1 1.814-2.39c.868.631 2.044.923 3.098.923c.716 0 1.419-.225 1.906-.557c.499-.339.594-.646.594-.8c0-.361-.156-.555-.467-.724c-.616-.335-1.34-.474-2.036-.607l-.404-.079c-.919-.187-2.11-.429-3.06-.946c-1.262-.687-2.033-1.91-2.033-3.359c0-1.478.905-2.6 1.906-3.28a6.3 6.3 0 0 1 2.094-.903v-.959a1.5 1.5 0 0 1 1.5-1.5m13 7.5a2 2 0 1 0 0 4h1a2 2 0 0 0 0-4zm-29 2a2 2 0 0 1 2-2h1a2 2 0 1 1 0 4h-1a2 2 0 0 1-2-2m3.635 24.72a1.5 1.5 0 0 1 1.987-.743c.402.183.857.298 1.35.323c2.115.107 5.09.201 9.028.201s6.914-.094 9.029-.201c.493-.025.947-.14 1.35-.323a1.5 1.5 0 0 1 1.243 2.73a6.7 6.7 0 0 1-2.441.59c-2.17.11-5.195.204-9.18.204c-3.986 0-7.012-.095-9.18-.205a6.7 6.7 0 0 1-2.442-.589a1.5 1.5 0 0 1-.744-1.987m-4.393-6.657a1.5 1.5 0 0 1 2.074-.442a3.7 3.7 0 0 0 1.82.578c2.759.151 6.979.3 12.864.3s10.105-.149 12.864-.3a3.7 3.7 0 0 0 1.82-.578a1.5 1.5 0 0 1 1.632 2.517a6.7 6.7 0 0 1-3.288 1.057c-2.817.154-7.092.305-13.028.305s-10.21-.151-13.028-.305a6.7 6.7 0 0 1-3.288-1.057a1.5 1.5 0 0 1-.442-2.075" clip-rule="evenodd"/></svg>
+                ${{ doctor.fees }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!loading && doctors.length === 0" class="no-results-state">
+        <p>No doctors found matching your criteria.</p>
+        <button (click)="loadDoctors()" class="btn-retry">Try Again</button>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-wrap" *ngIf="!loading && totalPages > 1">
+        <button [disabled]="currentPage === 0" (click)="previousPage()" class="btn-page">←</button>
+        <span class="page-indicator">Page <strong>{{ currentPage + 1 }}</strong> of {{ totalPages }}</span>
+        <button [disabled]="currentPage === totalPages - 1" (click)="nextPage()" class="btn-page">→</button>
+      </div>
+
+    </main>
+
+  </div>
+  <app-footer></app-footer>
 </div>
 
-<!-- Booking Modal -->
+<!-- Booking Modal remains mostly the same, just keeping it here for continuity -->
 <div *ngIf="showBookingModal" class="modal-overlay" (click)="closeBookingModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
         <!-- Modal Header -->
@@ -83,14 +150,11 @@
                 <h2 class="text-xl font-bold">🗓️ Book Appointment</h2>
                 <p class="text-sm text-blue-100 mt-1">{{ selectedDoctor?.name }} {{ selectedDoctor?.lastName }}</p>
             </div>
-            <button (click)="closeBookingModal()" class="close-btn">
-                ✕
-            </button>
+            <button (click)="closeBookingModal()" class="close-btn">✕</button>
         </div>
 
         <!-- Modal Body -->
         <div class="modal-body">
-            <!-- Doctor Summary -->
             <div class="summary-card">
                 <p class="text-sm text-gray-600">
                     <span class="font-medium">Speciality:</span> {{ selectedDoctor?.speciality }}
@@ -100,15 +164,12 @@
                 </p>
             </div>
 
-            <!-- Date Selection -->
             <div class="form-group">
-                <label class="block text-sm font-medium text-gray-700 mb-2">📅 Select Date (Monday - Friday)</label>
-                <p class="text-xs text-gray-500 mb-2">Available hours: 9:00 AM - 12:00 PM</p>
+                <label class="block text-sm font-medium text-gray-700 mb-2">📅 Select Date (Mon - Fri)</label>
                 <input type="date" [(ngModel)]="bookingData.selectedDate" (change)="onDateSelected()"
                     [min]="getMinDate()" [max]="getMaxDate()" class="form-input">
             </div>
 
-            <!-- Time Selection -->
             <div *ngIf="bookingData.selectedDate" class="form-group">
                 <label class="block text-sm font-medium text-gray-700 mb-2">⏰ Select Time</label>
                 <div *ngIf="slotsLoading" class="text-center py-4">
@@ -118,9 +179,8 @@
                     <button *ngFor="let slot of availableSlots" [disabled]="!slot.available"
                         [class.selected]="bookingData.selectedTime === slot.time && slot.available"
                         [class.unavailable]="!slot.available" (click)="bookingData.selectedTime = slot.time"
-                        class="time-slot-btn" [title]="!slot.available ? 'This slot is taken' : 'Available'">
+                        class="time-slot-btn">
                         {{ slot.time }}
-                        <span *ngIf="!slot.available" class="ml-1">✕</span>
                     </button>
                 </div>
                 <div *ngIf="!slotsLoading && availableSlots.length === 0" class="text-center py-2 text-red-500 text-sm">
@@ -128,28 +188,15 @@
                 </div>
             </div>
 
-            <!-- Reason -->
             <div class="form-group">
                 <label class="block text-sm font-medium text-gray-700 mb-2">📝 Reason for Visit</label>
-                <textarea [(ngModel)]="bookingData.reason"
-                    placeholder="Describe your symptoms or reason for appointment..." rows="3"
-                    class="form-input resize-none"></textarea>
-            </div>
-
-            <!-- Price Summary -->
-            <div class="price-summary">
-                <div class="flex items-center justify-between">
-                    <span class="text-gray-700 font-medium">Total Cost:</span>
-                    <span class="text-xl font-bold text-blue-600">${{ selectedDoctor?.fees }}</span>
-                </div>
+                <textarea [(ngModel)]="bookingData.reason" placeholder="Describe your symptoms..." rows="3"
+                    class="form-input"></textarea>
             </div>
         </div>
 
-        <!-- Modal Footer -->
         <div class="modal-footer">
-            <button (click)="closeBookingModal()" class="btn-cancel">
-                ❌ Cancel
-            </button>
+            <button (click)="closeBookingModal()" class="btn-cancel">Cancel</button>
             <button (click)="bookAppointment()"
                 [disabled]="bookingLoading || !bookingData.selectedDate || !bookingData.selectedTime || !bookingData.reason"
                 class="btn-confirm">

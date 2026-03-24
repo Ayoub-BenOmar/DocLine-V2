@@ -1,2 +1,177 @@
-/* Component-specific styles can be added here if needed */
+/* Statistics Dashboard Container */
+.stats-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 0 40px 0;
+}
 
+.page-header {
+  margin-bottom: 32px;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #f0f6fc;
+  letter-spacing: -0.8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-title i {
+  color: #2caea9;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   LEADERBOARD CARDS (TOP 3)
+────────────────────────────────────────────────────────────── */
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f0f6fc;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.leaderboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.rank-card {
+  background-color: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.rank-card:hover {
+  transform: translateY(-2px);
+  border-color: #444c56;
+}
+
+.rank-number {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 28px;
+  font-weight: 900;
+  color: #30363d;
+  opacity: 0.5;
+  line-height: 1;
+}
+
+.rank-subject {
+  font-size: 18px;
+  font-weight: 800;
+  color: #f0f6fc;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.rank-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.stat-num {
+  font-size: 24px;
+  font-weight: 800;
+  color: #2caea9;
+}
+
+.stat-unit {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8b949e;
+}
+
+/* Custom Progress Bar */
+.progress-container {
+  width: 100%;
+  height: 6px;
+  background-color: #30363d;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2caea9, #238f8a);
+  border-radius: 10px;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   OVERVIEW TABLES
+────────────────────────────────────────────────────────────── */
+.table-card {
+  background-color: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 40px;
+}
+
+.premium-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.premium-table th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #30363d;
+}
+
+.premium-table td {
+  padding: 20px 16px;
+  border-bottom: 1px solid #21262d;
+  color: #c9d1d9;
+  font-size: 15px;
+}
+
+.premium-table tr:hover td {
+  background-color: rgba(139, 148, 158, 0.03);
+}
+
+.count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  color: #2caea9;
+}
+
+/* Feedback/Status */
+.error-box {
+  background: rgba(248, 81, 73, 0.1);
+  border: 1px solid rgba(248, 81, 73, 0.2);
+  color: #f85149;
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}

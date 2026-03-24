@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
@@ -44,7 +44,8 @@ export class LoginComponent {
 
     constructor(
         private authService: AuthService,
-        private router: Router
+        private router: Router,
+        private cdr: ChangeDetectorRef
     ) {
         this.rotateBenefits();
     }
@@ -56,6 +57,7 @@ export class LoginComponent {
     rotateBenefits(): void {
         setInterval(() => {
             this.currentBenefitIndex = (this.currentBenefitIndex + 1) % this.benefits.length;
+            this.cdr.detectChanges();
         }, 5000);
     }
 
@@ -71,6 +73,7 @@ export class LoginComponent {
 
         this.loading = true;
         this.errorMessage = '';
+        this.cdr.detectChanges();
 
         this.authService.login({
             email: this.email,
@@ -78,6 +81,8 @@ export class LoginComponent {
         }).subscribe({
             next: (response: any) => {
                 this.loading = false;
+                this.cdr.detectChanges();
+
                 if (response.role === 'ROLE_ADMIN') {
                     this.router.navigate(['/admin/dashboard']);
                 } else if (response.role === 'ROLE_DOCTOR') {
@@ -96,10 +101,8 @@ export class LoginComponent {
                 } else {
                     this.errorMessage = 'Login failed. Please check your credentials.';
                 }
+                this.cdr.detectChanges();
             }
         });
     }
 }
-
-
-

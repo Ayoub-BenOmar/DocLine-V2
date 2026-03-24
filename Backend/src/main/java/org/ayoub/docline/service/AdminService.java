@@ -6,6 +6,7 @@ import org.ayoub.docline.model.dto.DoctorListingDto;
 import org.ayoub.docline.model.dto.PatientProfileDto;
 import org.ayoub.docline.model.dto.CityStatisticDto;
 import org.ayoub.docline.model.dto.SpecialtyStatisticDto;
+
 import java.util.List;
 
 public interface AdminService {
@@ -31,4 +32,5 @@ public interface AdminService {
     // Statistics
     List<CityStatisticDto> getCityStatistics();
     List<SpecialtyStatisticDto> getSpecialtyStatistics();
+
 }

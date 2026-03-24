@@ -1,151 +1,108 @@
-<div class="flex h-screen bg-gray-50">
-    <!-- Sidebar -->
-    <aside class="bg-white shadow-xl transition-all duration-300 z-20 flex flex-col"
-        [ngClass]="{'w-64': isSidebarOpen, 'w-20': !isSidebarOpen}">
-        <!-- Logo Area -->
-        <div class="h-16 flex items-center justify-center border-b border-gray-100">
-            <div class="flex items-center gap-2 font-bold text-xl text-blue-600">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                </svg>
-                <span [class.hidden]="!isSidebarOpen">DocLine</span>
-            </div>
+<div class="admin-shell">
+  
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar" [ngClass]="isSidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'">
+    
+    <!-- Header Logo -->
+    <div class="logo-area">
+      <div class="logo-inner">
+        <div class="nav-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
         </div>
+        <span class="logo-text" *ngIf="isSidebarOpen">DocLine Admin</span>
+      </div>
+    </div>
 
-        <!-- Navigation -->
-        <nav class="flex-1 py-6 px-3 space-y-2 overflow-y-auto">
-            <a routerLink="/admin/dashboard" routerLinkActive="bg-blue-50 text-blue-600"
-                [routerLinkActiveOptions]="{exact: true}"
-                class="flex items-center p-3 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors group">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                </svg>
-                <span class="ml-3 font-medium" [class.hidden]="!isSidebarOpen">Dashboard</span>
-            </a>
-
-            <!-- Patients Link -->
-            <a routerLink="/admin/patients" routerLinkActive="bg-blue-50 text-blue-600"
-                [routerLinkActiveOptions]="{exact: true}"
-                class="flex items-center p-3 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors group">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-                <span class="ml-3 font-medium" [class.hidden]="!isSidebarOpen">Patients</span>
-            </a>
-
-            <!-- Doctors Link -->
-            <a routerLink="/admin/doctors" routerLinkActive="bg-blue-50 text-blue-600"
-                [routerLinkActiveOptions]="{exact: true}"
-                class="flex items-center p-3 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors group">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                </svg>
-                <span class="ml-3 font-medium" [class.hidden]="!isSidebarOpen">Doctors</span>
-            </a>
-
-            <!-- Statistics Link -->
-            <a routerLink="/admin/statistics" routerLinkActive="bg-blue-50 text-blue-600"
-                [routerLinkActiveOptions]="{exact: true}"
-                class="flex items-center p-3 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors group">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-                <span class="ml-3 font-medium" [class.hidden]="!isSidebarOpen">Statistics</span>
-            </a>
-
-            <!-- Cities Link -->
-            <a routerLink="/admin/cities" routerLinkActive="bg-blue-50 text-blue-600"
-                [routerLinkActiveOptions]="{exact: true}"
-                class="flex items-center p-3 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors group">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
-                </svg>
-                <span class="ml-3 font-medium" [class.hidden]="!isSidebarOpen">Cities</span>
-            </a>
-
-            <!-- Specialties Link -->
-            <a routerLink="/admin/specialties" routerLinkActive="bg-blue-50 text-blue-600"
-                [routerLinkActiveOptions]="{exact: true}"
-                class="flex items-center p-3 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors group">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                </svg>
-                <span class="ml-3 font-medium" [class.hidden]="!isSidebarOpen">Specialties</span>
-            </a>
-
-            <a href="#" class="flex items-center p-3 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors group">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span class="ml-3 font-medium" [class.hidden]="!isSidebarOpen">Appointments</span>
-            </a>
-        </nav>
-
-        <!-- User Profile -->
-        <div class="border-t border-gray-100 p-4">
-            <div class="flex items-center" [class.justify-center]="!isSidebarOpen">
-                <img src="https://ui-avatars.com/api/?name=Admin+User&background=0D8ABC&color=fff" alt="Profile"
-                    class="h-10 w-10 rounded-full border-2 border-white shadow-sm">
-                <div class="ml-3" [class.hidden]="!isSidebarOpen">
-                    <p class="text-sm font-medium text-gray-700">Admin User</p>
-                    <p class="text-xs text-gray-500">admin@docline.com</p>
-                </div>
-            </div>
+    <!-- Scrollable Nav -->
+    <nav class="nav-container">
+      
+      <a routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">
+        <div class="nav-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
         </div>
-    </aside>
+        <span class="nav-text" *ngIf="isSidebarOpen">Overview</span>
+      </a>
 
-    <!-- Main Content -->
-    <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <!-- Topbar -->
-        <header class="h-16 bg-white shadow-sm flex items-center justify-between px-6 z-10">
-            <button (click)="toggleSidebar()"
-                class="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
-
-            <div class="flex items-center space-x-4">
-                <button class="p-2 text-gray-400 hover:text-gray-600 relative">
-                    <span class="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                    </svg>
-                </button>
-                <button (click)="logout()"
-                    class="flex items-center space-x-2 p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    <span class="text-sm font-medium">Logout</span>
-                </button>
-            </div>
-        </header>
-
-        <!-- Content Area -->
-        <div class="flex-1 overflow-auto bg-gray-50/50">
-            <router-outlet></router-outlet>
+      <a routerLink="/admin/doctors" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
         </div>
-    </main>
+        <span class="nav-text" *ngIf="isSidebarOpen">Specialists</span>
+      </a>
+
+      <a routerLink="/admin/patients" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+        <span class="nav-text" *ngIf="isSidebarOpen">Patients</span>
+      </a>
+
+      <a routerLink="/admin/statistics" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        </div>
+        <span class="nav-text" *ngIf="isSidebarOpen">Insights</span>
+      </a>
+
+      <a routerLink="/admin/cities" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+        </div>
+        <span class="nav-text" *ngIf="isSidebarOpen">Regions</span>
+      </a>
+
+      <a routerLink="/admin/specialties" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+        </div>
+        <span class="nav-text" *ngIf="isSidebarOpen">Medical Types</span>
+      </a>
+
+    </nav>
+
+    <!-- Footer Profile -->
+    <div class="sidebar-footer">
+      <div class="profile-card">
+        <img src="https://ui-avatars.com/api/?name=Admin+User&background=2caea9&color=fff" alt="Profile" class="avatar">
+        <div class="profile-info" *ngIf="isSidebarOpen">
+          <span class="profile-name">Administrator</span>
+          <span class="profile-role">System Controller</span>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- Main View Area -->
+  <main class="main-wrapper">
+    
+    <!-- Topbar Actions -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="btn-toggle" (click)="toggleSidebar()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+        <div class="breadcrumb" *ngIf="isSidebarOpen">
+          <span class="text-xs font-bold text-slate-500 tracking-widest uppercase">Management Panel</span>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <button class="btn-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        </button>
+        <button class="btn-logout" (click)="logout()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Content Shell -->
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+
+  </main>
+
 </div>

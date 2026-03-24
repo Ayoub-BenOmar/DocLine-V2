@@ -25,6 +25,7 @@ export class AdminDoctorsComponent implements OnInit {
 
     loadDoctors() {
         this.loading = true;
+        this.cdr.detectChanges();
         this.adminService.getAllDoctors().subscribe({
             next: (data) => {
                 this.doctors = data;

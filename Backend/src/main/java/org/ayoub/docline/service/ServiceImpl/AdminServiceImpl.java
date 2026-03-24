@@ -18,9 +18,13 @@ import org.ayoub.docline.repository.CityRepository;
 import org.ayoub.docline.repository.DoctorRepository;
 import org.ayoub.docline.repository.SpecialtyRepository;
 import org.ayoub.docline.repository.UserRepository;
+
+
 import org.ayoub.docline.service.AdminService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +37,7 @@ public class AdminServiceImpl implements AdminService {
     private final DoctorRepository doctorRepository;
     private final CityRepository cityRepository;
     private final SpecialtyRepository specialtyRepository;
+
 
     @Override
     public List<PatientProfileDto> getAllPatients() {
@@ -246,4 +251,6 @@ public class AdminServiceImpl implements AdminService {
                         .build())
                 .collect(Collectors.toList());
     }
+
+
 }

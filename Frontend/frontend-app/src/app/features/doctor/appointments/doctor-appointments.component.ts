@@ -59,6 +59,7 @@ export class DoctorAppointmentsComponent implements OnInit {
     } else {
       this.filteredAppointments = this.appointments.filter(a => a.status === filter.toUpperCase());
     }
+    this.cdr.detectChanges();
   }
 
   openCompleteModal(appointment: AppointmentResponseDto): void {
@@ -73,11 +74,13 @@ export class DoctorAppointmentsComponent implements OnInit {
       chronic: '',
       doctorNote: ''
     };
+    this.cdr.detectChanges();
   }
 
   closeCompleteModal(): void {
     this.showReportModal = false;
     this.selectedAppointment = null;
+    this.cdr.detectChanges();
   }
 
   submitReport(): void {
@@ -92,6 +95,7 @@ export class DoctorAppointmentsComponent implements OnInit {
         error: (err) => {
           console.error('Error completing appointment', err);
           alert('Failed to complete appointment');
+          this.cdr.detectChanges();
         }
       });
     }
@@ -180,4 +184,3 @@ export class DoctorAppointmentsComponent implements OnInit {
     }
   }
 }
-

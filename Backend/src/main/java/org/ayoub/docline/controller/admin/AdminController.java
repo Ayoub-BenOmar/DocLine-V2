@@ -7,6 +7,7 @@ import org.ayoub.docline.model.dto.CityDto;
 import org.ayoub.docline.model.dto.SpecialtyDto;
 import org.ayoub.docline.model.dto.CityStatisticDto;
 import org.ayoub.docline.model.dto.SpecialtyStatisticDto;
+
 import org.ayoub.docline.service.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -123,4 +124,6 @@ public class AdminController {
     public ResponseEntity<List<SpecialtyStatisticDto>> getSpecialtyStatistics() {
         return ResponseEntity.ok(adminService.getSpecialtyStatistics());
     }
+
+
 }

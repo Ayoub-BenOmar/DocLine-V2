@@ -20,6 +20,8 @@ export class AdminPatientsComponent implements OnInit {
     }
 
     loadPatients() {
+        this.loading = true;
+        this.cdr.detectChanges();
         this.adminService.getAllPatients().subscribe({
             next: (data) => {
                 this.patients = data;

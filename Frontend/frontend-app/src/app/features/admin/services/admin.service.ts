@@ -49,6 +49,16 @@ export interface Specialty {
     specialiteName: string;
 }
 
+export interface DashboardStatistics {
+    totalPatients: number;
+    totalDoctors: number;
+    totalUsers: number;
+    totalCities: number;
+    totalSpecialties: number;
+    appointmentsToday: number;
+    lastPendingDoctors: Doctor[];
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -56,6 +66,10 @@ export class AdminService {
     private apiUrl = 'http://localhost:8080/api/admin';
 
     constructor(private http: HttpClient) { }
+
+    getDashboardStatistics(): Observable<DashboardStatistics> {
+        return this.http.get<DashboardStatistics>(`${this.apiUrl}/statistics/dashboard`);
+    }
 
     getAllPatients(): Observable<Patient[]> {
         return this.http.get<Patient[]>(`${this.apiUrl}/patients`);

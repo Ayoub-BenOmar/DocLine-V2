@@ -28,6 +28,9 @@ export class AdminStatisticsComponent implements OnInit {
     loading = true;
     error = '';
 
+    private cityStatsLoaded = false;
+    private specialtyStatsLoaded = false;
+
     constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
@@ -37,6 +40,9 @@ export class AdminStatisticsComponent implements OnInit {
     loadStatistics(): void {
         this.loading = true;
         this.error = '';
+        this.cityStatsLoaded = false;
+        this.specialtyStatsLoaded = false;
+        this.cdr.detectChanges();
 
         // Load all cities and specialties
         this.adminService.getAllCities().subscribe({
@@ -72,12 +78,14 @@ export class AdminStatisticsComponent implements OnInit {
         this.adminService.getCityStatistics().subscribe({
             next: (stats) => {
                 this.cityStatistics = stats.sort((a, b) => b.doctorCount - a.doctorCount);
+                this.cityStatsLoaded = true;
                 this.cdr.detectChanges();
                 this.checkLoadingComplete();
             },
             error: (err) => {
                 console.error('Error loading city statistics:', err);
                 this.cityStatistics = [];
+                this.cityStatsLoaded = true;
                 this.cdr.detectChanges();
                 this.checkLoadingComplete();
             }
@@ -88,12 +96,14 @@ export class AdminStatisticsComponent implements OnInit {
         this.adminService.getSpecialtyStatistics().subscribe({
             next: (stats) => {
                 this.specialtyStatistics = stats.sort((a, b) => b.doctorCount - a.doctorCount);
+                this.specialtyStatsLoaded = true;
                 this.cdr.detectChanges();
                 this.checkLoadingComplete();
             },
             error: (err) => {
                 console.error('Error loading specialty statistics:', err);
                 this.specialtyStatistics = [];
+                this.specialtyStatsLoaded = true;
                 this.cdr.detectChanges();
                 this.checkLoadingComplete();
             }
@@ -101,7 +111,7 @@ export class AdminStatisticsComponent implements OnInit {
     }
 
     private checkLoadingComplete(): void {
-        if (this.cities.length > 0 && this.specialties.length > 0) {
+        if (this.cityStatsLoaded && this.specialtyStatsLoaded) {
             this.loading = false;
             this.cdr.detectChanges();
         }
@@ -125,4 +135,3 @@ export class AdminStatisticsComponent implements OnInit {
         return stat ? stat.doctorCount : 0;
     }
 }
-

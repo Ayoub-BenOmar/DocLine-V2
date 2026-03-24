@@ -30,6 +30,7 @@ export class AdminCitiesComponent implements OnInit {
 
     loadCities(): void {
         this.loading = true;
+        this.cdr.detectChanges();
         this.adminService.getAllCities().subscribe({
             next: (data) => {
                 this.cities = data;

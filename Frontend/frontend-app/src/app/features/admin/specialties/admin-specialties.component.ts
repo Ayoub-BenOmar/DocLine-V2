@@ -30,6 +30,7 @@ export class AdminSpecialtiesComponent implements OnInit {
 
     loadSpecialties(): void {
         this.loading = true;
+        this.cdr.detectChanges();
         this.adminService.getAllSpecialties().subscribe({
             next: (data) => {
                 this.specialties = data;
