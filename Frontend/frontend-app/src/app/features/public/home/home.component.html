@@ -1,32 +1,457 @@
-<div class="home-container">
-    <app-navbar></app-navbar>
+<!-- Navbar -->
+<app-navbar></app-navbar>
 
-    <div class="hero-section">
-        <div class="hero-content">
-            <h1>Find Your Perfect Doctor</h1>
-            <p>Search and book appointments with trusted healthcare professionals</p>
-            <a routerLink="/doctors" class="btn btn-primary btn-lg">Browse Doctors</a>
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<!-- HERO SECTION                                                         -->
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<section class="hero-section">
+  <div class="hero-inner">
+
+    <!-- LEFT: Text Content -->
+    <div class="hero-left">
+
+      <h1 class="hero-title">
+        Your Health,<br>
+        Our Priority with<br>
+        <div class="hero-title-brand">
+          <img src="/DocLine_Logo.png" alt="Logo" class="hero-inline-logo">
+          <span class="hero-highlight">DocLine</span>
         </div>
+      </h1>
+
+      <p class="hero-subtitle">
+        Find and book appointments with verified doctors across Algeria.
+        Fast, simple, and secure — healthcare at your fingertips.
+      </p>
+
+      <div class="hero-actions">
+        <a routerLink="/doctors" class="btn-primary-hero">Browse Doctors</a>
+        <a routerLink="/auth/register" class="btn-secondary-hero">Get Started Free</a>
+      </div>
+
+      <!-- Inline stats -->
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-num">50K+</span>
+          <span class="hero-stat-label">Patients</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">200+</span>
+          <span class="hero-stat-label">Doctors</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">30+</span>
+          <span class="hero-stat-label">Specialties</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">48</span>
+          <span class="hero-stat-label">Wilayas</span>
+        </div>
+      </div>
     </div>
 
-    <div class="features-section">
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">👨‍⚕️</div>
-                <h3>Expert Doctors</h3>
-                <p>Access a network of verified and experienced medical professionals</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📅</div>
-                <h3>Easy Booking</h3>
-                <p>Schedule appointments at your convenience with just a few clicks</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🏥</div>
-                <h3>Professional Care</h3>
-                <p>Receive quality healthcare from certified specialists</p>
-            </div>
-        </div>
+    <!-- RIGHT: Hero image -->
+    <div class="hero-right">
+      <img src="/hero.jpg" alt="DocLine healthcare platform" class="hero-main-img">
     </div>
-</div>
 
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<!-- WHAT WE DO                                                           -->
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<section class="section what-we-do-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Our Services</span>
+      <h2 class="section-title">What We Do</h2>
+      <p class="section-subtitle">DocLine bridges the gap between patients and healthcare professionals through a seamless digital experience.</p>
+    </div>
+  </div>
+
+  <div class="services-grid-wrapper">
+    <div class="services-grid">
+
+      <div class="service-card">
+        <div class="service-icon-box">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"><path d="M42 32a9.96 9.96 0 0 1-1.115 4.594c1.128.936 2.24 1.865 3.339 2.89c1.158 1.082 1.301 2.719.206 3.863a32 32 0 0 1-1.017 1.018c-1.145 1.095-2.782.951-3.863-.206c-1.02-1.092-1.943-2.197-2.873-3.318A9.96 9.96 0 0 1 32 42c-5.523 0-10-4.477-10-10s4.477-10 10-10s10 4.477 10 10m-10 4a4 4 0 1 0 0-8a4 4 0 0 0 0 8" clip-rule="evenodd"/><path d="M21 43c-6.264 0-10.566-.32-13.248-.627c-2.201-.252-3.85-1.903-4.092-4.105C3.34 35.378 3 30.527 3 23s.341-12.378.66-15.268C3.902 5.53 5.55 3.88 7.752 3.627C10.434 3.321 14.736 3 21 3q2.797.002 5.084.076c.85.266 3.579 1.354 7.52 5.218c3.719 3.646 4.917 6.233 5.268 7.213q.06 1.61.094 3.493"/><path d="M38.886 15.958c-2.087.311-5.841.072-8.69-.191a4.664 4.664 0 0 1-4.229-4.211c-.268-2.802-.506-6.466-.18-8.488"/></svg>
+        </div>
+        <h3>Smart Doctor Search</h3>
+        <p>Filter by specialty, city, availability and ratings to find exactly who you need.</p>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon-box">
+          <svg viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M13.752 1.01a25 25 0 0 1 1.496 0c2.306.071 3.665 1.937 3.724 4.001v.03Q21.294 5.001 24 5q2.708.001 5.027.041l.001-.03c.059-2.064 1.418-3.93 3.724-4a25 25 0 0 1 1.496 0c2.306.07 3.665 1.936 3.724 4l.01.355q1.045.064 1.91.127c3.517.259 6.293 2.943 6.596 6.489c.257 3 .512 7.596.512 14.018s-.255 11.019-.512 14.018c-.303 3.546-3.079 6.23-6.596 6.489C36.612 46.748 31.41 47 24 47s-12.611-.252-15.892-.493c-3.517-.259-6.293-2.943-6.596-6.489C1.255 37.018 1 32.422 1 26s.255-11.019.512-14.018c.303-3.546 3.079-6.23 6.596-6.489q.866-.063 1.91-.127l.01-.355c.059-2.064 1.418-3.93 3.724-4m-3.698 8.362q-.9.054-1.652.11c-1.59.117-2.772 1.284-2.905 2.84C5.251 15.202 5 19.684 5 26s.25 10.799.497 13.677c.133 1.557 1.315 2.724 2.905 2.84C11.577 42.752 16.68 43 24 43s12.423-.249 15.598-.482c1.59-.117 2.772-1.284 2.905-2.84c.246-2.88.497-7.362.497-13.678s-.25-10.799-.497-13.677c-.133-1.557-1.315-2.724-2.905-2.84q-.752-.057-1.652-.111c-.206 1.906-1.536 3.551-3.698 3.617a25 25 0 0 1-1.496 0c-2.286-.07-3.642-1.904-3.722-3.947A294 294 0 0 0 24 9q-2.714 0-5.03.042c-.08 2.043-1.436 3.878-3.722 3.947a25 25 0 0 1-1.496 0c-2.162-.066-3.492-1.71-3.698-3.617M10.25 24A2.75 2.75 0 0 1 13 21.25h22a2.75 2.75 0 1 1 0 5.5H13A2.75 2.75 0 0 1 10.25 24M13 31.25a2.75 2.75 0 1 0 0 5.5h11a2.75 2.75 0 1 0 0-5.5z" clip-rule="evenodd"/></svg>
+        </div>
+        <h3>Instant Booking</h3>
+        <p>Reserve your slot in seconds — no phone calls needed.</p>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon-box">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" xmlns="http://www.w3.org/2000/svg"><path d="M11 22h10m-10-9h24m-6.909 22.32c.102-1.751 1.319-2.991 3.067-3.131C32.462 32.084 34.338 32 37 32c2.8 0 4.72.093 6.015.205c1.605.139 2.739 1.255 2.86 2.862c.072.944.125 2.222.125 3.933s-.053 2.989-.125 3.933c-.121 1.607-1.255 2.723-2.86 2.862C41.72 45.907 39.8 46 37 46s-4.72-.093-6.015-.205c-1.605-.139-2.738-1.255-2.86-2.862A53 53 0 0 1 28 39c0-1.563.038-2.764.091-3.68"/><path d="m41.892 32.124l-.135-3.544a4.76 4.76 0 0 0-9.513 0l-.135 3.543M37 38v2"/><path d="m22.5 38l-7.198 6.17C14.004 45.282 12 44.36 12 42.652v-4.857a166 166 0 0 1-4.752-.258c-2.55-.177-4.539-2.081-4.762-4.627C2.24 30.12 2 25.885 2 20s.24-10.121.486-12.91c.223-2.546 2.212-4.45 4.762-4.627C10.475 2.238 15.628 2 23 2s12.525.238 15.752.463c2.55.177 4.539 2.081 4.762 4.627C43.76 9.88 44 14.115 44 20q0 .508-.002 1l-.002.26"/></svg>
+        </div>
+        <h3>Secure &amp; Private</h3>
+        <p>End-to-end encrypted data. HIPAA-compliant infrastructure.</p>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon-box">
+          <svg viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M23.998 1.5c-7.238 0-12.314.226-15.513.442C5.09 2.17 2.293 4.67 1.978 8.127c-.245 2.699-.482 6.76-.482 12.376s.237 9.678.482 12.376c.315 3.458 3.112 5.957 6.507 6.186c2.289.155 5.538.314 9.852.392a2 2 0 0 0 .073-4c-4.252-.076-7.436-.233-9.656-.383c-1.584-.107-2.67-1.204-2.792-2.557c-.233-2.57-.466-6.51-.466-12.014s.233-9.443.466-12.014c.123-1.352 1.208-2.45 2.792-2.557c3.103-.209 8.09-.432 15.244-.432c7.155 0 12.142.223 15.245.432c1.583.107 2.669 1.205 2.792 2.557c.233 2.57.466 6.511.466 12.014a2 2 0 0 0 4 0c0-5.615-.238-9.677-.483-12.376c-.314-3.457-3.112-5.956-6.506-6.185c-3.2-.216-8.276-.442-15.514-.442m3.466 18.64A5 5 0 0 1 31 18.676c1.381 0 2.632.56 3.536 1.464c1.278 0 2.558.488 3.535 1.465a5 5 0 0 1 1.465 3.535A5 5 0 0 1 41 28.676c0 1.38-.56 2.631-1.464 3.535a5 5 0 0 1-1.465 3.536c-.6.6-1.315 1.015-2.074 1.247c.014 2.15-.026 4.796-.2 7.647c-.103 1.711-2.147 2.462-3.355 1.303L31 44.561l-1.442 1.383c-1.208 1.159-3.252.408-3.356-1.303a115 115 0 0 1-.2-7.647a5 5 0 0 1-2.073-1.247a5 5 0 0 1-1.464-3.536A5 5 0 0 1 21 28.676c0-1.381.56-2.632 1.465-3.536c0-1.278.487-2.559 1.464-3.535a5 5 0 0 1 3.536-1.465M31 25.223a3.5 3.5 0 1 0 0 7a3.5 3.5 0 0 0 0-7M10.283 12a2 2 0 0 1 2-2h20.503a2 2 0 0 1 0 4H12.282a2 2 0 0 1-2-2m2 4.617a2 2 0 1 0 0 4h5.858a2 2 0 1 0 0-4z" clip-rule="evenodd"/></svg>
+        </div>
+        <h3>Verified Reviews</h3>
+        <p>Authentic patient reviews to guide your healthcare decisions.</p>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon-box">
+          <svg viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M.5 18.3C.5 11.102 6.241 4 14.904 4c3.35 0 5.983 1.104 7.768 2.2c.51.313.953.627 1.328.917c.375-.29.818-.604 1.328-.917A14.8 14.8 0 0 1 33.096 4h.024c8.425.1 14.38 7.06 14.38 14.3c0 5.782-2.695 10.662-6.429 14.69c-3.722 4.014-8.59 7.311-13.243 9.988a7.68 7.68 0 0 1-7.657 0c-4.653-2.677-9.52-5.973-13.242-9.988C3.195 28.96.5 24.082.5 18.3M14.904 7.982C8.682 7.982 4.5 13.064 4.5 18.3c0 4.457 2.058 8.418 5.368 11.989c3.323 3.584 7.79 6.645 12.305 9.241c1.13.65 2.524.65 3.654 0c4.514-2.596 8.982-5.657 12.305-9.241c3.31-3.571 5.368-7.532 5.368-11.989c0-5.19-4.32-10.239-10.416-10.318c-2.433.003-4.343.8-5.657 1.607a10.5 10.5 0 0 0-1.486 1.098a7 7 0 0 0-.354.336c-.435.445-.935.766-1.587.766c-.639 0-1.207-.378-1.587-.766a7 7 0 0 0-.354-.336a10.5 10.5 0 0 0-1.486-1.098a10.76 10.76 0 0 0-5.67-1.607m16.241 8.024a2 2 0 0 0-3.654.115l-3.602 8.847l-2.97-6.467a2 2 0 0 0-3.507-.235l-2.528 3.992H10.64a2 2 0 0 0 0 4h5.343a2 2 0 0 0 1.69-.93l1.147-1.811l3.362 7.318a2 2 0 0 0 3.67-.08l3.646-8.957l1.606 3.329a2 2 0 0 0 1.801 1.13h4.453a2 2 0 0 0 0-4h-3.197z" clip-rule="evenodd"/></svg>
+        </div>
+        <h3>Multiple Specialties</h3>
+        <p>Cardiology, dermatology, pediatrics, neurology, and 30+ more.</p>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon-box">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" xmlns="http://www.w3.org/2000/svg"><path d="M26.195 29.58c.146-1.652 1.173-2.97 2.815-3.202C30.448 26.175 32.656 26 36 26s5.552.175 6.99.378c1.642.232 2.67 1.55 2.814 3.202A51 51 0 0 1 46 34c0 4.514-2.383 8.738-6.396 10.804C38.263 45.494 36.954 46 36 46s-2.263-.506-3.604-1.196C28.382 42.738 26 38.514 26 34c0-1.708.091-3.233.195-4.42"/><path d="m32.5 34.767l3.294 3.733l4.706-7m-17.553-7.673A11 11 0 0 0 29 14c0-6.075-4.925-11-11-11S7 7.925 7 14a11 11 0 0 0 6.053 9.827c-5.017 1.736-8.818 6.038-9.803 11.319c-.318 1.706.675 3.1 2.397 3.323C7.742 38.74 11.457 39 18 39q1.611 0 3-.02"/></svg>
+        </div>
+        <h3>Manage Your Profile</h3>
+        <p>Track appointments, medical history and upcoming visits from one dashboard.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<!-- HOW IT WORKS                                                         -->
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<section class="section how-it-works-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Process</span>
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-subtitle">Book your appointment in 3 simple steps</p>
+    </div>
+    <div class="steps-row">
+
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <h3>Create an Account</h3>
+        <p>Sign up for free in under a minute. No credit card required.</p>
+      </div>
+
+      <div class="step-connector">
+        <svg viewBox="0 0 40 16" fill="none"><path d="M0 8h36" stroke="#2caea9" stroke-width="1.5" stroke-dasharray="4 3"/><path d="M30 2l8 6-8 6" stroke="#2caea9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="step-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <h3>Find Your Doctor</h3>
+        <p>Search by specialty, city or name and browse verified profiles.</p>
+      </div>
+
+      <div class="step-connector">
+        <svg viewBox="0 0 40 16" fill="none"><path d="M0 8h36" stroke="#2caea9" stroke-width="1.5" stroke-dasharray="4 3"/><path d="M30 2l8 6-8 6" stroke="#2caea9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="step-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h3>Book &amp; Confirm</h3>
+        <p>Pick a time slot and receive instant confirmation of your appointment.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<!-- TOP 3 DOCTORS                                                        -->
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<section class="section doctors-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Top Rated</span>
+      <h2 class="section-title">Our Featured Doctors</h2>
+      <p class="section-subtitle">Highly rated specialists trusted by thousands of patients across Algeria</p>
+    </div>
+    <div class="doctors-grid">
+
+      <!-- Doctor Card 1 -->
+      <div class="doctor-card">
+        <div class="doctor-photo-slot">
+          <!-- Replace src with doctor photo -->
+          <img src="/images/doctor-1.jpg" alt="Dr. Amira Benali" class="doctor-photo-img" onerror="this.style.display='none'">
+          <div class="doctor-photo-fallback">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+        </div>
+        <div class="doctor-info">
+          <div class="doctor-rating">
+            <svg class="star-svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>4.9</span>
+            <span class="review-count">· 284 reviews</span>
+          </div>
+          <h3 class="doctor-name">Dr. Amira Benali</h3>
+          <span class="doctor-specialty">Cardiologist</span>
+          <div class="doctor-meta">
+            <span class="doctor-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Algiers
+            </span>
+            <span class="doctor-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              12 yrs exp.
+            </span>
+          </div>
+          <a routerLink="/doctors" class="doctor-btn">View Profile</a>
+        </div>
+      </div>
+
+      <!-- Doctor Card 2 (featured) -->
+      <div class="doctor-card doctor-card-featured">
+        <div class="featured-label">Most Booked</div>
+        <div class="doctor-photo-slot">
+          <!-- Replace src with doctor photo -->
+          <img src="/images/doctor-2.jpg" alt="Dr. Karim Chikhi" class="doctor-photo-img" onerror="this.style.display='none'">
+          <div class="doctor-photo-fallback doctor-photo-fallback-light">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+        </div>
+        <div class="doctor-info">
+          <div class="doctor-rating" style="color:rgba(255,255,255,0.9)">
+            <svg class="star-svg" viewBox="0 0 24 24" fill="#ffd700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>5.0</span>
+            <span class="review-count" style="color:rgba(255,255,255,0.6)">· 412 reviews</span>
+          </div>
+          <h3 class="doctor-name" style="color:white">Dr. Karim Chikhi</h3>
+          <span class="doctor-specialty" style="background:rgba(255,255,255,0.2);color:white">Neurologist</span>
+          <div class="doctor-meta">
+            <span class="doctor-meta-item" style="color:rgba(255,255,255,0.75)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Oran
+            </span>
+            <span class="doctor-meta-item" style="color:rgba(255,255,255,0.75)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              18 yrs exp.
+            </span>
+          </div>
+          <a routerLink="/doctors" class="doctor-btn doctor-btn-white">View Profile</a>
+        </div>
+      </div>
+
+      <!-- Doctor Card 3 -->
+      <div class="doctor-card">
+        <div class="doctor-photo-slot">
+          <!-- Replace src with doctor photo -->
+          <img src="/images/doctor-3.jpg" alt="Dr. Leila Hadjadj" class="doctor-photo-img" onerror="this.style.display='none'">
+          <div class="doctor-photo-fallback">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+        </div>
+        <div class="doctor-info">
+          <div class="doctor-rating">
+            <svg class="star-svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>4.8</span>
+            <span class="review-count">· 197 reviews</span>
+          </div>
+          <h3 class="doctor-name">Dr. Leila Hadjadj</h3>
+          <span class="doctor-specialty">Dermatologist</span>
+          <div class="doctor-meta">
+            <span class="doctor-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Constantine
+            </span>
+            <span class="doctor-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              9 yrs exp.
+            </span>
+          </div>
+          <a routerLink="/doctors" class="doctor-btn">View Profile</a>
+        </div>
+      </div>
+
+    </div>
+    <div class="section-cta">
+      <a routerLink="/doctors" class="btn-outline">View All Doctors →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<!-- TOP 3 CITIES                                                         -->
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<section class="section cities-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Coverage</span>
+      <h2 class="section-title">Top Cities</h2>
+      <p class="section-subtitle">DocLine is active across Algeria's major cities with hundreds of verified specialists</p>
+    </div>
+    <div class="cities-grid">
+
+      <div class="city-card">
+        <!-- Replace src with an Algiers city photo -->
+        <img src="/images/city-algiers.jpg" alt="Algiers" class="city-bg-img" onerror="this.style.display='none'">
+        <div class="city-overlay"></div>
+        <div class="city-content">
+          <h3 class="city-name">Algiers</h3>
+          <p class="city-count">85+ Doctors</p>
+          <a routerLink="/doctors" class="city-link">Explore →</a>
+        </div>
+      </div>
+
+      <div class="city-card city-card-featured">
+        <!-- Replace src with an Oran city photo -->
+        <img src="/images/city-oran.jpg" alt="Oran" class="city-bg-img" onerror="this.style.display='none'">
+        <div class="city-overlay"></div>
+        <div class="city-content">
+          <h3 class="city-name">Oran</h3>
+          <p class="city-count">60+ Doctors</p>
+          <a routerLink="/doctors" class="city-link">Explore →</a>
+        </div>
+      </div>
+
+      <div class="city-card">
+        <!-- Replace src with a Constantine city photo -->
+        <img src="/images/city-constantine.jpg" alt="Constantine" class="city-bg-img" onerror="this.style.display='none'">
+        <div class="city-overlay"></div>
+        <div class="city-content">
+          <h3 class="city-name">Constantine</h3>
+          <p class="city-count">45+ Doctors</p>
+          <a routerLink="/doctors" class="city-link">Explore →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<!-- STATS BANNER                                                         -->
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<section class="stats-banner-section">
+  <div class="container">
+    <div class="stats-banner-grid">
+      <div class="stat-banner-item">
+        <span class="stat-banner-num">50,000+</span>
+        <span class="stat-banner-label">Registered Patients</span>
+      </div>
+      <div class="stat-banner-item">
+        <span class="stat-banner-num">200+</span>
+        <span class="stat-banner-label">Verified Doctors</span>
+      </div>
+      <div class="stat-banner-item">
+        <span class="stat-banner-num">30+</span>
+        <span class="stat-banner-label">Specialties</span>
+      </div>
+      <div class="stat-banner-item">
+        <span class="stat-banner-num">48</span>
+        <span class="stat-banner-label">Wilayas Covered</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<!-- REVIEWS                                                              -->
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<section class="section reviews-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Testimonials</span>
+      <h2 class="section-title">What Our Patients Say</h2>
+      <p class="section-subtitle">Real stories from real patients who found the care they deserved</p>
+    </div>
+    <div class="reviews-grid">
+
+      <div class="review-card">
+        <div class="review-quote-mark">"</div>
+        <p class="review-text">DocLine made it incredibly easy to find a cardiologist near me. I booked in under 2 minutes and got an appointment the next day. Highly recommend!</p>
+        <div class="review-footer">
+          <div class="reviewer-photo-wrap">
+            <!-- Replace src with reviewer photo -->
+            <img src="/images/reviewer-1.jpg" alt="Mohamed Zerrouki" class="reviewer-photo" onerror="this.style.display='none'">
+            <div class="reviewer-fallback" style="background:#2caea9">M</div>
+          </div>
+          <div>
+            <div class="reviewer-name">Mohamed Zerrouki</div>
+            <div class="reviewer-meta">Patient · Algiers</div>
+          </div>
+          <div class="review-stars-sm">★★★★★</div>
+        </div>
+      </div>
+
+      <div class="review-card review-card-featured">
+        <div class="review-quote-mark" style="color:rgba(255,255,255,0.2)">"</div>
+        <p class="review-text" style="color:rgba(255,255,255,0.9)">As a doctor, DocLine has completely transformed how I manage my appointments. The dashboard is clean, the booking system is seamless, and my patients love it.</p>
+        <div class="review-footer">
+          <div class="reviewer-photo-wrap">
+            <!-- Replace src with reviewer photo -->
+            <img src="/images/reviewer-2.jpg" alt="Dr. Samia Belkaid" class="reviewer-photo" onerror="this.style.display='none'">
+            <div class="reviewer-fallback" style="background:rgba(255,255,255,0.25);color:white">S</div>
+          </div>
+          <div>
+            <div class="reviewer-name" style="color:white">Dr. Samia Belkaid</div>
+            <div class="reviewer-meta" style="color:rgba(255,255,255,0.6)">Doctor · Oran</div>
+          </div>
+          <div class="review-stars-sm" style="color:#ffd700">★★★★★</div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-quote-mark">"</div>
+        <p class="review-text">I was skeptical at first, but after using DocLine for my family's healthcare needs, I can't imagine going back to the old way. It's a game changer for Algeria.</p>
+        <div class="review-footer">
+          <div class="reviewer-photo-wrap">
+            <!-- Replace src with reviewer photo -->
+            <img src="/images/reviewer-3.jpg" alt="Fatima Amrouche" class="reviewer-photo" onerror="this.style.display='none'">
+            <div class="reviewer-fallback" style="background:#1a8a85">F</div>
+          </div>
+          <div>
+            <div class="reviewer-name">Fatima Amrouche</div>
+            <div class="reviewer-meta">Patient · Constantine</div>
+          </div>
+          <div class="review-stars-sm">★★★★★</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<!-- CTA SECTION                                                          -->
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="cta-bg-pattern"></div>
+  <div class="container cta-container">
+    <div class="cta-content">
+      <h2 class="cta-title">Ready to Take Control of Your Health?</h2>
+      <p class="cta-subtitle">Join over 50,000 Algerians who trust DocLine for their healthcare journey.</p>
+      <div class="cta-actions">
+        <a routerLink="/auth/register" class="btn-primary-hero">Create Free Account</a>
+        <a routerLink="/doctors" class="btn-ghost">Browse Doctors</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<!-- FOOTER                                                               -->
+<!-- ─────────────────────────────────────────────────────────────────── -->
+<app-footer></app-footer>
