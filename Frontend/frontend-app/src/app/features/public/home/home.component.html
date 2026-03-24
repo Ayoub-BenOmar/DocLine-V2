@@ -138,41 +138,42 @@
       <h2 class="section-title">How It Works</h2>
       <p class="section-subtitle">Book your appointment in 3 simple steps</p>
     </div>
-    <div class="steps-row">
+  </div>
+
+  <div class="steps-grid-wrapper-wide">
+    <div class="steps-grid">
 
       <div class="step-card">
-        <div class="step-num">01</div>
-        <div class="step-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <div class="step-content">
+          <div class="step-badge">Step 1</div>
+          <h3>Create an Account</h3>
+          <p>Sign up for free in under a minute. No credit card required.</p>
         </div>
-        <h3>Create an Account</h3>
-        <p>Sign up for free in under a minute. No credit card required.</p>
-      </div>
-
-      <div class="step-connector">
-        <svg viewBox="0 0 40 16" fill="none"><path d="M0 8h36" stroke="#2caea9" stroke-width="1.5" stroke-dasharray="4 3"/><path d="M30 2l8 6-8 6" stroke="#2caea9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-
-      <div class="step-card">
-        <div class="step-num">02</div>
-        <div class="step-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <div class="step-img-box">
+          <img src="/create account.jpg" alt="Create an Account illustration">
         </div>
-        <h3>Find Your Doctor</h3>
-        <p>Search by specialty, city or name and browse verified profiles.</p>
-      </div>
-
-      <div class="step-connector">
-        <svg viewBox="0 0 40 16" fill="none"><path d="M0 8h36" stroke="#2caea9" stroke-width="1.5" stroke-dasharray="4 3"/><path d="M30 2l8 6-8 6" stroke="#2caea9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
 
       <div class="step-card">
-        <div class="step-num">03</div>
-        <div class="step-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="20 6 9 17 4 12"/></svg>
+        <div class="step-content">
+          <div class="step-badge">Step 2</div>
+          <h3>Find Your Doctor</h3>
+          <p>Search by specialty, city or name and browse verified profiles.</p>
         </div>
-        <h3>Book &amp; Confirm</h3>
-        <p>Pick a time slot and receive instant confirmation of your appointment.</p>
+        <div class="step-img-box">
+          <img src="/find doctor.png" alt="Find Your Doctor illustration">
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-content">
+          <div class="step-badge">Step 3</div>
+          <h3>Book &amp; Confirm</h3>
+          <p>Pick a time slot and receive instant confirmation of your appointment.</p>
+        </div>
+        <div class="step-img-box">
+          <img src="/confirm and book.jpg" alt="Book and Confirm illustration">
+        </div>
       </div>
 
     </div>
@@ -182,121 +183,17 @@
 <!-- ─────────────────────────────────────────────────────────────────── -->
 <!-- TOP 3 DOCTORS                                                        -->
 <!-- ─────────────────────────────────────────────────────────────────── -->
-<section class="section doctors-section">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-tag">Top Rated</span>
-      <h2 class="section-title">Our Featured Doctors</h2>
-      <p class="section-subtitle">Highly rated specialists trusted by thousands of patients across Algeria</p>
-    </div>
-    <div class="doctors-grid">
 
-      <!-- Doctor Card 1 -->
-      <div class="doctor-card">
-        <div class="doctor-photo-slot">
-          <!-- Replace src with doctor photo -->
-          <img src="/images/doctor-1.jpg" alt="Dr. Amira Benali" class="doctor-photo-img" onerror="this.style.display='none'">
-          <div class="doctor-photo-fallback">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </div>
-        </div>
-        <div class="doctor-info">
-          <div class="doctor-rating">
-            <svg class="star-svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <span>4.9</span>
-            <span class="review-count">· 284 reviews</span>
-          </div>
-          <h3 class="doctor-name">Dr. Amira Benali</h3>
-          <span class="doctor-specialty">Cardiologist</span>
-          <div class="doctor-meta">
-            <span class="doctor-meta-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              Algiers
-            </span>
-            <span class="doctor-meta-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-              12 yrs exp.
-            </span>
-          </div>
-          <a routerLink="/doctors" class="doctor-btn">View Profile</a>
-        </div>
-      </div>
-
-      <!-- Doctor Card 2 (featured) -->
-      <div class="doctor-card doctor-card-featured">
-        <div class="featured-label">Most Booked</div>
-        <div class="doctor-photo-slot">
-          <!-- Replace src with doctor photo -->
-          <img src="/images/doctor-2.jpg" alt="Dr. Karim Chikhi" class="doctor-photo-img" onerror="this.style.display='none'">
-          <div class="doctor-photo-fallback doctor-photo-fallback-light">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </div>
-        </div>
-        <div class="doctor-info">
-          <div class="doctor-rating" style="color:rgba(255,255,255,0.9)">
-            <svg class="star-svg" viewBox="0 0 24 24" fill="#ffd700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <span>5.0</span>
-            <span class="review-count" style="color:rgba(255,255,255,0.6)">· 412 reviews</span>
-          </div>
-          <h3 class="doctor-name" style="color:white">Dr. Karim Chikhi</h3>
-          <span class="doctor-specialty" style="background:rgba(255,255,255,0.2);color:white">Neurologist</span>
-          <div class="doctor-meta">
-            <span class="doctor-meta-item" style="color:rgba(255,255,255,0.75)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              Oran
-            </span>
-            <span class="doctor-meta-item" style="color:rgba(255,255,255,0.75)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-              18 yrs exp.
-            </span>
-          </div>
-          <a routerLink="/doctors" class="doctor-btn doctor-btn-white">View Profile</a>
-        </div>
-      </div>
-
-      <!-- Doctor Card 3 -->
-      <div class="doctor-card">
-        <div class="doctor-photo-slot">
-          <!-- Replace src with doctor photo -->
-          <img src="/images/doctor-3.jpg" alt="Dr. Leila Hadjadj" class="doctor-photo-img" onerror="this.style.display='none'">
-          <div class="doctor-photo-fallback">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </div>
-        </div>
-        <div class="doctor-info">
-          <div class="doctor-rating">
-            <svg class="star-svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <span>4.8</span>
-            <span class="review-count">· 197 reviews</span>
-          </div>
-          <h3 class="doctor-name">Dr. Leila Hadjadj</h3>
-          <span class="doctor-specialty">Dermatologist</span>
-          <div class="doctor-meta">
-            <span class="doctor-meta-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              Constantine
-            </span>
-            <span class="doctor-meta-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-              9 yrs exp.
-            </span>
-          </div>
-          <a routerLink="/doctors" class="doctor-btn">View Profile</a>
-        </div>
-      </div>
-
-    </div>
-    <div class="section-cta">
-      <a routerLink="/doctors" class="btn-outline">View All Doctors →</a>
-    </div>
-  </div>
-</section>
 
 <!-- ─────────────────────────────────────────────────────────────────── -->
 <!-- TOP 3 CITIES                                                         -->
 <!-- ─────────────────────────────────────────────────────────────────── -->
 <section class="section cities-section">
-  <div class="container">
+  <div class="cities-bg">
+    <img src="/world.png" alt="World Map" class="world-bg-img">
+    <div class="cities-overlay"></div>
+  </div>
+  <div class="container relatives">
     <div class="section-header">
       <span class="section-tag">Coverage</span>
       <h2 class="section-title">Top Cities</h2>
@@ -305,36 +202,18 @@
     <div class="cities-grid">
 
       <div class="city-card">
-        <!-- Replace src with an Algiers city photo -->
-        <img src="/images/city-algiers.jpg" alt="Algiers" class="city-bg-img" onerror="this.style.display='none'">
-        <div class="city-overlay"></div>
-        <div class="city-content">
-          <h3 class="city-name">Algiers</h3>
-          <p class="city-count">85+ Doctors</p>
-          <a routerLink="/doctors" class="city-link">Explore →</a>
-        </div>
+        <h3 class="city-name">Algiers</h3>
+        <p class="city-count">85+ Doctors</p>
       </div>
 
-      <div class="city-card city-card-featured">
-        <!-- Replace src with an Oran city photo -->
-        <img src="/images/city-oran.jpg" alt="Oran" class="city-bg-img" onerror="this.style.display='none'">
-        <div class="city-overlay"></div>
-        <div class="city-content">
-          <h3 class="city-name">Oran</h3>
-          <p class="city-count">60+ Doctors</p>
-          <a routerLink="/doctors" class="city-link">Explore →</a>
-        </div>
+      <div class="city-cardfeatured">
+        <h3 class="city-name">Oran</h3>
+        <p class="city-count">60+ Doctors</p>
       </div>
 
       <div class="city-card">
-        <!-- Replace src with a Constantine city photo -->
-        <img src="/images/city-constantine.jpg" alt="Constantine" class="city-bg-img" onerror="this.style.display='none'">
-        <div class="city-overlay"></div>
-        <div class="city-content">
-          <h3 class="city-name">Constantine</h3>
-          <p class="city-count">45+ Doctors</p>
-          <a routerLink="/doctors" class="city-link">Explore →</a>
-        </div>
+        <h3 class="city-name">Constantine</h3>
+        <p class="city-count">45+ Doctors</p>
       </div>
 
     </div>
@@ -396,20 +275,20 @@
         </div>
       </div>
 
-      <div class="review-card review-card-featured">
-        <div class="review-quote-mark" style="color:rgba(255,255,255,0.2)">"</div>
-        <p class="review-text" style="color:rgba(255,255,255,0.9)">As a doctor, DocLine has completely transformed how I manage my appointments. The dashboard is clean, the booking system is seamless, and my patients love it.</p>
+      <div class="review-card">
+        <div class="review-quote-mark">"</div>
+        <p class="review-text">As a doctor, DocLine has completely transformed how I manage my appointments. The dashboard is clean, the booking system is seamless, and my patients love it.</p>
         <div class="review-footer">
           <div class="reviewer-photo-wrap">
             <!-- Replace src with reviewer photo -->
             <img src="/images/reviewer-2.jpg" alt="Dr. Samia Belkaid" class="reviewer-photo" onerror="this.style.display='none'">
-            <div class="reviewer-fallback" style="background:rgba(255,255,255,0.25);color:white">S</div>
+            <div class="reviewer-fallback" style="background:#2caea9">S</div>
           </div>
           <div>
-            <div class="reviewer-name" style="color:white">Dr. Samia Belkaid</div>
-            <div class="reviewer-meta" style="color:rgba(255,255,255,0.6)">Doctor · Oran</div>
+            <div class="reviewer-name">Dr. Samia Belkaid</div>
+            <div class="reviewer-meta">Doctor · Oran</div>
           </div>
-          <div class="review-stars-sm" style="color:#ffd700">★★★★★</div>
+          <div class="review-stars-sm">★★★★★</div>
         </div>
       </div>
 
