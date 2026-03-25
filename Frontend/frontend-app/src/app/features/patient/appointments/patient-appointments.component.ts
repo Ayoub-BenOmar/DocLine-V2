@@ -24,6 +24,7 @@ export class PatientAppointmentsComponent implements OnInit {
     // Modal data
     showBookingModal = false;
     selectedDoctor: any = null;
+    rescheduleAppointmentId: number | null = null;
     availableSlots: any[] = [];
     bookingData = {
         selectedDate: '',
@@ -317,30 +318,62 @@ export class PatientAppointmentsComponent implements OnInit {
 
         console.log('Booking appointment:', appointmentData);
 
-        this.patientService.bookAppointment(appointmentData).subscribe({
-            next: (response) => {
-                console.log('Appointment booked:', response);
-                this.bookingLoading = false;
-                this.notificationService.success(
-                    'Appointment Confirmed',
-                    `Your appointment with ${this.selectedDoctor?.name} has been successfully booked!`
-                );
-                this.closeBookingModal();
-                this.loadAppointments();
-                this.cdr.detectChanges();
-            },
-            error: (err) => {
-                console.error('Error booking appointment:', err);
-                this.bookingLoading = false;
-                const errorMsg = err.error?.message || 'Please try again';
-                this.notificationService.error(
-                    'Booking Failed',
-                    errorMsg
-                );
-                this.cdr.detectChanges();
-            }
-        });
-    }
+        // Check if this is a reschedule or a new booking
+        if (this.rescheduleAppointmentId) {
+            // Reschedule existing appointment
+            this.patientService.rescheduleAppointment(this.rescheduleAppointmentId, {
+                dateTime: dateTimeStr,
+                reason: this.bookingData.reason
+            }).subscribe({
+                next: (response) => {
+                    console.log('Appointment rescheduled:', response);
+                    this.bookingLoading = false;
+                    this.notificationService.success(
+                        'Appointment Rescheduled',
+                        `Your appointment with ${this.selectedDoctor?.name} has been successfully rescheduled!`
+                    );
+                    this.closeBookingModal();
+                    this.rescheduleAppointmentId = null;
+                    this.loadAppointments();
+                    this.cdr.detectChanges();
+                },
+                error: (err) => {
+                    console.error('Error rescheduling appointment:', err);
+                    this.bookingLoading = false;
+                    const errorMsg = err.error?.message || 'Please try again';
+                    this.notificationService.error(
+                        'Rescheduling Failed',
+                        errorMsg
+                    );
+                    this.cdr.detectChanges();
+                }
+            });
+        } else {
+            // Book new appointment
+            this.patientService.bookAppointment(appointmentData).subscribe({
+                next: (response) => {
+                    console.log('Appointment booked:', response);
+                    this.bookingLoading = false;
+                    this.notificationService.success(
+                        'Appointment Confirmed',
+                        `Your appointment with ${this.selectedDoctor?.name} has been successfully booked!`
+                    );
+                    this.closeBookingModal();
+                    this.loadAppointments();
+                    this.cdr.detectChanges();
+                },
+                error: (err) => {
+                    console.error('Error booking appointment:', err);
+                    this.bookingLoading = false;
+                    const errorMsg = err.error?.message || 'Please try again';
+                    this.notificationService.error(
+                        'Booking Failed',
+                        errorMsg
+                    );
+                    this.cdr.detectChanges();
+                }
+            });
+        }
 
     switchTab(tab: 'upcoming' | 'past'): void {
         console.log('[PatientAppointments] Switching to tab:', tab);
@@ -349,14 +382,48 @@ export class PatientAppointmentsComponent implements OnInit {
     }
 
     cancelAppointment(appointment: any): void {
-        if (confirm(`Are you sure you want to cancel the appointment with ${appointment.doctorName}?`)) {
-            // Call API to cancel appointment
-            console.log('Cancelling appointment:', appointment.id);
+        if (!confirm(`Are you sure you want to cancel the appointment with ${appointment.doctorName}?`)) {
+            return;
         }
+
+        console.log('Cancelling appointment:', appointment.id);
+        this.patientService.cancelAppointment(appointment.id).subscribe({
+            next: (response) => {
+                console.log('Appointment cancelled:', response);
+                this.notificationService.success(
+                    'Appointment Cancelled',
+                    `Your appointment with ${appointment.doctorName} has been cancelled`
+                );
+                this.loadAppointments();
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Error cancelling appointment:', err);
+                const errorMsg = err.error?.message || 'Failed to cancel appointment';
+                this.notificationService.error(
+                    'Cancellation Failed',
+                    errorMsg
+                );
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     rescheduleAppointment(appointment: any): void {
-        this.openBookingModal(appointment.doctorId);
+        this.rescheduleAppointmentId = appointment.id;
+        this.selectedDoctor = {
+            id: appointment.doctorId,
+            name: appointment.doctorName,
+            speciality: appointment.speciality,
+            fees: appointment.fees
+        };
+        this.bookingData = {
+            selectedDate: '',
+            selectedTime: '',
+            reason: appointment.reason
+        };
+        this.showBookingModal = true;
+        this.cdr.detectChanges();
     }
 
     downloadReport(appointment: any): void {
@@ -494,6 +561,38 @@ export class PatientAppointmentsComponent implements OnInit {
         const date = new Date(dateStr);
         const dayOfWeek = date.getDay();
         return dayOfWeek >= 1 && dayOfWeek <= 5;
+    }
+
+    closeBookingModal(): void {
+        this.showBookingModal = false;
+        this.rescheduleAppointmentId = null;
+        this.bookingData = {
+            selectedDate: '',
+            selectedTime: '',
+            reason: ''
+        };
+        this.availableSlots = [];
+        this.cdr.detectChanges();
+    }
+
+    resetBookingForm(): void {
+        this.bookingData = {
+            selectedDate: '',
+            selectedTime: '',
+            reason: ''
+        };
+        this.availableSlots = [];
+    }
+
+    getMinDate(): string {
+        const today = new Date();
+        return today.toISOString().split('T')[0];
+    }
+
+    getMaxDate(): string {
+        const maxDate = new Date();
+        maxDate.setDate(maxDate.getDate() + 30);
+        return maxDate.toISOString().split('T')[0];
     }
 }
 
