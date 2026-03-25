@@ -7,6 +7,7 @@ import { NavbarComponent } from '../../../shared/components/navbar/navbar.compon
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { PublicService, City, Specialty, Doctor } from '../../../core/services/public.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { PatientService } from '../../patient/services/patient.service';
 
 @Component({
@@ -53,6 +54,7 @@ export class DoctorsComponent implements OnInit {
         private publicService: PublicService,
         private authService: AuthService,
         private patientService: PatientService,
+        private notificationService: NotificationService,
         private router: Router,
         private cdr: ChangeDetectorRef
     ) { }
@@ -62,6 +64,8 @@ export class DoctorsComponent implements OnInit {
         this.loading = true;
         this.cdr.detectChanges();
 
+        console.log('[PublicDoctors] Loading data...');
+
         // Load cities, specialties, and doctors in parallel
         forkJoin({
             cities: this.publicService.getAllCities(),
@@ -69,7 +73,7 @@ export class DoctorsComponent implements OnInit {
             doctors: this.publicService.getAllDoctors(undefined, undefined, 0, this.pageSize)
         }).subscribe({
             next: (result) => {
-                console.log('All data loaded successfully:', result);
+                console.log('[PublicDoctors] All data loaded successfully:', result);
                 this.cities = result.cities;
                 this.specialties = result.specialties;
                 this.doctors = result.doctors.content;
@@ -79,7 +83,9 @@ export class DoctorsComponent implements OnInit {
                 this.cdr.detectChanges();
             },
             error: (err) => {
-                console.error('Error loading data:', err);
+                console.error('[PublicDoctors] Error loading data:', err);
+                console.error('[PublicDoctors] Status:', err.status);
+                console.error('[PublicDoctors] Error details:', err);
                 this.loading = false;
                 this.cdr.detectChanges();
             }
@@ -144,7 +150,10 @@ export class DoctorsComponent implements OnInit {
         }
 
         if (this.userRole !== 'ROLE_PATIENT') {
-            alert('Only patients can book appointments');
+            this.notificationService.warning(
+                'Access Denied',
+                'Only patients can book appointments'
+            );
             return;
         }
 
@@ -220,7 +229,10 @@ export class DoctorsComponent implements OnInit {
 
         // 1. Check Weekday
         if (!this.isWeekday(this.bookingData.selectedDate)) {
-            alert('❌ Please select a weekday (Monday-Friday)');
+            this.notificationService.warning(
+                'Invalid Date',
+                'Please select a weekday (Monday-Friday)'
+            );
             this.bookingData.selectedDate = '';
             this.availableSlots = [];
             this.cdr.detectChanges();
@@ -249,7 +261,10 @@ export class DoctorsComponent implements OnInit {
         });
 
         if (isUnavailable) {
-            alert('🚫 Doctor is unavailable on this date (Holiday/Emergency). Please choose another date.');
+            this.notificationService.warning(
+                'Doctor Unavailable',
+                'This doctor is unavailable on the selected date. Please choose another date.'
+            );
             this.bookingData.selectedDate = '';
             this.availableSlots = [];
             this.cdr.detectChanges();
@@ -353,7 +368,10 @@ export class DoctorsComponent implements OnInit {
             next: (response) => {
                 console.log('Appointment booked:', response);
                 this.bookingLoading = false;
-                alert('✅ Appointment booked successfully!');
+                this.notificationService.success(
+                    'Appointment Confirmed',
+                    `Your appointment with ${this.selectedDoctor.name} has been successfully booked!`
+                );
                 this.closeBookingModal();
                 this.cdr.detectChanges();
                 // Optionally refresh something?
@@ -361,7 +379,11 @@ export class DoctorsComponent implements OnInit {
             error: (err) => {
                 console.error('Error booking appointment:', err);
                 this.bookingLoading = false;
-                alert('❌ Failed to book: ' + (err.error?.message || 'Unknown error'));
+                const errorMsg = err.error?.message || 'Please try again';
+                this.notificationService.error(
+                    'Booking Failed',
+                    errorMsg
+                );
                 this.cdr.detectChanges();
             }
         });
