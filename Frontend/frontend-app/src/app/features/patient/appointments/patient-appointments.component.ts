@@ -46,14 +46,37 @@ export class PatientAppointmentsComponent implements OnInit {
     loadAppointments(): void {
         this.loading = true;
         this.cdr.detectChanges();
+        console.log('[PatientAppointments] Starting to load appointments...');
 
         this.patientService.getAppointments().subscribe({
             next: (appointments) => {
-                console.log('Appointments loaded:', appointments);
+                console.log('[PatientAppointments] ✅ SUCCESS - Received appointments:', appointments);
+                console.log('[PatientAppointments] Number of appointments:', appointments?.length);
+                console.log('[PatientAppointments] Type of appointments:', typeof appointments);
+                console.log('[PatientAppointments] Is Array?:', Array.isArray(appointments));
+
+                if (!appointments || appointments.length === 0) {
+                    console.warn('[PatientAppointments] ⚠️ No appointments returned from backend');
+                    this.upcomingAppointments = [];
+                    this.pastAppointments = [];
+                    this.loading = false;
+                    this.cdr.detectChanges();
+                    console.log('[PatientAppointments] After detectChanges - upcomingAppointments:', this.upcomingAppointments.length);
+                    return;
+                }
+
                 const now = new Date();
+                console.log('[PatientAppointments] Current time:', now);
 
                 const mappedAppointments = appointments.map((apt: any) => {
                     const aptDate = new Date(apt.dateTime);
+                    console.log('[PatientAppointments] Mapping appointment:', {
+                        originalDate: apt.dateTime,
+                        parsedDate: aptDate,
+                        status: apt.status,
+                        doctorName: apt.doctorName,
+                        dateTimeObj: aptDate
+                    });
                     return {
                         ...apt,
                         date: aptDate.toLocaleDateString(),
@@ -63,18 +86,42 @@ export class PatientAppointmentsComponent implements OnInit {
                     };
                 });
 
-                this.upcomingAppointments = mappedAppointments.filter((apt: any) =>
-                    apt.dateTimeObj >= now && apt.status !== 'COMPLETED' && apt.status !== 'CANCELLED'
-                );
-                this.pastAppointments = mappedAppointments.filter((apt: any) =>
-                    apt.dateTimeObj < now || apt.status === 'COMPLETED' || apt.status === 'CANCELLED'
-                );
+                console.log('[PatientAppointments] Mapped appointments:', mappedAppointments);
+
+                this.upcomingAppointments = mappedAppointments.filter((apt: any) => {
+                    const isUpcoming = apt.status === 'PENDING';
+                    console.log('[PatientAppointments] Filtering upcoming -', {
+                        doctor: apt.doctorName,
+                        status: apt.status,
+                        isUpcoming: isUpcoming
+                    });
+                    return isUpcoming;
+                });
+
+                this.pastAppointments = mappedAppointments.filter((apt: any) => {
+                    const isPast = apt.status === 'COMPLETED' || apt.status === 'CANCELLED';
+                    console.log('[PatientAppointments] Filtering past -', {
+                        doctor: apt.doctorName,
+                        status: apt.status,
+                        isPast: isPast
+                    });
+                    return isPast;
+                });
+
+                console.log('[PatientAppointments] ✅ Final upcoming appointments:', this.upcomingAppointments);
+                console.log('[PatientAppointments] ✅ Final upcoming count:', this.upcomingAppointments.length);
+                console.log('[PatientAppointments] ✅ Final past appointments:', this.pastAppointments);
+                console.log('[PatientAppointments] ✅ Final past count:', this.pastAppointments.length);
 
                 this.loading = false;
                 this.cdr.detectChanges();
+                console.log('[PatientAppointments] After final detectChanges - loading:', this.loading);
             },
             error: (err) => {
-                console.error('Error loading appointments:', err);
+                console.error('[PatientAppointments] ❌ ERROR loading appointments:', err);
+                console.error('[PatientAppointments] Error status:', err.status);
+                console.error('[PatientAppointments] Error message:', err.message);
+                console.error('[PatientAppointments] Full error object:', err);
                 this.upcomingAppointments = [];
                 this.pastAppointments = [];
                 this.loading = false;
@@ -155,9 +202,9 @@ export class PatientAppointmentsComponent implements OnInit {
         this.bookingData.selectedTime = '';
         this.cdr.detectChanges();
 
-        console.log('Fetching slots for doctor:', this.selectedDoctor.id, 'Date:', this.bookingData.selectedDate);
+        console.log('Fetching slots for doctor:', this.selectedDoctor?.id, 'Date:', this.bookingData.selectedDate);
 
-        this.patientService.getDoctorSlots(this.selectedDoctor.id, this.bookingData.selectedDate).subscribe({
+        this.patientService.getDoctorSlots(this.selectedDoctor?.id, this.bookingData.selectedDate).subscribe({
             next: (slots: any[]) => {
                 console.log('Raw slots response:', slots);
                 console.log('Response type:', typeof slots);
@@ -258,7 +305,7 @@ export class PatientAppointmentsComponent implements OnInit {
         }
 
         const appointmentData = {
-            doctorId: this.selectedDoctor.id,
+            doctorId: this.selectedDoctor?.id,
             dateTime: dateTimeStr,
             reason: this.bookingData.reason
         };
@@ -284,6 +331,7 @@ export class PatientAppointmentsComponent implements OnInit {
     }
 
     switchTab(tab: 'upcoming' | 'past'): void {
+        console.log('[PatientAppointments] Switching to tab:', tab);
         this.activeTab = tab;
         this.cdr.detectChanges();
     }
@@ -379,12 +427,10 @@ export class PatientAppointmentsComponent implements OnInit {
 
     getStatusColor(status: string): string {
         switch(status) {
-            case 'CONFIRMED':
-                return 'bg-green-100 text-green-800 border-green-300';
             case 'PENDING':
                 return 'bg-yellow-100 text-yellow-800 border-yellow-300';
             case 'COMPLETED':
-                return 'bg-blue-100 text-blue-800 border-blue-300';
+                return 'bg-green-100 text-green-800 border-green-300';
             case 'CANCELLED':
                 return 'bg-red-100 text-red-800 border-red-300';
             default:
@@ -394,8 +440,6 @@ export class PatientAppointmentsComponent implements OnInit {
 
     getStatusIcon(status: string): string {
         switch(status) {
-            case 'CONFIRMED':
-                return '✅';
             case 'PENDING':
                 return '⏳';
             case 'COMPLETED':
@@ -440,4 +484,6 @@ export class PatientAppointmentsComponent implements OnInit {
         return dayOfWeek >= 1 && dayOfWeek <= 5;
     }
 }
+
+
 
