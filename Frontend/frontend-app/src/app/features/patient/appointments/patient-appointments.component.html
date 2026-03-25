@@ -1,228 +1,215 @@
-<div class="p-6">
-    <h1 class="text-3xl font-bold mb-6 text-gray-800">📋 My Appointments</h1>
+<div class="page-container">
+  <header class="page-header">
+    <h1 class="page-title">Clinical Sessions</h1>
+    <p class="page-subtitle">Track your medical engagements and historical health record.</p>
+  </header>
 
-    <!-- Loading State -->
-    <div *ngIf="loading" class="text-center py-12">
-        <p class="text-gray-600">⏳ Loading your appointments...</p>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex flex-col items-center justify-center py-20">
+    <div class="w-12 h-12 border-4 border-[#2caea9] border-t-transparent rounded-full animate-spin"></div>
+    <span class="text-slate-500 font-medium italic mt-4">Retrieving clinical history...</span>
+  </div>
+
+  <ng-container *ngIf="!loading">
+    <!-- Debug Info -->
+    <div style="background: #0d1117; border: 1px solid #30363d; padding: 12px; margin-bottom: 20px; border-radius: 8px; color: #8b949e; font-size: 12px;">
+      <div>Debug: upcomingAppointments.length = {{ upcomingAppointments.length }}</div>
+      <div>Debug: pastAppointments.length = {{ pastAppointments.length }}</div>
+      <div>Debug: activeTab = {{ activeTab }}</div>
     </div>
 
-    <!-- Tabs -->
-    <div *ngIf="!loading" class="flex gap-4 mb-6 border-b border-gray-200">
-        <button (click)="switchTab('upcoming')"
-            [class]="activeTab === 'upcoming' ? 'border-blue-600 text-blue-600 border-b-2' : 'border-transparent text-gray-600 hover:text-gray-800'"
-            class="pb-3 px-1 font-medium transition">
-            📅 Upcoming ({{ upcomingAppointments.length }})
+    <!-- Filter Tabs (Premium Style) -->
+    <div class="filter-tabs">
+      <button (click)="switchTab('upcoming')" class="tab-btn" [class.active]="activeTab === 'upcoming'">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Active Queue</span>
+        <span class="tab-badge">{{ upcomingAppointments.length }}</span>
+      </button>
+      <button (click)="switchTab('past')" class="tab-btn" [class.active]="activeTab === 'past'">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span>Completed History</span>
+        <span class="tab-badge">{{ pastAppointments.length }}</span>
+      </button>
+    </div>
+
+    <!-- Upcoming Appointments Registry -->
+    <div *ngIf="activeTab === 'upcoming'" class="admin-card animate-in fade-in duration-300">
+      <div *ngIf="upcomingAppointments.length === 0" class="flex flex-col items-center justify-center py-24 text-center">
+        <div class="w-20 h-20 bg-[#0d1117] rounded-3xl flex items-center justify-center mb-6 border border-[#30363d]">
+          <span class="text-3xl">📅</span>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">No Active Engagements</h3>
+        <p class="text-slate-500 max-w-sm mb-8">You don't have any upcoming clinical sessions scheduled at this time.</p>
+        <button routerLink="/doctors" class="btn-action btn-primary py-3 px-8">
+          Find a Specialist
         </button>
-        <button (click)="switchTab('past')"
-            [class]="activeTab === 'past' ? 'border-blue-600 text-blue-600 border-b-2' : 'border-transparent text-gray-600 hover:text-gray-800'"
-            class="pb-3 px-1 font-medium transition">
-            ✓ Past ({{ pastAppointments.length }})
-        </button>
-    </div>
+      </div>
 
-    <!-- Upcoming Appointments Tab -->
-    <div *ngIf="!loading && activeTab === 'upcoming'" class="space-y-4">
-        <div *ngIf="upcomingAppointments.length > 0" class="space-y-4">
-            <div *ngFor="let appointment of upcomingAppointments" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <!-- Doctor Info -->
-                        <div class="md:col-span-2">
-                            <h3 class="text-lg font-bold text-gray-800">{{ appointment.doctorName }}</h3>
-                            <p class="text-sm text-gray-600">{{ appointment.speciality }}</p>
-                            <p class="text-sm text-gray-500 mt-2">Reason: {{ appointment.reason }}</p>
-                        </div>
-
-                        <!-- Date & Time -->
-                        <div class="md:col-span-1">
-                            <p class="text-sm text-gray-600 font-medium">Date & Time</p>
-                            <p class="text-lg font-bold text-gray-800">{{ appointment.date }}</p>
-                            <p class="text-sm text-gray-600">{{ appointment.time }}</p>
-                        </div>
-
-                        <!-- Status & Actions -->
-                        <div class="md:col-span-1 flex flex-col items-start md:items-end justify-between">
-                            <span [class]="getStatusColor(appointment.status)" class="px-3 py-1 rounded-full text-sm font-medium border mb-3">
-                                {{ getStatusIcon(appointment.status) }} {{ appointment.status }}
-                            </span>
-                            <div class="flex gap-2">
-                                <button (click)="rescheduleAppointment(appointment)"
-                                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition">
-                                    📅 Reschedule
-                                </button>
-                                <button (click)="cancelAppointment(appointment)"
-                                    class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition">
-                                    ❌ Cancel
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+      <div *ngIf="upcomingAppointments.length > 0" class="overflow-x-auto">
+        <table class="mini-table">
+          <thead>
+            <tr>
+              <th>Specialist</th>
+              <th>Clinical Protocol</th>
+              <th>Date & Time</th>
+              <th>Status</th>
+              <th class="text-right">Management</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let apt of upcomingAppointments" class="hover:bg-[#0d1117]/50 transition-colors">
+              <td>
+                <div class="flex items-center gap-4">
+                  <div class="avatar-cell">{{ apt.doctorName.charAt(0) }}</div>
+                  <div>
+                    <div class="font-bold text-white">{{ apt.doctorName }}</div>
+                    <div class="text-xs text-slate-500 font-medium">{{ apt.speciality }}</div>
+                  </div>
                 </div>
-            </div>
-        </div>
-
-        <div *ngIf="upcomingAppointments.length === 0" class="bg-white rounded-xl shadow-sm p-12 border border-gray-100 text-center">
-            <p class="text-gray-500 text-lg mb-4">📭 No upcoming appointments</p>
-            <a routerLink="/doctors" class="text-blue-600 hover:underline font-medium">Browse doctors to book an appointment</a>
-        </div>
-    </div>
-
-    <!-- Past Appointments Tab -->
-    <div *ngIf="!loading && activeTab === 'past'" class="space-y-4">
-        <div *ngIf="pastAppointments.length > 0" class="space-y-4">
-            <div *ngFor="let appointment of pastAppointments" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition opacity-75">
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <!-- Doctor Info -->
-                        <div class="md:col-span-2">
-                            <h3 class="text-lg font-bold text-gray-800">{{ appointment.doctorName }}</h3>
-                            <p class="text-sm text-gray-600">{{ appointment.speciality }}</p>
-                            <p class="text-sm text-gray-500 mt-2">Reason: {{ appointment.reason }}</p>
-                        </div>
-
-                        <!-- Date & Time -->
-                        <div class="md:col-span-1">
-                            <p class="text-sm text-gray-600 font-medium">Date & Time</p>
-                            <p class="text-lg font-bold text-gray-800">{{ appointment.date }}</p>
-                            <p class="text-sm text-gray-600">{{ appointment.time }}</p>
-                        </div>
-
-                        <!-- Status -->
-                        <div class="md:col-span-1 flex flex-col items-start md:items-end justify-between">
-                            <span [class]="getStatusColor(appointment.status)" class="px-3 py-1 rounded-full text-sm font-medium border mb-2">
-                                {{ getStatusIcon(appointment.status) }} {{ appointment.status }}
-                            </span>
-
-                            <button *ngIf="appointment.status === 'COMPLETED'"
-                                    (click)="downloadReport(appointment)"
-                                    class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                Download Report
-                            </button>
-                        </div>
-                    </div>
+              </td>
+              <td>
+                <div class="text-sm italic text-slate-400">"{{ apt.reason }}"</div>
+              </td>
+              <td>
+                <div class="font-bold text-slate-200">{{ apt.date }}</div>
+                <div class="text-xs font-black text-[#2caea9] mt-1">{{ apt.time }}</div>
+              </td>
+              <td>
+                <span [class]="'status-pill status-pending'">
+                  PENDING
+                </span>
+              </td>
+              <td class="text-right">
+                <div class="flex justify-end gap-3">
+                  <button (click)="rescheduleAppointment(apt)" class="btn-action btn-secondary">
+                    Reschedule
+                  </button>
+                  <button (click)="cancelAppointment(apt)" class="btn-action btn-danger">
+                    Cancel
+                  </button>
                 </div>
-            </div>
-        </div>
-
-        <div *ngIf="pastAppointments.length === 0" class="bg-white rounded-xl shadow-sm p-12 border border-gray-100 text-center">
-            <p class="text-gray-500 text-lg">✓ No past appointments yet</p>
-        </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- Book New Appointment CTA -->
-    <div *ngIf="!loading" class="mt-8 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl shadow-sm p-6 border border-blue-200">
-        <div class="flex items-center justify-between">
-            <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-2">Ready to book an appointment?</h3>
-                <p class="text-gray-600">Browse our available doctors and schedule your next visit.</p>
-            </div>
-            <a routerLink="/doctors" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition whitespace-nowrap">
-                👨‍⚕️ Browse Doctors
-            </a>
-        </div>
+    <!-- Past History Registry -->
+    <div *ngIf="activeTab === 'past'" class="admin-card animate-in fade-in duration-300">
+      <div *ngIf="pastAppointments.length === 0" class="flex flex-col items-center justify-center py-24 text-center">
+        <p class="text-slate-500 italic">No medical history available in the registry.</p>
+      </div>
+
+      <div *ngIf="pastAppointments.length > 0" class="overflow-x-auto">
+        <table class="mini-table">
+          <thead>
+            <tr>
+              <th>Medical Professional</th>
+              <th>Reason</th>
+              <th>Timeline</th>
+              <th>Result</th>
+              <th class="text-right">Documents</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let apt of pastAppointments" class="opacity-80 hover:opacity-100 transition-opacity">
+              <td class="font-bold text-white">{{ apt.doctorName }}</td>
+              <td class="text-sm text-slate-400">{{ apt.reason }}</td>
+              <td>
+                <div class="text-slate-300">{{ apt.date }}</div>
+                <div class="text-[10px] uppercase font-black text-slate-500">{{ apt.time }}</div>
+              </td>
+              <td>
+                <span [class]="'status-pill ' + (apt.status === 'COMPLETED' ? 'status-completed' : 'status-cancelled')">
+                  {{ apt.status }}
+                </span>
+              </td>
+              <td class="text-right">
+                <button *ngIf="apt.status === 'COMPLETED'" (click)="downloadReport(apt)" class="text-xs font-black text-[#2caea9] uppercase tracking-widest hover:text-white transition flex items-center gap-2 justify-end">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Report
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+  </ng-container>
+
+  <!-- Professional CTA -->
+  <div *ngIf="!loading" class="mt-12 p-10 bg-gradient-to-br from-[#161b22] to-[#0d1117] rounded-[32px] border border-[#30363d] relative overflow-hidden">
+    <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+      <div class="text-center md:text-left">
+        <h3 class="text-2xl font-black text-white mb-3">Initiate New Clinical Protocol</h3>
+        <p class="text-slate-400 max-w-lg">Browse our directory of globally recognized medical specialists and secure your next session instantly.</p>
+      </div>
+      <button routerLink="/doctors" class="btn-premium py-4 px-10 rounded-2xl">
+        👨‍⚕️ Explore Specialists
+      </button>
+    </div>
+    <div class="absolute top-0 right-0 w-64 h-64 bg-[#2caea9] opacity-5 blur-[120px]"></div>
+  </div>
 </div>
 
-<!-- Booking Modal -->
-<div *ngIf="showBookingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <!-- Modal Header -->
-        <div class="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 flex items-center justify-between">
-            <div>
-                <h2 class="text-xl font-bold">🗓️ Book Appointment</h2>
-                <p class="text-sm text-blue-100 mt-1">{{ selectedDoctor?.name }}</p>
-            </div>
-            <button (click)="closeBookingModal()" class="text-2xl hover:text-blue-200 transition">
-                ✕
-            </button>
+<!-- Premium Booking/Reschedule Modal -->
+<div *ngIf="showBookingModal" class="modal-overlay" (click)="closeBookingModal()">
+  <div class="modal-content animate-in zoom-in-95 duration-200" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <div>
+        <div class="text-[#2caea9] text-[10px] font-black uppercase tracking-widest mb-1">Clinical Protocol</div>
+        <h2 class="modal-title">Schedule Session</h2>
+      </div>
+      <button (click)="closeBookingModal()" class="text-slate-500 hover:text-white transition">✕</button>
+    </header>
+
+    <div class="modal-body space-y-8">
+      <div class="p-4 bg-[#0d1117] rounded-2xl border border-[#30363d] flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-[#2caea9] flex items-center justify-center font-bold text-white text-lg">
+          {{ selectedDoctor?.name?.charAt(0) }}
+        </div>
+        <div>
+          <div class="font-bold text-white">{{ selectedDoctor?.name }}</div>
+          <div class="text-xs text-slate-500 font-medium">{{ selectedDoctor?.speciality }} • MAD {{ selectedDoctor?.fees }}</div>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="admin-label">Timeline Date</label>
+          <input type="date" [(ngModel)]="bookingData.selectedDate" (change)="onDateSelected()" [min]="getMinDate()" [max]="getMaxDate()" class="admin-input font-bold">
         </div>
 
-        <!-- Modal Body -->
-        <div class="p-6 space-y-6">
-            <!-- Doctor Summary -->
-            <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                <p class="text-sm text-gray-600">
-                    <span class="font-medium">Speciality:</span> {{ selectedDoctor?.speciality }}
-                </p>
-                <p class="text-sm text-gray-600">
-                    <span class="font-medium">Consultation Fee:</span> ${{ selectedDoctor?.fees }}
-                </p>
-            </div>
-
-            <!-- Date Selection -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">📅 Select Date (Monday - Friday)</label>
-                <p class="text-xs text-gray-500 mb-2">Available hours: 9:00 AM - 12:00 PM</p>
-                <input
-                    type="date"
-                    [(ngModel)]="bookingData.selectedDate"
-                    (change)="onDateSelected()"
-                    [min]="getMinDate()"
-                    [max]="getMaxDate()"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-
-            <!-- Time Selection -->
-            <div *ngIf="bookingData.selectedDate">
-                <label class="block text-sm font-medium text-gray-700 mb-2">⏰ Select Time</label>
-                <div *ngIf="slotsLoading" class="text-center py-4">
-                    <p class="text-gray-600 text-sm">⏳ Loading available slots...</p>
-                </div>
-                <div *ngIf="!slotsLoading && availableSlots.length > 0" class="grid grid-cols-3 gap-2">
-                    <button
-                        *ngFor="let slot of availableSlots"
-                        [disabled]="!slot.available"
-                        [class.bg-blue-600]="bookingData.selectedTime === slot.time && slot.available"
-                        [class.text-white]="bookingData.selectedTime === slot.time && slot.available"
-                        [class.bg-gray-100]="!slot.available"
-                        [class.text-gray-400]="!slot.available"
-                        [class.bg-white]="bookingData.selectedTime !== slot.time && slot.available"
-                        [class.text-gray-800]="bookingData.selectedTime !== slot.time && slot.available"
-                        [title]="!slot.available ? 'This slot is taken' : 'Available'"
-                        (click)="bookingData.selectedTime = slot.time"
-                        class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium transition hover:border-blue-500 disabled:cursor-not-allowed">
-                        {{ slot.time }}
-                        <span *ngIf="!slot.available" class="ml-1">✕</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Reason -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">📝 Reason for Visit</label>
-                <textarea
-                    [(ngModel)]="bookingData.reason"
-                    placeholder="Describe your symptoms or reason for appointment..."
-                    rows="3"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
-            </div>
-
-            <!-- Price Summary -->
-            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                <div class="flex items-center justify-between">
-                    <span class="text-gray-700 font-medium">Total Cost:</span>
-                    <span class="text-xl font-bold text-blue-600">${{ selectedDoctor?.fees }}</span>
-                </div>
-            </div>
+        <div *ngIf="bookingData.selectedDate">
+          <label class="admin-label">Available Slots</label>
+          <div *ngIf="slotsLoading" class="py-4 text-center text-xs text-slate-500 italic">Synchronizing available slots...</div>
+          <div *ngIf="!slotsLoading" class="slots-grid">
+            <button *ngFor="let slot of availableSlots"
+                    [disabled]="!slot.available"
+                    (click)="bookingData.selectedTime = slot.time"
+                    class="slot-option"
+                    [class.selected]="bookingData.selectedTime === slot.time"
+                    [class.disabled]="!slot.available">
+              {{ slot.time }}
+            </button>
+          </div>
         </div>
 
-        <!-- Modal Footer -->
-        <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 p-6 flex gap-3">
-            <button
-                (click)="closeBookingModal()"
-                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition">
-                ❌ Cancel
-            </button>
-            <button
-                (click)="bookAppointment()"
-                [disabled]="bookingLoading || !bookingData.selectedDate || !bookingData.selectedTime || !bookingData.reason"
-                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed">
-                {{ bookingLoading ? '⏳ Booking...' : '✓ Confirm Booking' }}
-            </button>
+        <div>
+          <label class="admin-label">Clinical Objective</label>
+          <textarea [(ngModel)]="bookingData.reason" rows="3" class="admin-input" placeholder="Explain the reason for this visit..."></textarea>
         </div>
+      </div>
     </div>
-</div>
 
+    <footer class="modal-footer">
+      <button (click)="closeBookingModal()" class="btn-action btn-secondary flex-1 py-3 justify-center">Discard</button>
+      <button (click)="bookAppointment()"
+              [disabled]="bookingLoading || !bookingData.selectedDate || !bookingData.selectedTime || !bookingData.reason"
+              class="btn-action btn-primary flex-1 py-3 justify-center">
+        {{ bookingLoading ? 'Processing...' : 'Secure Session' }}
+      </button>
+    </footer>
+  </div>
+</div>
