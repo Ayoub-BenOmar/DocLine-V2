@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { PatientService, AppointmentResponseDto } from '../services/patient.service';
 import { PublicService } from '../../../core/services/public.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import jsPDF from 'jspdf';
 
 @Component({
@@ -36,7 +37,8 @@ export class PatientAppointmentsComponent implements OnInit {
         private route: ActivatedRoute,
         private patientService: PatientService,
         private publicService: PublicService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private notificationService: NotificationService
     ) { }
 
     ngOnInit(): void {
@@ -277,7 +279,10 @@ export class PatientAppointmentsComponent implements OnInit {
 
     bookAppointment(): void {
         if (!this.bookingData.selectedDate || !this.bookingData.selectedTime || !this.bookingData.reason) {
-            alert('Please fill in all fields');
+            this.notificationService.warning(
+                'Incomplete Form',
+                'Please fill in all fields before submitting'
+            );
             return;
         }
 
@@ -316,7 +321,10 @@ export class PatientAppointmentsComponent implements OnInit {
             next: (response) => {
                 console.log('Appointment booked:', response);
                 this.bookingLoading = false;
-                alert('✅ Appointment booked successfully!');
+                this.notificationService.success(
+                    'Appointment Confirmed',
+                    `Your appointment with ${this.selectedDoctor?.name} has been successfully booked!`
+                );
                 this.closeBookingModal();
                 this.loadAppointments();
                 this.cdr.detectChanges();
@@ -324,7 +332,11 @@ export class PatientAppointmentsComponent implements OnInit {
             error: (err) => {
                 console.error('Error booking appointment:', err);
                 this.bookingLoading = false;
-                alert('❌ Failed to book appointment: ' + (err.error?.message || 'Please try again'));
+                const errorMsg = err.error?.message || 'Please try again';
+                this.notificationService.error(
+                    'Booking Failed',
+                    errorMsg
+                );
                 this.cdr.detectChanges();
             }
         });
