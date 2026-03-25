@@ -115,7 +115,7 @@ export class RegisterComponent implements OnInit {
       lastName: this.lastName,
       email: this.email,
       password: this.password,
-      role: this.userRole === 'doctor' ? 'DOCTOR' : 'PATIENT'
+      role: this.userRole === 'doctor' ? 'ROLE_DOCTOR' : 'ROLE_PATIENT'
     };
 
     if (this.userRole === 'doctor') {

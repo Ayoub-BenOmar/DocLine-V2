@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
+import { NotificationContainerComponent } from '../../../shared/components/notification-container/notification-container.component';
 
 @Component({
     selector: 'app-admin-layout',
     standalone: true,
-    imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
+    imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, NotificationContainerComponent],
     templateUrl: './admin-layout.component.html',
     styleUrl: './admin-layout.component.css'
 })

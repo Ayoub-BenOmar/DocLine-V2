@@ -20,6 +20,7 @@ import org.ayoub.docline.service.DoctorService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,10 +40,38 @@ public class DoctorServiceImpl implements DoctorService {
         Doctor doctor = doctorRepository.findByEmail(doctorEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
 
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = unavailabilityDto.getStartDate();
+        LocalDate endDate = unavailabilityDto.getEndDate();
+
+        // Validate: start date should not be in the past
+        if (startDate.isBefore(today)) {
+            throw new IllegalArgumentException("Start date cannot be in the past");
+        }
+
+        // Validate: end date should not be before start date
+        if (endDate.isBefore(startDate)) {
+            throw new IllegalArgumentException("End date cannot be before start date");
+        }
+
+        // Check for existing pending appointments in the date range
+        LocalDateTime rangeStart = startDate.atStartOfDay();
+        LocalDateTime rangeEnd = endDate.plusDays(1).atStartOfDay();
+
+        List<Appointment> existingAppointments = appointmentRepository
+                .findByDoctorIdAndDateTimeBetween(doctor.getId(), rangeStart, rangeEnd)
+                .stream()
+                .filter(apt -> apt.getStatus() == AppointmentStatus.PENDING)
+                .toList();
+
+        if (!existingAppointments.isEmpty()) {
+            throw new IllegalArgumentException("Cannot set unavailability: You have " + existingAppointments.size() + " pending appointment(s) in this date range");
+        }
+
         Unavailability unavailability = Unavailability.builder()
                 .doctor(doctor)
-                .startDate(unavailabilityDto.getStartDate())
-                .endDate(unavailabilityDto.getEndDate())
+                .startDate(startDate)
+                .endDate(endDate)
                 .reason(unavailabilityDto.getReason())
                 .build();
 
@@ -57,7 +86,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Doctor updateProfile(DoctorProfileDto profileDto, String doctorEmail) {
+    public DoctorProfileDto updateProfile(DoctorProfileDto profileDto, String doctorEmail) {
         Doctor doctor = doctorRepository.findByEmail(doctorEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
 
@@ -76,7 +105,8 @@ public class DoctorServiceImpl implements DoctorService {
             doctor.setCity(city);
         }
 
-        return doctorRepository.save(doctor);
+        doctorRepository.save(doctor);
+        return getProfile(doctorEmail);
     }
 
     @Override
@@ -153,6 +183,7 @@ public class DoctorServiceImpl implements DoctorService {
                 .dateTime(appointment.getDateTime())
                 .status(appointment.getStatus())
                 .reason(appointment.getReason())
+                .doctorId(appointment.getDoctor().getId())
                 .doctorName(appointment.getDoctor().getFullName())
                 .doctorSpeciality(appointment.getDoctor().getSpeciality() != null ? appointment.getDoctor().getSpeciality().getSpecialiteName() : null)
                 .patientId(appointment.getPatient().getId())

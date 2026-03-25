@@ -1,93 +1,97 @@
-<div class="p-6">
-  <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-    <h1 class="text-2xl font-bold text-gray-800">My Appointments</h1>
-
-    <!-- Filter Tabs -->
-    <div class="flex bg-gray-100 p-1 rounded-lg">
-      <button (click)="applyFilter('all')"
-        [class]="currentFilter === 'all' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'"
-        class="px-4 py-2 rounded-md text-sm font-medium transition-all">
-        All
-      </button>
-      <button (click)="applyFilter('confirmed')"
-        [class]="currentFilter === 'confirmed' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'"
-        class="px-4 py-2 rounded-md text-sm font-medium transition-all">
-        Confirmed
-      </button>
-      <button (click)="applyFilter('completed')"
-        [class]="currentFilter === 'completed' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'"
-        class="px-4 py-2 rounded-md text-sm font-medium transition-all">
-        Completed
-      </button>
-      <button (click)="applyFilter('cancelled')"
-        [class]="currentFilter === 'cancelled' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'"
-        class="px-4 py-2 rounded-md text-sm font-medium transition-all">
-        Cancelled
-      </button>
-    </div>
-  </div>
-
-  <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+<div class="appointments-manage-container p-6">
+  <header class="page-header mb-8">
+    <h1 class="page-title text-2xl font-bold text-white">Appointment Desk</h1>
+    <p class="text-slate-500 text-sm mt-1">Clinical queue and patient engagement registry</p>
+  </header>
+ 
+  <!-- Filter Navigation (Admin Style) -->
+  <nav class="filter-tabs mb-8">
+    <button (click)="applyFilter('all')" [class.active]="currentFilter === 'all'" class="tab-btn">
+      All Engagements
+    </button>
+    <button (click)="applyFilter('confirmed')" [class.active]="currentFilter === 'confirmed'" class="tab-btn">
+      Confirmed
+    </button>
+    <button (click)="applyFilter('completed')" [class.active]="currentFilter === 'completed'" class="tab-btn">
+      Completed
+    </button>
+    <button (click)="applyFilter('cancelled')" [class.active]="currentFilter === 'cancelled'" class="tab-btn">
+      Cancelled
+    </button>
+  </nav>
+ 
+  <div class="bg-[#161b22] rounded-2xl border border-[#30363d] overflow-hidden shadow-2xl">
     <!-- Loading State -->
-    <div *ngIf="loading" class="flex justify-center py-20">
-      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+    <div *ngIf="loading" class="flex flex-col items-center justify-center py-24">
+      <div class="w-12 h-12 border-4 border-[#2caea9] border-t-transparent rounded-full animate-spin"></div>
+      <span class="text-slate-500 font-medium italic mt-4">Retrieving clinical queue...</span>
     </div>
-
+ 
     <!-- Empty State -->
-    <div *ngIf="!loading && filteredAppointments.length === 0" class="text-center py-20">
-      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-      <h3 class="mt-2 text-sm font-medium text-gray-900">No appointments found</h3>
-      <p class="mt-1 text-sm text-gray-500">There are no appointments matching the selected filter.</p>
+    <div *ngIf="!loading && filteredAppointments.length === 0" class="flex flex-col items-center justify-center py-24 text-center">
+      <div class="w-20 h-20 bg-[#0d1117] rounded-full flex items-center justify-center mb-6 border border-[#30363d]">
+        <svg class="h-10 w-10 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-white mb-2">No Engagements Found</h3>
+      <p class="text-slate-500 max-w-xs mx-auto text-sm">The current registry filter returned no matching patient records.</p>
     </div>
-
-    <!-- Appointments Table -->
+ 
+    <!-- Appointments Table (Admin Style) -->
     <div *ngIf="!loading && filteredAppointments.length > 0" class="overflow-x-auto">
-      <table class="w-full text-left text-sm text-gray-600">
-        <thead class="bg-gray-50 text-gray-700 font-medium border-b border-gray-200">
+      <table class="mini-table w-full">
+        <thead>
           <tr>
-            <th class="py-4 px-6">ID</th>
-            <th class="py-4 px-6">Patient</th>
-            <th class="py-4 px-6">Date & Time</th>
-            <th class="py-4 px-6">Reason</th>
-            <th class="py-4 px-6">Status</th>
-            <th class="py-4 px-6 text-right">Actions</th>
+            <th class="py-4 px-6">Patient Identifier</th>
+            <th class="py-4 px-6">Clinical Schedule</th>
+            <th class="py-4 px-6">Protocol Status</th>
+            <th class="py-4 px-6 text-right">Intervention</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
-          <tr *ngFor="let apt of filteredAppointments" class="hover:bg-gray-50 transition-colors">
-            <td class="py-4 px-6 font-medium text-gray-900">#{{ apt.id }}</td>
-            <td class="py-4 px-6">
-              <div class="font-medium text-gray-900">{{ apt.patientName }}</div>
-              <div class="text-xs text-gray-500">ID: {{ apt.patientId }}</div>
+        <tbody class="divide-y divide-[#30363d]">
+          <tr *ngFor="let apt of filteredAppointments" class="group hover:bg-[#0d1117] transition-all">
+            <td class="py-5 px-6">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center font-bold text-[#2caea9] border border-slate-700">
+                  {{ apt.patientName.charAt(0) }}
+                </div>
+                <div>
+                  <div class="font-bold text-white text-sm">{{ apt.patientName }}</div>
+                  <div class="text-[10px] text-slate-500 font-bold uppercase mt-0.5">UID: {{ apt.patientId }}</div>
+                </div>
+              </div>
             </td>
-            <td class="py-4 px-6">
-              <div class="font-medium text-gray-900">{{ apt.dateTime | date:'mediumDate' }}</div>
-              <div class="text-xs text-gray-500">{{ apt.dateTime | date:'shortTime' }}</div>
+            <td class="py-5 px-6">
+              <div class="font-bold text-white text-sm">{{ apt.dateTime | date:'MMM dd, yyyy' }}</div>
+              <div class="text-xs text-[#2caea9] font-bold mt-0.5">{{ apt.dateTime | date:'shortTime' }}</div>
             </td>
-            <td class="py-4 px-6 max-w-xs truncate" title="{{ apt.reason }}">
-              {{ apt.reason }}
-            </td>
-            <td class="py-4 px-6">
-              <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + getStatusClass(apt.status)">
+            <td class="py-5 px-6">
+              <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider" [ngClass]="{
+                  'bg-amber-500/10 text-amber-500 border border-amber-500/20': apt.status === 'PENDING',
+                  'bg-blue-500/10 text-blue-500 border border-blue-500/20': apt.status === 'CONFIRMED',
+                  'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20': apt.status === 'COMPLETED',
+                  'bg-rose-500/10 text-rose-500 border border-rose-500/20': apt.status === 'CANCELLED'
+                }">
                 {{ apt.status }}
               </span>
             </td>
-            <td class="py-4 px-6 text-right">
-              <button *ngIf="apt.status === 'CONFIRMED' || apt.status === 'PENDING'"
-                      (click)="openCompleteModal(apt)"
-                      class="text-blue-600 hover:text-blue-900 font-medium">
-                Complete
-              </button>
-              <button *ngIf="apt.status === 'COMPLETED'"
-                      (click)="generatePDF(apt)"
-                      class="text-green-600 hover:text-green-900 font-medium flex items-center justify-end w-full gap-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                PDF
-              </button>
+            <td class="py-5 px-6 text-right">
+              <div class="flex justify-end gap-2">
+                <button *ngIf="apt.status === 'CONFIRMED' || apt.status === 'PENDING'"
+                        (click)="openCompleteModal(apt)"
+                        class="px-4 py-2 bg-[#2caea9] text-white rounded-xl text-xs font-bold hover:bg-[#238f8a] transition shadow-lg shadow-[#2caea9]/15">
+                  Complete Case
+                </button>
+                <button *ngIf="apt.status === 'COMPLETED'"
+                        (click)="generatePDF(apt)"
+                        class="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-slate-700 transition flex items-center gap-2 border border-slate-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#2caea9]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Archive Report
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -95,31 +99,33 @@
     </div>
   </div>
 </div>
-
-<!-- Complete Appointment Modal -->
-<div *ngIf="showReportModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 transition-opacity">
-  <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto transform transition-all">
-    <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10">
-      <h2 class="text-lg font-bold text-gray-800">Complete Appointment #{{ selectedAppointment?.id }}</h2>
-      <button (click)="closeCompleteModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+ 
+<!-- Complete Appointment Modal (Admin Style) -->
+<div *ngIf="showReportModal" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2 class="text-xl font-bold text-white">Clinical Dossier Update</h2>
+      <button (click)="closeCompleteModal()" class="text-slate-500 hover:text-white transition">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
     </div>
-
-    <div class="p-6 space-y-6">
-      <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-        <h4 class="text-sm font-semibold text-blue-800 mb-1">Patient Information</h4>
-        <p class="text-sm text-blue-900">Patient: <span class="font-bold">{{ selectedAppointment?.patientName }}</span></p>
-        <p class="text-sm text-blue-900">Reason: {{ selectedAppointment?.reason }}</p>
+ 
+    <div class="modal-body space-y-8 overflow-y-auto max-h-[70vh]">
+      <div class="bg-[#2caea9]/5 p-5 rounded-2xl border border-[#2caea9]/20 flex gap-4 items-center">
+        <div class="w-12 h-12 bg-[#2caea9]/10 rounded-full flex items-center justify-center text-xl">👤</div>
+        <div>
+          <h4 class="text-xs font-black text-[#2caea9] uppercase tracking-widest mb-1">Subject Intelligence</h4>
+          <p class="text-sm text-slate-300">Patient <span class="text-white font-bold">{{ selectedAppointment?.patientName }}</span> | Ref #{{ selectedAppointment?.id }}</p>
+        </div>
       </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="col-span-1">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Blood Type</label>
-          <select [(ngModel)]="medicalReport.bloodType" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
-              <option value="">Select Blood Type</option>
+ 
+      <form class="admin-form grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="form-group">
+          <label class="form-label">Blood Type</label>
+          <select [(ngModel)]="medicalReport.bloodType" name="bloodType" class="admin-input">
+              <option value="">N/A</option>
               <option value="A_POSITIVE">A+</option>
               <option value="A_NEGATIVE">A-</option>
               <option value="B_POSITIVE">B+</option>
@@ -130,44 +136,32 @@
               <option value="AB_NEGATIVE">AB-</option>
           </select>
         </div>
-
-        <div class="col-span-1">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Known Allergies</label>
-          <input type="text" [(ngModel)]="medicalReport.allergies" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="e.g. Penicillin, Peanuts">
+ 
+        <div class="form-group">
+          <label class="form-label">Pathological History</label>
+          <input type="text" [(ngModel)]="medicalReport.pastIllnesses" name="pastIllnesses" class="admin-input" placeholder="Previous diagnoses...">
         </div>
-
-        <div class="col-span-2">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Doctor's Diagnosis & Notes <span class="text-red-500">*</span></label>
-          <textarea [(ngModel)]="medicalReport.doctorNote" rows="4" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Detailed clinical notes..."></textarea>
+ 
+        <div class="form-group col-span-2">
+          <label class="form-label">Clinical Assessment <span class="text-[#2caea9]">*</span></label>
+          <textarea [(ngModel)]="medicalReport.doctorNote" name="doctorNote" rows="5" class="admin-input" placeholder="Detailed medical assessment and intervention notes..." required></textarea>
         </div>
-
-        <div class="col-span-2">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Chronic Conditions</label>
-          <input type="text" [(ngModel)]="medicalReport.chronic" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="e.g. Diabetes, Hypertension">
+ 
+        <div class="form-group">
+          <label class="form-label">Systemic Conditions</label>
+          <input type="text" [(ngModel)]="medicalReport.chronic" name="chronic" class="admin-input" placeholder="e.g. Diabetes, HTN">
         </div>
-
-        <div class="col-span-2">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Surgical History</label>
-          <input type="text" [(ngModel)]="medicalReport.surgeries" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="List any past surgeries">
+ 
+        <div class="form-group">
+          <label class="form-label">Allergies</label>
+          <input type="text" [(ngModel)]="medicalReport.allergies" name="allergies" class="admin-input" placeholder="Medication or contact allergies">
         </div>
-
-        <div class="col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Past Illnesses</label>
-            <textarea [(ngModel)]="medicalReport.pastIllnesses" rows="2" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Significant past illnesses..."></textarea>
-        </div>
-      </div>
+      </form>
     </div>
-
-    <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3 rounded-b-xl border-t border-gray-200">
-      <button (click)="closeCompleteModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-white bg-white transition-colors font-medium text-sm shadow-sm">
-        Cancel
-      </button>
-      <button (click)="submitReport()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm shadow-sm flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-        </svg>
-        Save Report & Complete
-      </button>
+ 
+    <div class="modal-footer">
+      <button (click)="closeCompleteModal()" class="btn-cancel-admin">Discard</button>
+      <button (click)="submitReport()" class="btn-primary-admin">Commit Dossier</button>
     </div>
   </div>
 </div>

@@ -4,8 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.ayoub.docline.model.dto.AppointmentRequestDto;
 import org.ayoub.docline.model.dto.AppointmentResponseDto;
 import org.ayoub.docline.model.dto.DoctorListingDto;
-import org.ayoub.docline.model.dto.TimeSlotDto;
-import org.ayoub.docline.model.entity.Appointment;
+
 import org.ayoub.docline.model.entity.Unavailability;
 import org.ayoub.docline.service.PatientService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -89,5 +88,25 @@ public class PatientController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
         return ResponseEntity.ok(patientService.updatePatientProfile(currentPrincipalName, updateDto));
+    }
+
+    @PutMapping("/appointments/{id}/cancel")
+    @PreAuthorize("hasAuthority('ROLE_PATIENT')")
+    public ResponseEntity<String> cancelAppointment(@PathVariable Integer id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+        patientService.cancelAppointment(id, currentPrincipalName);
+        return ResponseEntity.ok("Appointment cancelled successfully");
+    }
+
+    @PutMapping("/appointments/{id}/reschedule")
+    @PreAuthorize("hasAuthority('ROLE_PATIENT')")
+    public ResponseEntity<AppointmentResponseDto> rescheduleAppointment(
+            @PathVariable Integer id,
+            @RequestBody AppointmentRequestDto rescheduleDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+
+        return ResponseEntity.ok(patientService.rescheduleAppointment(id, rescheduleDto, currentPrincipalName));
     }
 }

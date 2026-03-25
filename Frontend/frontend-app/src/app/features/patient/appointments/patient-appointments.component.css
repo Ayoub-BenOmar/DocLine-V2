@@ -195,18 +195,50 @@
 .admin-input {
   width: 100%;
   background-color: #0d1117;
-  border: 1px solid #30363d;
+  border: 2px solid #30363d;
   border-radius: 12px;
   padding: 12px 16px;
   color: #f0f6fc;
   font-size: 14px;
   transition: all 0.2s;
+  font-family: inherit;
+}
+
+.admin-input::placeholder {
+  color: #6e7681;
 }
 
 .admin-input:focus {
   outline: none;
   border-color: #2caea9;
-  box-shadow: 0 0 0 3px rgba(44, 174, 169, 0.1);
+  box-shadow: 0 0 0 3px rgba(44, 174, 169, 0.2);
+  background-color: #161b22;
+}
+
+.admin-input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #0d1117 inset;
+  -webkit-text-fill-color: #f0f6fc;
+}
+
+.admin-input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #161b22 inset;
+  -webkit-text-fill-color: #f0f6fc;
+}
+
+/* For date input */
+.admin-input[type="date"] {
+  color: #f0f6fc;
+}
+
+.admin-input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+/* Textarea */
+textarea.admin-input {
+  resize: vertical;
+  min-height: 80px;
 }
 
 .admin-label {
@@ -221,49 +253,89 @@
 
 /* Action Buttons */
 .btn-action {
-  padding: 8px 16px;
+  padding: 12px 20px;
   border-radius: 10px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
+  border: none;
 }
 
-.btn-primary { background-color: #2caea9; color: white; border: none; }
-.btn-primary:hover { background-color: #1a7f7b; transform: translateY(-1px); }
+.btn-primary {
+  background-color: #2caea9;
+  color: white;
+}
 
-.btn-secondary { background-color: #30363d; color: #f0f6fc; border: 1px solid #444c56; }
-.btn-secondary:hover { background-color: #444c56; }
+.btn-primary:hover:not(:disabled) {
+  background-color: #1a7f7b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(44, 174, 169, 0.3);
+}
 
-.btn-danger { background-color: rgba(248, 81, 73, 0.1); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.2); }
-.btn-danger:hover { background-color: #f85149; color: white; }
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #30363d;
+  color: #f0f6fc;
+  border: 1px solid #444c56;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #444c56;
+}
+
+.btn-danger {
+  background-color: rgba(248, 81, 73, 0.1);
+  color: #f85149;
+  border: 1px solid rgba(248, 81, 73, 0.2);
+}
+
+.btn-danger:hover {
+  background-color: #f85149;
+  color: white;
+}
 
 /* Grid Slots for Booking */
 .slots-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
 }
 
 .slot-option {
-  padding: 10px;
+  padding: 12px 16px;
   background-color: #0d1117;
-  border: 1px solid #30363d;
+  border: 2px solid #30363d;
   border-radius: 10px;
   color: #8b949e;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
   text-align: center;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.slot-option:hover:not(:disabled) {
+  border-color: #2caea9;
+  color: #2caea9;
+  background-color: rgba(44, 174, 169, 0.05);
 }
 
 .slot-option.selected {
   border-color: #2caea9;
   color: #2caea9;
-  background-color: rgba(44, 174, 169, 0.05);
+  background-color: rgba(44, 174, 169, 0.15);
+  box-shadow: 0 0 0 3px rgba(44, 174, 169, 0.1);
 }
 
 .slot-option.disabled {

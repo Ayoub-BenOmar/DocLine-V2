@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NotificationService, Notification } from '../../services/notification.service';
+import { NotificationService, Notification } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-notification-container',
@@ -15,8 +15,10 @@ export class NotificationContainerComponent implements OnInit {
   constructor(private notificationService: NotificationService) {}
 
   ngOnInit() {
-    this.notificationService.notifications.subscribe(notifications => {
-      this.notifications = notifications;
+    this.notificationService.notifications.subscribe((notifications: Notification[]) => {
+      setTimeout(() => {
+        this.notifications = notifications;
+      });
     });
   }
 

@@ -252,6 +252,30 @@
 .btn-logout:hover {
   background: rgba(248, 81, 73, 0.1);
 }
+ 
+/* User Identity Anchor */
+.user-anchor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+}
+ 
+.avatar-mini {
+  width: 28px;
+  height: 28px;
+  background-color: #2caea9;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 10px;
+  color: white;
+}
 
 /* Content Container */
 .content-area {

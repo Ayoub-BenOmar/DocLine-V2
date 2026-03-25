@@ -1,2 +1,298 @@
-/* Add any specific styles here if needed */
+/* Doctor Layout Shell (Parity with Admin) */
+.admin-shell {
+  display: flex;
+  height: 100vh;
+  background-color: #0d1117; /* Deepest background */
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SIDEBAR
+12: ────────────────────────────────────────────────────────────── */
+.sidebar {
+  background-color: #161b22; /* Slightly Lighter Sidebar */
+  border-right: 1px solid #30363d;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+}
+
+.sidebar-open {
+  width: 280px;
+}
+
+.sidebar-collapsed {
+  width: 80px;
+}
+
+/* Logo Area */
+.logo-area {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  border-bottom: 1px solid #30363d;
+  background: rgba(44, 174, 169, 0.02);
+}
+
+.logo-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #2caea9;
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+}
+
+/* Navigation List */
+.nav-container {
+  flex: 1;
+  padding: 24px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 12px;
+  color: #8b949e;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14.5px;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link:hover {
+  background-color: #21262d;
+  color: #f0f6fc;
+}
+
+.nav-link.active {
+  background-color: rgba(44, 174, 169, 0.1);
+  color: #2caea9;
+  font-weight: 600;
+}
+
+.nav-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  height: 70%;
+  width: 3px;
+  background-color: #2caea9;
+  border-radius: 0 4px 4px 0;
+  box-shadow: 0 0 10px rgba(44, 174, 169, 0.5);
+}
+
+.nav-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-text {
+  margin-left: 12px;
+  white-space: nowrap;
+}
+
+/* Profile Area */
+.sidebar-footer {
+  padding: 20px 16px;
+  border-top: 1px solid #30363d;
+  background-color: #161b22;
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.profile-card:hover {
+  background-color: #21262d;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #30363d;
+  object-fit: cover;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.profile-name {
+  color: #f0f6fc;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-role {
+  color: #8b949e;
+  font-size: 12px;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   MAIN CONTENT AREA
+166: ────────────────────────────────────────────────────────────── */
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background-color: #0d1117;
+}
+
+/* Top Header (Navbar) */
+.topbar {
+  height: 70px;
+  background-color: rgba(22, 27, 34, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #30363d;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  z-index: 40;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #30363d;
+  background: transparent;
+  color: #8b949e;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-toggle:hover {
+  background: #30363d;
+  color: #f0f6fc;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.btn-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: #8b949e;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  background: rgba(139, 148, 158, 0.1);
+  color: #f0f6fc;
+}
+
+.btn-logout {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #f85149;
+  color: #f85149;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background: rgba(248, 81, 73, 0.1);
+}
+ 
+/* User Identity Anchor */
+.user-anchor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+}
+ 
+.avatar-mini {
+  width: 28px;
+  height: 28px;
+  background-color: #2caea9;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 10px;
+  color: white;
+}
+
+/* Content Container */
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  /* Removed large padding as it interferes with component padding */
+}
+
+/* Utility for Hidden Items */
+.hidden-collapsed {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .sidebar-open {
+    width: 0;
+    overflow: hidden;
+  }
+}
 

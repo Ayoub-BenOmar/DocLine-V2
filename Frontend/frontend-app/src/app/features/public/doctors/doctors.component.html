@@ -138,42 +138,42 @@
     </main>
 
   </div>
-  <app-footer></app-footer>
-</div>
-
-<!-- Booking Modal remains mostly the same, just keeping it here for continuity -->
+  <app-footer></app-footer><!-- Booking Modal -->
 <div *ngIf="showBookingModal" class="modal-overlay" (click)="closeBookingModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-content animate-in zoom-in-95 duration-200" (click)="$event.stopPropagation()">
         <!-- Modal Header -->
         <div class="modal-header">
             <div>
-                <h2 class="text-xl font-bold">🗓️ Book Appointment</h2>
-                <p class="text-sm text-blue-100 mt-1">{{ selectedDoctor?.name }} {{ selectedDoctor?.lastName }}</p>
+                <h2 class="modal-title">🗓️ Book Appointment</h2>
+                <p class="doctor-subtitle">{{ selectedDoctor?.name }} {{ selectedDoctor?.lastName }}</p>
             </div>
             <button (click)="closeBookingModal()" class="close-btn">✕</button>
         </div>
 
         <!-- Modal Body -->
         <div class="modal-body">
-            <div class="summary-card">
-                <p class="text-sm text-gray-600">
-                    <span class="font-medium">Speciality:</span> {{ selectedDoctor?.speciality }}
-                </p>
-                <p class="text-sm text-gray-600">
-                    <span class="font-medium">Consultation Fee:</span> ${{ selectedDoctor?.fees }}
-                </p>
-            </div>
+            <!-- <div class="summary-card">
+                <div class="summary-item">
+                    <span class="summary-label">Speciality</span>
+                    <span class="summary-value">{{ selectedDoctor?.speciality }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Consultation Fee</span>
+                    <span class="summary-value">MAD {{ selectedDoctor?.fees }}</span>
+                </div>
+            </div> -->
 
             <div class="form-group">
-                <label class="block text-sm font-medium text-gray-700 mb-2">📅 Select Date (Mon - Fri)</label>
+                <label class="admin-label">📅 Select Date (Mon - Fri)</label>
                 <input type="date" [(ngModel)]="bookingData.selectedDate" (change)="onDateSelected()"
                     [min]="getMinDate()" [max]="getMaxDate()" class="form-input">
             </div>
 
             <div *ngIf="bookingData.selectedDate" class="form-group">
-                <label class="block text-sm font-medium text-gray-700 mb-2">⏰ Select Time</label>
-                <div *ngIf="slotsLoading" class="text-center py-4">
-                    <p class="text-gray-600 text-sm">⏳ Loading available slots...</p>
+                <label class="admin-label">⏰ Select Time</label>
+                <div *ngIf="slotsLoading" class="loading-slots">
+                    <div class="spinner-mini"></div>
+                    <p>Synchronizing available slots...</p>
                 </div>
                 <div *ngIf="!slotsLoading && availableSlots.length > 0" class="time-grid">
                     <button *ngFor="let slot of availableSlots" [disabled]="!slot.available"
@@ -183,14 +183,14 @@
                         {{ slot.time }}
                     </button>
                 </div>
-                <div *ngIf="!slotsLoading && availableSlots.length === 0" class="text-center py-2 text-red-500 text-sm">
-                    No slots available for this date.
+                <div *ngIf="!slotsLoading && availableSlots.length === 0" class="no-slots-err">
+                    No slots detected for this date.
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="block text-sm font-medium text-gray-700 mb-2">📝 Reason for Visit</label>
-                <textarea [(ngModel)]="bookingData.reason" placeholder="Describe your symptoms..." rows="3"
+                <label class="admin-label">📝 Reason for Visit</label>
+                <textarea [(ngModel)]="bookingData.reason" placeholder="Briefly describe your purpose..." rows="3"
                     class="form-input"></textarea>
             </div>
         </div>
@@ -200,10 +200,18 @@
             <button (click)="bookAppointment()"
                 [disabled]="bookingLoading || !bookingData.selectedDate || !bookingData.selectedTime || !bookingData.reason"
                 class="btn-confirm">
-                {{ bookingLoading ? '⏳ Booking...' : '✓ Confirm Booking' }}
+                {{ bookingLoading ? 'Processing...' : '✓ Confirm Booking' }}
             </button>
         </div>
     </div>
 </div>
 
-
+<!-- Error Display -->
+<div *ngIf="!loading && doctors.length === 0 && cities.length === 0 && specialties.length === 0" class="flex items-center justify-center min-h-screen bg-gray-50">
+  <div class="bg-white rounded-lg shadow-lg p-8 max-w-md text-center">
+    <h2 class="text-2xl font-bold text-red-600 mb-2">⚠️ Error Loading Data</h2>
+    <p class="text-gray-600 mb-4">Unable to fetch doctors, cities, or specialties from the server.</p>
+    <p class="text-sm text-gray-500 mb-4">Check the browser console for more details.</p>
+    <button (click)="ngOnInit()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Retry</button>
+  </div>
+</div>

@@ -18,6 +18,7 @@ public class AppointmentResponseDto {
     private AppointmentStatus status;
     private String reason;
     
+    private Integer doctorId;
     private String doctorName;
     private String doctorSpeciality;
     

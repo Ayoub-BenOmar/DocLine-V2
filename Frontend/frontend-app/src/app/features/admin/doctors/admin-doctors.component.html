@@ -1,5 +1,5 @@
 <div class="doctors-manage-container">
-  
+
   <header class="page-header">
     <h1 class="page-title">Specialist Directory</h1>
   </header>
@@ -31,9 +31,9 @@
 
   <!-- Grid Results -->
   <div *ngIf="!loading" class="doctors-grid">
-    
+
     <div *ngFor="let doctor of filteredDoctors" class="doctor-card">
-      
+
       <!-- Card Top: Image & Vital Info -->
       <div class="card-top">
         <div class="photo-wrapper">
@@ -47,10 +47,10 @@
             {{ getStatusLabel(doctor.status) }}
           </span>
         </div>
-        
+
         <h3 class="dr-name">Dr. {{ doctor.name }} {{ doctor.lastName }}</h3>
         <p class="dr-spec">{{ doctor.speciality || 'General Practitioner' }}</p>
-        
+
         <div class="dr-meta">
           <div class="meta-item">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
@@ -101,13 +101,13 @@
 
   </div>
 
-</div>
+  </div>
 
 <!-- DETAILS MODAL -->
 <div class="modal-overlay" *ngIf="showDetailsModal && selectedDoctor" (click)="closeModal()">
-  
+
   <div class="modal-card" (click)="$event.stopPropagation()">
-    
+
     <div class="modal-header">
       <h2 class="text-xl font-bold text-white">Medical Dossier</h2>
       <button (click)="closeModal()" class="text-slate-500 hover:text-white transition">
@@ -116,13 +116,13 @@
     </div>
 
     <div class="modal-body">
-      
+
       <div class="flex items-center gap-6 mb-8 pb-8 border-bottom border-slate-700">
         <img [src]="selectedDoctor.profilePic || '/doctor profile.png'" alt="Doctor" class="w-24 h-24 rounded-2xl border-2 border-slate-700 object-cover">
         <div>
           <h3 class="text-2xl font-bold text-white">Dr. {{ selectedDoctor.name }} {{ selectedDoctor.lastName }}</h3>
           <p class="text-[#2caea9] font-semibold text-lg">{{ selectedDoctor.speciality }}</p>
-          <div class="mt-2 inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider" 
+          <div class="mt-2 inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider"
                [ngClass]="selectedDoctor.status === 'ACTIVE' ? 'bg-green-500/10 text-green-500' : 'bg-yellow-500/10 text-yellow-500'">
             {{ getStatusLabel(selectedDoctor.status) }}
           </div>
@@ -172,7 +172,7 @@
       <button (click)="closeModal()" class="px-6 py-2 rounded-xl text-slate-400 hover:text-white font-bold transition">
         Close Dossier
       </button>
-      
+
       <!-- Instant Actions in Modal -->
       <ng-container *ngIf="selectedDoctor.status === 'PENDING_VERIFICATION'">
         <button (click)="approveDoctor(selectedDoctor.id)" class="px-6 py-2 bg-[#2caea9] text-white rounded-xl font-bold hover:bg-[#238f8a] transition shadow-lg shadow-[#2caea9]/20">

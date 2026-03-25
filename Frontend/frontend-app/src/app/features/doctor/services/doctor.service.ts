@@ -75,8 +75,8 @@ export class DoctorService {
     return this.http.get<Unavailability[]>(`${this.apiUrl}/unavailability`);
   }
 
-  updateProfile(profileDto: DoctorProfileDto): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/profile`, profileDto);
+  updateProfile(profileDto: DoctorProfileDto): Observable<DoctorProfileDto> {
+    return this.http.put<DoctorProfileDto>(`${this.apiUrl}/profile`, profileDto);
   }
 
   getProfile(): Observable<DoctorProfileDto> {

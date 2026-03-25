@@ -26,6 +26,7 @@ public class PatientProfileDto {
     private String insuranceProvider;
     private String insuranceNumber;
     private Boolean hasInsurance;
+    private String status;
     // Medical history
     private String pastIllnesses;
     private String surgeries;

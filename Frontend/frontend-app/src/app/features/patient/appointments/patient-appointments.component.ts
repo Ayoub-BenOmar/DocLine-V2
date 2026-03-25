@@ -194,7 +194,10 @@ export class PatientAppointmentsComponent implements OnInit {
         if (!this.bookingData.selectedDate) return;
 
         if (!this.isWeekday(this.bookingData.selectedDate)) {
-            alert('❌ Please select a weekday (Monday-Friday)');
+            this.notificationService.warning(
+                'Invalid Date',
+                'Please select a weekday (Monday-Friday)'
+            );
             this.bookingData.selectedDate = '';
             this.cdr.detectChanges();
             return;
@@ -217,7 +220,10 @@ export class PatientAppointmentsComponent implements OnInit {
                     console.error('Slots response is not an array:', slots);
                     this.availableSlots = [];
                     this.slotsLoading = false;
-                    alert('⚠️ Unexpected response format');
+                    this.notificationService.error(
+                        'Response Error',
+                        'Unexpected response format from server'
+                    );
                     this.cdr.detectChanges();
                     return;
                 }
@@ -232,7 +238,7 @@ export class PatientAppointmentsComponent implements OnInit {
                         });
                         return {
                             time: startTime,
-                            available: slot.isAvailable,
+                            available: slot.available,
                             start: slot.start,
                             raw: slot
                         };
@@ -246,7 +252,10 @@ export class PatientAppointmentsComponent implements OnInit {
                 console.log('Formatted and filtered slots:', this.availableSlots);
 
                 if (this.availableSlots.length === 0) {
-                    alert('⚠️ No available slots for this date');
+                    this.notificationService.warning(
+                        'No Slots Available',
+                        'No available slots for this date. Please choose another date.'
+                    );
                 }
 
                 this.slotsLoading = false;
@@ -261,119 +270,123 @@ export class PatientAppointmentsComponent implements OnInit {
                 this.availableSlots = [];
                 this.slotsLoading = false;
 
-                let errorMsg = '❌ Failed to load available slots';
+                let errorMsg = 'Failed to load available slots';
                 if (err.status === 401) {
-                    errorMsg = '❌ Authentication failed. Please login again.';
+                    errorMsg = 'Authentication failed. Please login again.';
                 } else if (err.status === 400) {
-                    errorMsg = '❌ Invalid date format. Please select another date.';
+                    errorMsg = 'Invalid date format. Please select another date.';
                 } else if (err.status === 404) {
-                    errorMsg = '❌ Doctor not found.';
+                    errorMsg = 'Doctor not found.';
                 } else if (err.error?.message) {
-                    errorMsg = '❌ ' + err.error.message;
+                    errorMsg = err.error.message;
                 }
 
-                alert(errorMsg);
+                this.notificationService.error(
+                    'Failed to Load Slots',
+                    errorMsg
+                );
                 this.cdr.detectChanges();
             }
         });
     }
 
     bookAppointment(): void {
-        if (!this.bookingData.selectedDate || !this.bookingData.selectedTime || !this.bookingData.reason) {
-            this.notificationService.warning(
-                'Incomplete Form',
-                'Please fill in all fields before submitting'
+      if (!this.bookingData.selectedDate || !this.bookingData.selectedTime || !this.bookingData.reason) {
+        this.notificationService.warning(
+          'Incomplete Form',
+          'Please fill in all fields before submitting'
+        );
+        return;
+      }
+
+      this.bookingLoading = true;
+      this.cdr.detectChanges();
+
+      const selectedSlot = this.availableSlots.find((slot: any) => slot.time === this.bookingData.selectedTime);
+      let dateTimeStr: string;
+
+      if (selectedSlot && selectedSlot.start) {
+        dateTimeStr = selectedSlot.start;
+      } else {
+        const timeRegex = /(\d+):(\d+)\s*(AM|PM)/i;
+        const match = this.bookingData.selectedTime.match(timeRegex);
+        let hours = parseInt(match![1]);
+        const minutes = parseInt(match![2]);
+        const period = match![3].toUpperCase();
+
+        if (period === 'PM' && hours !== 12) hours += 12;
+        if (period === 'AM' && hours === 12) hours = 0;
+
+        const appointmentDate = new Date(this.bookingData.selectedDate);
+        appointmentDate.setHours(hours, minutes, 0);
+        dateTimeStr = appointmentDate.toISOString();
+      }
+
+      const appointmentData = {
+        doctorId: this.selectedDoctor?.id,
+        dateTime: dateTimeStr,
+        reason: this.bookingData.reason
+      };
+
+      console.log('Booking appointment:', appointmentData);
+
+      // Check if this is a reschedule or a new booking
+      if (this.rescheduleAppointmentId) {
+        // Reschedule existing appointment
+        this.patientService.rescheduleAppointment(this.rescheduleAppointmentId, {
+          dateTime: dateTimeStr,
+          reason: this.bookingData.reason
+        }).subscribe({
+          next: (response) => {
+            console.log('Appointment rescheduled:', response);
+            this.bookingLoading = false;
+            this.notificationService.success(
+              'Appointment Rescheduled',
+              `Your appointment with ${this.selectedDoctor?.name} has been successfully rescheduled!`
             );
-            return;
-        }
-
-        this.bookingLoading = true;
-        this.cdr.detectChanges();
-
-        const selectedSlot = this.availableSlots.find((slot: any) => slot.time === this.bookingData.selectedTime);
-        let dateTimeStr: string;
-
-        if (selectedSlot && selectedSlot.start) {
-            dateTimeStr = selectedSlot.start;
-        } else {
-            const timeRegex = /(\d+):(\d+)\s*(AM|PM)/i;
-            const match = this.bookingData.selectedTime.match(timeRegex);
-            let hours = parseInt(match![1]);
-            const minutes = parseInt(match![2]);
-            const period = match![3].toUpperCase();
-
-            if (period === 'PM' && hours !== 12) hours += 12;
-            if (period === 'AM' && hours === 12) hours = 0;
-
-            const appointmentDate = new Date(this.bookingData.selectedDate);
-            appointmentDate.setHours(hours, minutes, 0);
-            dateTimeStr = appointmentDate.toISOString();
-        }
-
-        const appointmentData = {
-            doctorId: this.selectedDoctor?.id,
-            dateTime: dateTimeStr,
-            reason: this.bookingData.reason
-        };
-
-        console.log('Booking appointment:', appointmentData);
-
-        // Check if this is a reschedule or a new booking
-        if (this.rescheduleAppointmentId) {
-            // Reschedule existing appointment
-            this.patientService.rescheduleAppointment(this.rescheduleAppointmentId, {
-                dateTime: dateTimeStr,
-                reason: this.bookingData.reason
-            }).subscribe({
-                next: (response) => {
-                    console.log('Appointment rescheduled:', response);
-                    this.bookingLoading = false;
-                    this.notificationService.success(
-                        'Appointment Rescheduled',
-                        `Your appointment with ${this.selectedDoctor?.name} has been successfully rescheduled!`
-                    );
-                    this.closeBookingModal();
-                    this.rescheduleAppointmentId = null;
-                    this.loadAppointments();
-                    this.cdr.detectChanges();
-                },
-                error: (err) => {
-                    console.error('Error rescheduling appointment:', err);
-                    this.bookingLoading = false;
-                    const errorMsg = err.error?.message || 'Please try again';
-                    this.notificationService.error(
-                        'Rescheduling Failed',
-                        errorMsg
-                    );
-                    this.cdr.detectChanges();
-                }
-            });
-        } else {
-            // Book new appointment
-            this.patientService.bookAppointment(appointmentData).subscribe({
-                next: (response) => {
-                    console.log('Appointment booked:', response);
-                    this.bookingLoading = false;
-                    this.notificationService.success(
-                        'Appointment Confirmed',
-                        `Your appointment with ${this.selectedDoctor?.name} has been successfully booked!`
-                    );
-                    this.closeBookingModal();
-                    this.loadAppointments();
-                    this.cdr.detectChanges();
-                },
-                error: (err) => {
-                    console.error('Error booking appointment:', err);
-                    this.bookingLoading = false;
-                    const errorMsg = err.error?.message || 'Please try again';
-                    this.notificationService.error(
-                        'Booking Failed',
-                        errorMsg
-                    );
-                    this.cdr.detectChanges();
-                }
-            });
-        }
+            this.closeBookingModal();
+            this.rescheduleAppointmentId = null;
+            this.loadAppointments();
+            this.cdr.detectChanges();
+          },
+          error: (err) => {
+            console.error('Error rescheduling appointment:', err);
+            this.bookingLoading = false;
+            const errorMsg = err.error?.message || 'Please try again';
+            this.notificationService.error(
+              'Rescheduling Failed',
+              errorMsg
+            );
+            this.cdr.detectChanges();
+          }
+        });
+      } else {
+        // Book new appointment
+        this.patientService.bookAppointment(appointmentData).subscribe({
+          next: (response) => {
+            console.log('Appointment booked:', response);
+            this.bookingLoading = false;
+            this.notificationService.success(
+              'Appointment Confirmed',
+              `Your appointment with ${this.selectedDoctor?.name} has been successfully booked!`
+            );
+            this.closeBookingModal();
+            this.loadAppointments();
+            this.cdr.detectChanges();
+          },
+          error: (err) => {
+            console.error('Error booking appointment:', err);
+            this.bookingLoading = false;
+            const errorMsg = err.error?.message || 'Please try again';
+            this.notificationService.error(
+              'Booking Failed',
+              errorMsg
+            );
+            this.cdr.detectChanges();
+          }
+        });
+      }
+    }
 
     switchTab(tab: 'upcoming' | 'past'): void {
         console.log('[PatientAppointments] Switching to tab:', tab);
@@ -430,9 +443,11 @@ export class PatientAppointmentsComponent implements OnInit {
         const doc = new jsPDF();
         const pageWidth = doc.internal.pageSize.width;
 
-        // Check if report data exists
         if (!appointment.doctorNote) {
-            alert('Medical report is not available yet.');
+            this.notificationService.warning(
+                'Report Not Available',
+                'Medical report is not available yet.'
+            );
             return;
         }
 
@@ -561,38 +576,6 @@ export class PatientAppointmentsComponent implements OnInit {
         const date = new Date(dateStr);
         const dayOfWeek = date.getDay();
         return dayOfWeek >= 1 && dayOfWeek <= 5;
-    }
-
-    closeBookingModal(): void {
-        this.showBookingModal = false;
-        this.rescheduleAppointmentId = null;
-        this.bookingData = {
-            selectedDate: '',
-            selectedTime: '',
-            reason: ''
-        };
-        this.availableSlots = [];
-        this.cdr.detectChanges();
-    }
-
-    resetBookingForm(): void {
-        this.bookingData = {
-            selectedDate: '',
-            selectedTime: '',
-            reason: ''
-        };
-        this.availableSlots = [];
-    }
-
-    getMinDate(): string {
-        const today = new Date();
-        return today.toISOString().split('T')[0];
-    }
-
-    getMaxDate(): string {
-        const maxDate = new Date();
-        maxDate.setDate(maxDate.getDate() + 30);
-        return maxDate.toISOString().split('T')[0];
     }
 }
 

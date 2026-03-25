@@ -7,6 +7,7 @@ export interface AppointmentResponseDto {
     dateTime: string;
     status: string;
     reason: string;
+    doctorId: number;
     doctorName: string;
     doctorSpeciality: string;
     patientId: number;
@@ -73,8 +74,8 @@ export class PatientService {
     }
 
     // Cancel appointment
-    cancelAppointment(appointmentId: number): Observable<any> {
-        return this.http.put(`${this.apiUrl}/appointments/${appointmentId}/cancel`, {});
+    cancelAppointment(appointmentId: number): Observable<string> {
+        return this.http.put(`${this.apiUrl}/appointments/${appointmentId}/cancel`, {}, { responseType: 'text' });
     }
 
     // Reschedule appointment

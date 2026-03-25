@@ -10,6 +10,7 @@ import org.ayoub.docline.model.dto.TimeSlotDto;
 import org.ayoub.docline.model.entity.*;
 import org.ayoub.docline.model.enums.AppointmentStatus;
 import org.ayoub.docline.model.enums.Role;
+import org.ayoub.docline.model.enums.UserStatus;
 import org.ayoub.docline.repository.AppointmentRepository;
 import org.ayoub.docline.repository.DoctorRepository;
 import org.ayoub.docline.repository.PatientRepository;
@@ -54,7 +55,7 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public List<DoctorListingDto> getAllDoctors() {
         return doctorRepository.findAll().stream()
-                .filter(d -> d.getRole() == Role.ROLE_DOCTOR && d.getIsActivated())
+                .filter(d -> d.getRole() == Role.ROLE_DOCTOR && d.getIsActivated() && d.getStatus() == UserStatus.ACTIVE)
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -150,25 +151,6 @@ public class PatientServiceImpl implements PatientService {
         return mapToAppointmentDto(saved);
     }
 
-    private AppointmentResponseDto mapToAppointmentDto(Appointment appointment) {
-        return AppointmentResponseDto.builder()
-                .id(appointment.getId())
-                .dateTime(appointment.getDateTime())
-                .status(appointment.getStatus())
-                .reason(appointment.getReason())
-                .doctorName(appointment.getDoctor().getFullName())
-                .doctorSpeciality(appointment.getDoctor().getSpeciality() != null ? appointment.getDoctor().getSpeciality().getSpecialiteName() : null)
-                .patientName(appointment.getPatient().getFullName())
-                .patientBloodType(appointment.getPatient().getBloodType() != null ? appointment.getPatient().getBloodType().name() : null)
-                .patientPastIllnesses(appointment.getPatient().getPastIllnesses())
-                .patientSurgeries(appointment.getPatient().getSurgeries())
-                .patientAllergies(appointment.getPatient().getAllergies())
-                .patientChronic(appointment.getPatient().getChronic())
-                .doctorNote(appointment.getDoctorNote())
-                .medicalReportDate(appointment.getMedicalReportDate())
-                .build();
-    }
-
     @Override
     public PatientProfileDto getPatientProfile(String email) {
         Patient patient = patientRepository.findByEmail(email)
@@ -233,7 +215,98 @@ public class PatientServiceImpl implements PatientService {
         return getPatientProfile(savedPatient.getEmail());
     }
 
-    
+    @Override
+    public List<AppointmentResponseDto> getPatientAppointments(String email) {
+        Patient patient = patientRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Patient not found"));
+
+        return appointmentRepository.findByPatientId(patient.getId()).stream()
+                .map(this::mapToAppointmentDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void cancelAppointment(Integer appointmentId, String patientEmail) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+
+        if (!appointment.getPatient().getEmail().equals(patientEmail)) {
+            throw new SecurityException("Not authorized to cancel this appointment");
+        }
+
+        if (appointment.getDateTime().isBefore(LocalDateTime.now())) {
+             throw new IllegalStateException("Cannot cancel past appointments");
+        }
+
+        appointment.setStatus(AppointmentStatus.CANCELLED);
+        appointmentRepository.save(appointment);
+    }
+
+    @Override
+    @Transactional
+    public AppointmentResponseDto rescheduleAppointment(Integer appointmentId, AppointmentRequestDto rescheduleDto, String patientEmail) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+
+        if (!appointment.getPatient().getEmail().equals(patientEmail)) {
+            throw new SecurityException("Not authorized to reschedule this appointment");
+        }
+
+        if (appointment.getStatus() == AppointmentStatus.COMPLETED || appointment.getStatus() == AppointmentStatus.CANCELLED) {
+             throw new IllegalStateException("Cannot reschedule a completed or cancelled appointment");
+        }
+
+        LocalDateTime newDateTime = rescheduleDto.getDateTime();
+
+        if (!newDateTime.equals(appointment.getDateTime())) {
+             if (newDateTime.isBefore(LocalDateTime.now())) {
+                 throw new IllegalArgumentException("Cannot reschedule to the past");
+             }
+
+             List<Unavailability> unavailabilities = unavailabilityRepository.findByDoctorIdAndDate(
+                     appointment.getDoctor().getId(), newDateTime.toLocalDate());
+             if (!unavailabilities.isEmpty()) {
+                 throw new IllegalStateException("Doctor is unavailable on the selected date");
+             }
+
+             boolean isSlotTaken = appointmentRepository.existsByDoctorIdAndDateTimeAndStatusNot(
+                     appointment.getDoctor().getId(), newDateTime, AppointmentStatus.CANCELLED);
+
+             if (isSlotTaken) {
+                 throw new IllegalStateException("Selected time slot is already booked");
+             }
+
+             appointment.setDateTime(newDateTime);
+        }
+
+        appointment.setReason(rescheduleDto.getReason());
+        appointment.setStatus(AppointmentStatus.PENDING);
+
+        Appointment saved = appointmentRepository.save(appointment);
+        return mapToAppointmentDto(saved);
+    }
+
+    private AppointmentResponseDto mapToAppointmentDto(Appointment appointment) {
+        return AppointmentResponseDto.builder()
+                .id(appointment.getId())
+                .dateTime(appointment.getDateTime())
+                .status(appointment.getStatus())
+                .reason(appointment.getReason())
+                .doctorId(appointment.getDoctor().getId())
+                .doctorName(appointment.getDoctor().getFullName())
+                .doctorSpeciality(appointment.getDoctor().getSpeciality() != null ? appointment.getDoctor().getSpeciality().getSpecialiteName() : null)
+                .patientName(appointment.getPatient().getFullName())
+                .patientBloodType(appointment.getPatient().getBloodType() != null ? appointment.getPatient().getBloodType().name() : null)
+                .patientPastIllnesses(appointment.getPatient().getPastIllnesses())
+                .patientSurgeries(appointment.getPatient().getSurgeries())
+                .patientAllergies(appointment.getPatient().getAllergies())
+                .patientChronic(appointment.getPatient().getChronic())
+                .doctorNote(appointment.getDoctorNote())
+                .medicalReportDate(appointment.getMedicalReportDate())
+                .build();
+    }
+
     private DoctorListingDto mapToDto(Doctor doctor) {
         return DoctorListingDto.builder()
                 .id(doctor.getId())
@@ -244,15 +317,5 @@ public class PatientServiceImpl implements PatientService {
                 .city(doctor.getCity() != null ? doctor.getCity().getCityName() : null)
                 .fees(doctor.getFees())
                 .build();
-    }
-
-    @Override
-    public List<AppointmentResponseDto> getPatientAppointments(String email) {
-        Patient patient = patientRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Patient not found"));
-
-        return appointmentRepository.findByPatientId(patient.getId()).stream()
-                .map(this::mapToAppointmentDto)
-                .collect(Collectors.toList());
     }
 }

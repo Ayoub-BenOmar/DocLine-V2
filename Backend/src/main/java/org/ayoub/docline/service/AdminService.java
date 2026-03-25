@@ -16,6 +16,7 @@ public interface AdminService {
     void approveDoctor(Integer doctorId);
     void rejectDoctor(Integer doctorId);
     void suspendDoctor(Integer doctorId);
+    void suspendPatient(Integer patientId);
 
     // City & Specialty Management
     CityDto addCity(CityDto cityDto);

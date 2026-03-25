@@ -28,6 +28,13 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getAllPatients());
     }
 
+    @PutMapping("/patients/{patientId}/suspend")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<String> suspendPatient(@PathVariable Integer patientId) {
+        adminService.suspendPatient(patientId);
+        return ResponseEntity.ok("Patient suspension status toggled successfully");
+    }
+
     @GetMapping("/doctors")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<DoctorListingDto>> getAllDoctors() {

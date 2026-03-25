@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminService, Doctor } from '../services/admin.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
     selector: 'app-admin-doctors',
@@ -17,7 +18,11 @@ export class AdminDoctorsComponent implements OnInit {
     selectedDoctor: Doctor | null = null;
     showDetailsModal = false;
 
-    constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) { }
+    constructor(
+        private adminService: AdminService,
+        private cdr: ChangeDetectorRef,
+        private notificationService: NotificationService
+    ) { }
 
     ngOnInit(): void {
         this.loadDoctors();
@@ -35,6 +40,7 @@ export class AdminDoctorsComponent implements OnInit {
             },
             error: (err) => {
                 console.error('Error loading doctors', err);
+                this.notificationService.error('Failed', 'Failed to load doctors');
                 this.loading = false;
                 this.cdr.detectChanges();
             }
@@ -71,13 +77,13 @@ export class AdminDoctorsComponent implements OnInit {
         if (confirm('Are you sure you want to approve this doctor?')) {
             this.adminService.approveDoctor(doctorId).subscribe({
                 next: () => {
-                    alert('Doctor approved successfully');
+                    this.notificationService.success('Doctor Approved', 'Doctor has been approved successfully');
                     this.loadDoctors();
                     this.closeModal();
                 },
                 error: (err) => {
                     console.error('Error approving doctor', err);
-                    alert('Failed to approve doctor');
+                    this.notificationService.error('Failed', 'Failed to approve doctor');
                 }
             });
         }
@@ -87,13 +93,13 @@ export class AdminDoctorsComponent implements OnInit {
         if (confirm('Are you sure you want to reject this doctor?')) {
             this.adminService.rejectDoctor(doctorId).subscribe({
                 next: () => {
-                    alert('Doctor rejected successfully');
+                    this.notificationService.success('Doctor Rejected', 'Doctor has been rejected');
                     this.loadDoctors();
                     this.closeModal();
                 },
                 error: (err) => {
                     console.error('Error rejecting doctor', err);
-                    alert('Failed to reject doctor');
+                    this.notificationService.error('Failed', 'Failed to reject doctor');
                 }
             });
         }
@@ -103,13 +109,13 @@ export class AdminDoctorsComponent implements OnInit {
         if (confirm('Are you sure you want to toggle the suspension status of this doctor?')) {
             this.adminService.suspendDoctor(doctorId).subscribe({
                 next: () => {
-                    alert('Doctor suspension status toggled successfully');
+                    this.notificationService.success('Status Updated', 'Doctor suspension status has been updated');
                     this.loadDoctors();
                     this.closeModal();
                 },
                 error: (err) => {
                     console.error('Error suspending doctor', err);
-                    alert('Failed to suspend doctor');
+                    this.notificationService.error('Failed', 'Failed to update doctor status');
                 }
             });
         }

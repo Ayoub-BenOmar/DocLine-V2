@@ -1,178 +1,162 @@
-<div class="p-6">
-    <div class="flex items-center justify-between mb-6">
-        <h1 class="text-3xl font-bold text-gray-800">👤 My Profile</h1>
-        <button (click)="toggleEditMode()"
-            [class]="editMode ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'"
-            class="text-white font-medium py-2 px-6 rounded-lg transition">
-            {{ editMode ? '❌ Cancel' : '✏️ Edit Profile' }}
+<div class="page-container">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Personal Dossier</h1>
+      <p class="page-subtitle">Manage your medical identity and platform credentials.</p>
+    </div>
+    <button (click)="toggleEditMode()" [class]="editMode ? 'btn-premium btn-danger-outline' : 'btn-premium btn-outline'">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      <span>{{ editMode ? 'Discard Changes' : 'Refine Dossier' }}</span>
+    </button>
+  </header>
+   <!-- Premium Feedback Notification -->
+  <div *ngIf="message" class="mb-8 animate-in slide-in-from-top-4 duration-300">
+    <div [class]="messageType === 'success' ? 'bg-[#2caea9]/10 border-[#2caea9]/30 text-[#2caea9]' : 'bg-[#f85149]/10 border-[#f85149]/30 text-[#f85149]'" 
+         class="border-l-4 px-6 py-4 rounded-r-2xl flex items-center gap-4 font-bold text-sm">
+      <svg *ngIf="messageType === 'success'" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      <svg *ngIf="messageType === 'error'" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      {{ message }}
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex flex-col items-center justify-center py-20">
+    <div class="w-12 h-12 border-4 border-[#2caea9] border-t-transparent rounded-full animate-spin"></div>
+    <span class="text-slate-500 font-medium italic mt-4">Retrieving medical record...</span>
+  </div>
+ 
+  <div *ngIf="!loading && profile" class="profile-grid animate-in slide-in-from-bottom-4 duration-500">
+    <!-- LEFT: Personal Identity Summary -->
+    <aside class="avatar-card">
+      <div class="avatar-wrapper">
+        <img *ngIf="profile.profilePic" [src]="profile.profilePic" class="profile-img">
+        <div *ngIf="!profile.profilePic" class="avatar-placeholder">P</div>
+        <div class="status-badge">Verified User</div>
+      </div>
+      
+      <div class="mb-8">
+        <h2 class="text-2xl font-black text-white mb-1">{{ profile?.name }} {{ profile?.lastName }}</h2>
+        <p class="text-sm font-bold text-[#2caea9]">{{ profile?.email }}</p>
+      </div>
+ 
+      <div class="p-4 bg-[#0d1117] rounded-2xl border border-[#30363d] text-left">
+        <div class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Health Metadata</div>
+        <div class="flex justify-between items-center py-2 border-b border-[#30363d]/50">
+          <span class="text-xs text-slate-400">Blood Type</span>
+          <span class="text-xs font-black text-white">{{ profile?.bloodType || 'Not Set' }}</span>
+        </div>
+        <div class="flex justify-between items-center py-2 border-b border-[#30363d]/50">
+          <span class="text-xs text-slate-400">Service Zone</span>
+          <span class="text-xs font-black text-white">{{ profile?.city || 'Not Set' }}</span>
+        </div>
+        <div class="flex justify-between items-center py-2">
+          <span class="text-xs text-slate-400">Registry ID</span>
+          <span class="text-xs font-black text-[#2caea9]">#DL-{{ profile?.id }}</span>
+        </div>
+      </div>
+    </aside>
+ 
+    <!-- RIGHT: Medical & Identity Dossier -->
+    <div class="space-y-8">
+      <!-- Section: Clinical Identity -->
+      <div class="admin-card">
+        <div class="card-title">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Personal Information</span>
+        </div>
+ 
+        <div class="admin-form">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Row 1: Identity -->
+            <div class="form-group">
+              <label class="form-label">Given Name</label>
+              <input *ngIf="editMode" type="text" [(ngModel)]="formData.name" class="admin-input font-bold">
+              <input *ngIf="!editMode" disabled type="text" [ngModel]="profile?.name" class="admin-input font-bold opacity-70">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Family Name</label>
+              <input *ngIf="editMode" type="text" [(ngModel)]="formData.lastName" class="admin-input font-bold">
+              <input *ngIf="!editMode" disabled type="text" [ngModel]="profile?.lastName" class="admin-input font-bold opacity-70">
+            </div>
+ 
+            <!-- Row 2: Communication -->
+            <div class="form-group">
+              <label class="form-label">Registry Email</label>
+              <input disabled type="email" [value]="profile?.email" class="admin-input opacity-70">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Direct Contact</label>
+              <input *ngIf="editMode" type="text" [(ngModel)]="formData.phone" class="admin-input" placeholder="+212 ...">
+              <input *ngIf="!editMode" disabled type="text" [ngModel]="profile?.phone" class="admin-input opacity-70" placeholder="+212 ...">
+            </div>
+ 
+            <!-- Row 3: Verification & Birth -->
+            <div class="form-group">
+              <label class="form-label">National Identity (CIN)</label>
+              <input *ngIf="editMode" type="text" [(ngModel)]="formData.cin" class="admin-input font-black uppercase">
+              <input *ngIf="!editMode" disabled type="text" [ngModel]="profile?.cin" class="admin-input font-black uppercase opacity-70">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Date of Birth</label>
+              <input *ngIf="editMode" type="date" [(ngModel)]="formData.birthdate" class="admin-input font-bold">
+              <input *ngIf="!editMode" disabled type="text" [ngModel]="profile?.birthdate" class="admin-input font-bold opacity-70">
+            </div>
+ 
+            <!-- Row 4: Attributes & Residence -->
+            <div class="form-group">
+              <label class="form-label">Biological Gender</label>
+              <select *ngIf="editMode" [(ngModel)]="formData.gender" class="admin-input font-bold">
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+                <option value="OTHER">Other</option>
+              </select>
+              <input *ngIf="!editMode" disabled type="text" [ngModel]="profile?.gender" class="admin-input font-bold opacity-70">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Residential Address</label>
+              <input *ngIf="editMode" type="text" [(ngModel)]="formData.address" class="admin-input" placeholder="Complete street address...">
+              <input *ngIf="!editMode" disabled type="text" [ngModel]="profile?.address" class="admin-input opacity-70">
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Section: Medical Coverage -->
+      <div class="admin-card">
+        <div class="card-title">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Insurance Protocol</span>
+        </div>
+ 
+        <div class="admin-form space-y-8">
+          <div (click)="editMode ? formData.hasInsurance = !formData.hasInsurance : null" class="checkbox-group">
+            <div class="checkbox-custom" [class.checked]="editMode ? formData.hasInsurance : profile?.hasInsurance">
+              <svg *ngIf="editMode ? formData.hasInsurance : profile?.hasInsurance" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <span class="text-xs font-bold text-slate-300 uppercase tracking-widest">Active Insurance Coverage</span>
+          </div>
+ 
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6" *ngIf="editMode ? formData.hasInsurance : profile?.hasInsurance">
+            <div class="form-group">
+              <label class="form-label">Provider Name</label>
+              <input *ngIf="editMode" type="text" [(ngModel)]="formData.insuranceProvider" class="admin-input" placeholder="e.g. Cigna, AXA...">
+              <input *ngIf="!editMode" disabled type="text" [ngModel]="profile?.insuranceProvider" class="admin-input opacity-70">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Policy Number</label>
+              <input *ngIf="editMode" type="text" [(ngModel)]="formData.insuranceNumber" class="admin-input font-black uppercase">
+              <input *ngIf="!editMode" disabled type="text" [ngModel]="profile?.insuranceNumber" class="admin-input font-black uppercase opacity-70">
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Persistence Actions -->
+      <div *ngIf="editMode" class="flex gap-4">
+        <button (click)="saveProfile()" [disabled]="saving" class="btn-premium btn-primary flex-1 justify-center py-4">
+          {{ saving ? 'Synchronizing Dossier...' : 'Commit Changes to Registry' }}
         </button>
+      </div>
     </div>
-
-    <!-- Message Alert -->
-    <div *ngIf="message" [ngClass]="{'bg-green-100 border-green-400 text-green-700': messageType === 'success', 'bg-red-100 border-red-400 text-red-700': messageType === 'error'}" class="border px-4 py-3 rounded mb-6">
-        {{ message }}
-    </div>
-
-    <!-- Loading State -->
-    <div *ngIf="loading" class="text-center py-12">
-        <p class="text-gray-600">⏳ Loading your profile...</p>
-    </div>
-
-    <!-- Profile Content -->
-    <div *ngIf="!loading && profile" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Profile Picture Card -->
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div class="text-center">
-                <img *ngIf="profile.profilePic" [src]="profile.profilePic"
-                    class="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-blue-200">
-                <div *ngIf="!profile.profilePic" class="w-32 h-32 rounded-full mx-auto mb-4 bg-gray-200 flex items-center justify-center text-4xl">
-                    👤
-                </div>
-                <h2 class="text-2xl font-bold text-gray-800">{{ profile.name }} {{ profile.lastName }}</h2>
-                <p class="text-gray-600">{{ profile.email }}</p>
-                <p class="text-sm text-gray-500 mt-2">Patient ID: {{ profile.id }}</p>
-            </div>
-        </div>
-
-        <!-- Main Profile Information -->
-        <div class="lg:col-span-2 space-y-6">
-            <!-- Personal Information -->
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <h3 class="text-xl font-bold mb-4 text-gray-800">📋 Personal Information</h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- First Name -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                        <input *ngIf="!editMode" type="text" [value]="profile.name"
-                            class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600" disabled>
-                        <input *ngIf="editMode" type="text" [(ngModel)]="formData.name"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-
-                    <!-- Last Name -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                        <input *ngIf="!editMode" type="text" [value]="profile.lastName"
-                            class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600" disabled>
-                        <input *ngIf="editMode" type="text" [(ngModel)]="formData.lastName"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-
-                    <!-- Email -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input type="email" [value]="profile.email"
-                            class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600" disabled>
-                    </div>
-
-                    <!-- Phone -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
-                        <input *ngIf="!editMode" type="text" [value]="profile.phone || '-'"
-                            class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600" disabled>
-                        <input *ngIf="editMode" type="text" [(ngModel)]="formData.phone"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-
-                    <!-- Birthdate -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Birthdate</label>
-                        <input *ngIf="!editMode" type="text" [value]="profile.birthdate || '-'"
-                            class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600" disabled>
-                        <input *ngIf="editMode" type="date" [(ngModel)]="formData.birthdate"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-
-                    <!-- Gender -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
-                        <input *ngIf="!editMode" type="text" [value]="profile.gender || '-'"
-                            class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600" disabled>
-                        <select *ngIf="editMode" [(ngModel)]="formData.gender"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">Select Gender</option>
-                            <option value="MALE">Male</option>
-                            <option value="FEMALE">Female</option>
-                            <option value="OTHER">Other</option>
-                        </select>
-                    </div>
-
-                    <!-- CIN -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">CIN/ID Number</label>
-                        <input *ngIf="!editMode" type="text" [value]="profile.cin || '-'"
-                            class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600" disabled>
-                        <input *ngIf="editMode" type="text" [(ngModel)]="formData.cin"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-
-                    <!-- Blood Type -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Blood Type</label>
-                        <input type="text" [value]="profile.bloodType || '-'"
-                            class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600" disabled>
-                    </div>
-
-                    <!-- Address -->
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
-                        <input *ngIf="!editMode" type="text" [value]="profile.address || '-'"
-                            class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600" disabled>
-                        <input *ngIf="editMode" type="text" [(ngModel)]="formData.address"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-
-                    <!-- City -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
-                        <input type="text" [value]="profile.city || '-'"
-                            class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600" disabled>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Insurance Information -->
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <h3 class="text-xl font-bold mb-4 text-gray-800">🏥 Insurance Information</h3>
-
-                <div class="space-y-4">
-                    <!-- Has Insurance -->
-                    <div class="flex items-center">
-                        <input *ngIf="!editMode" type="checkbox" [checked]="profile.hasInsurance" disabled
-                            class="h-4 w-4 text-blue-600 rounded focus:ring-blue-500">
-                        <input *ngIf="editMode" type="checkbox" [(ngModel)]="formData.hasInsurance"
-                            class="h-4 w-4 text-blue-600 rounded focus:ring-blue-500">
-                        <label class="ml-3 text-sm font-medium text-gray-700">Has Insurance</label>
-                    </div>
-
-                    <!-- Insurance Provider -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Insurance Provider</label>
-                        <input *ngIf="!editMode" type="text" [value]="profile.insuranceProvider || '-'"
-                            class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600" disabled>
-                        <input *ngIf="editMode" type="text" [(ngModel)]="formData.insuranceProvider"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-
-                    <!-- Insurance Number -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Insurance Number</label>
-                        <input *ngIf="!editMode" type="text" [value]="profile.insuranceNumber || '-'"
-                            class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600" disabled>
-                        <input *ngIf="editMode" type="text" [(ngModel)]="formData.insuranceNumber"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Save Button -->
-            <div *ngIf="editMode" class="flex gap-4">
-                <button (click)="saveProfile()" [disabled]="saving"
-                    class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition disabled:opacity-50">
-                    {{ saving ? '💾 Saving...' : '💾 Save Changes' }}
-                </button>
-            </div>
-        </div>
-    </div>
+  </div>
 </div>

@@ -26,4 +26,8 @@ public interface PatientService {
     // Profile Management
     PatientProfileDto getPatientProfile(String email);
     PatientProfileDto updatePatientProfile(String email, PatientProfileUpdateDto updateDto);
+
+    // Appointment actions
+    void cancelAppointment(Integer appointmentId, String patientEmail);
+    AppointmentResponseDto rescheduleAppointment(Integer appointmentId, AppointmentRequestDto rescheduleDto, String patientEmail);
 }

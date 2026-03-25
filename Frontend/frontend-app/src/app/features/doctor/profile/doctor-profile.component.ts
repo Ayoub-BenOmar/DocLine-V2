@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DoctorService, DoctorProfileDto } from '../services/doctor.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-doctor-profile',
@@ -34,7 +35,8 @@ export class DoctorProfileComponent implements OnInit {
   constructor(
       private doctorService: DoctorService,
       private authService: AuthService,
-      private cdr: ChangeDetectorRef
+      private cdr: ChangeDetectorRef,
+      private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -73,14 +75,15 @@ export class DoctorProfileComponent implements OnInit {
     this.saving = true;
     this.cdr.detectChanges();
     this.doctorService.updateProfile(this.profile).subscribe({
-      next: () => {
-        alert('Profile updated successfully');
+      next: (data) => {
+        this.profile = data;
+        this.notificationService.success('Profile Updated', 'Your profile has been updated successfully');
         this.saving = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error updating profile', err);
-        alert('Failed to update profile');
+        this.notificationService.error('Update Failed', 'Failed to update profile. Please try again.');
         this.saving = false;
         this.cdr.detectChanges();
       }

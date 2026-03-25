@@ -1,2 +1,282 @@
-/* Patient Layout Styles */
+/* Patient Layout Shell (Parity with Admin/Doctor) */
+.admin-shell {
+  display: flex;
+  height: 100vh;
+  background-color: #0d1117; /* Deepest background */
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  color: #f0f6fc;
+}
 
+/* ──────────────────────────────────────────────────────────────
+   SIDEBAR
+────────────────────────────────────────────────────────────── */
+.sidebar {
+  background-color: #161b22; /* Slightly Lighter Sidebar */
+  border-right: 1px solid #30363d;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+}
+
+.sidebar.expanded {
+  width: 280px;
+}
+
+.sidebar.collapsed {
+  width: 80px;
+}
+
+/* Logo Area */
+.logo-area {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  border-bottom: 1px solid #30363d;
+  background: rgba(44, 174, 169, 0.02);
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  background-color: #2caea9;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  color: white;
+  font-size: 14px;
+}
+
+.brand-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: #f0f6fc;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+}
+
+/* Navigation List */
+.nav-section {
+  flex: 1;
+  padding: 24px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 12px;
+  color: #8b949e;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14.5px;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  gap: 12px;
+}
+
+.nav-link:hover {
+  background-color: #21262d;
+  color: #f0f6fc;
+}
+
+.nav-link.active {
+  background-color: rgba(44, 174, 169, 0.1);
+  color: #2caea9;
+  font-weight: 600;
+}
+
+.nav-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  height: 70%;
+  width: 3px;
+  background-color: #2caea9;
+  border-radius: 0 4px 4px 0;
+}
+
+.nav-item svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+  padding: 20px 12px;
+  border-top: 1px solid #30363d;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   MAIN CONTENT AREA
+────────────────────────────────────────────────────────────── */
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background-color: #0d1117;
+}
+
+/* Topbar Architecture */
+.topbar {
+  height: 70px;
+  background-color: rgba(22, 27, 34, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #30363d;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  z-index: 40;
+}
+
+.topbar-left, .topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #30363d;
+  background: transparent;
+  color: #8b949e;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-toggle:hover {
+  background: #30363d;
+  color: #f0f6fc;
+}
+
+.btn-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: #8b949e;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: transparent;
+  border: none;
+}
+ 
+.btn-icon:hover {
+  background: rgba(139, 148, 158, 0.1);
+  color: #f0f6fc;
+}
+ 
+.btn-logout {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #f85149;
+  color: #f85149;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+ 
+.btn-logout:hover {
+  background: rgba(248, 81, 73, 0.1);
+}
+ 
+.action-icon {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8b949e;
+  cursor: pointer;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background-color: #f85149;
+  border: 2px solid #161b22;
+  border-radius: 50%;
+}
+
+/* User Identity Anchor */
+.user-anchor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+}
+
+.avatar-mini {
+  width: 28px;
+  height: 28px;
+  background-color: #2caea9;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 10px;
+  color: white;
+}
+
+/* Content Viewport */
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Transitions */
+.animate-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .sidebar.expanded {
+    position: fixed;
+    height: 100vh;
+  }
+}

@@ -12,11 +12,11 @@
 
   <ng-container *ngIf="!loading">
     <!-- Debug Info -->
-    <div style="background: #0d1117; border: 1px solid #30363d; padding: 12px; margin-bottom: 20px; border-radius: 8px; color: #8b949e; font-size: 12px;">
+    <!--<div style="background: #0d1117; border: 1px solid #30363d; padding: 12px; margin-bottom: 20px; border-radius: 8px; color: #8b949e; font-size: 12px;">
       <div>Debug: upcomingAppointments.length = {{ upcomingAppointments.length }}</div>
       <div>Debug: pastAppointments.length = {{ pastAppointments.length }}</div>
       <div>Debug: activeTab = {{ activeTab }}</div>
-    </div>
+    </div> -->
 
     <!-- Filter Tabs (Premium Style) -->
     <div class="filter-tabs">
@@ -161,7 +161,7 @@
         <div class="text-[#2caea9] text-[10px] font-black uppercase tracking-widest mb-1">Clinical Protocol</div>
         <h2 class="modal-title">Schedule Session</h2>
       </div>
-      <button (click)="closeBookingModal()" class="text-slate-500 hover:text-white transition">✕</button>
+      <button (click)="closeBookingModal()" class="text-slate-500 hover:text-white transition" style="font-size: 24px; line-height: 1;">✕</button>
     </header>
 
     <div class="modal-body space-y-8">
@@ -175,39 +175,66 @@
         </div>
       </div>
 
-      <div class="space-y-4">
+      <div class="space-y-6">
+        <!-- Date Selection -->
         <div>
-          <label class="admin-label">Timeline Date</label>
-          <input type="date" [(ngModel)]="bookingData.selectedDate" (change)="onDateSelected()" [min]="getMinDate()" [max]="getMaxDate()" class="admin-input font-bold">
+          <label class="admin-label">Select Appointment Date</label>
+          <input
+            type="date"
+            [(ngModel)]="bookingData.selectedDate"
+            (change)="onDateSelected()"
+            [min]="getMinDate()"
+            [max]="getMaxDate()"
+            class="admin-input"
+            style="background-color: #0d1117; color: #f0f6fc; border: 2px solid #30363d; padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: bold; width: 100%;"
+            required>
         </div>
 
+        <!-- Time Slots Selection -->
         <div *ngIf="bookingData.selectedDate">
-          <label class="admin-label">Available Slots</label>
-          <div *ngIf="slotsLoading" class="py-4 text-center text-xs text-slate-500 italic">Synchronizing available slots...</div>
-          <div *ngIf="!slotsLoading" class="slots-grid">
-            <button *ngFor="let slot of availableSlots"
-                    [disabled]="!slot.available"
-                    (click)="bookingData.selectedTime = slot.time"
-                    class="slot-option"
-                    [class.selected]="bookingData.selectedTime === slot.time"
-                    [class.disabled]="!slot.available">
+          <label class="admin-label">Select Time Slot (9:00 AM - 12:00 PM)</label>
+          <div *ngIf="slotsLoading" class="py-6 text-center">
+            <div class="inline-block w-8 h-8 border-4 border-[#2caea9] border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-slate-400 font-medium italic mt-3">Loading available slots...</p>
+          </div>
+          <div *ngIf="!slotsLoading && availableSlots.length > 0" class="slots-grid">
+            <button
+              *ngFor="let slot of availableSlots"
+              type="button"
+              [disabled]="!slot.available"
+              (click)="bookingData.selectedTime = slot.time"
+              class="slot-option"
+              [class.selected]="bookingData.selectedTime === slot.time"
+              [class.disabled]="!slot.available"
+              style="background-color: #0d1117; color: #8b949e; border: 2px solid #30363d; padding: 12px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.2s; font-family: inherit;">
               {{ slot.time }}
             </button>
           </div>
+          <div *ngIf="!slotsLoading && availableSlots.length === 0" class="py-6 text-center">
+            <p class="text-slate-400 italic">No available slots for this date</p>
+          </div>
         </div>
 
+        <!-- Reason Textarea -->
         <div>
-          <label class="admin-label">Clinical Objective</label>
-          <textarea [(ngModel)]="bookingData.reason" rows="3" class="admin-input" placeholder="Explain the reason for this visit..."></textarea>
+          <label class="admin-label">Reason for Visit</label>
+          <textarea
+            [(ngModel)]="bookingData.reason"
+            rows="4"
+            class="admin-input"
+            placeholder="Please describe your symptoms or reason for this appointment..."
+            style="background-color: #0d1117; color: #f0f6fc; border: 2px solid #30363d; padding: 12px 16px; border-radius: 12px; font-size: 14px; width: 100%; font-family: inherit; resize: vertical; min-height: 80px;"
+            required></textarea>
         </div>
       </div>
     </div>
 
     <footer class="modal-footer">
-      <button (click)="closeBookingModal()" class="btn-action btn-secondary flex-1 py-3 justify-center">Discard</button>
+      <button (click)="closeBookingModal()" class="btn-action btn-secondary flex-1 py-3 justify-center" style="background-color: #30363d; color: #f0f6fc; border: 1px solid #444c56; padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; margin-right: 8px;">Discard</button>
       <button (click)="bookAppointment()"
               [disabled]="bookingLoading || !bookingData.selectedDate || !bookingData.selectedTime || !bookingData.reason"
-              class="btn-action btn-primary flex-1 py-3 justify-center">
+              class="btn-action btn-primary flex-1 py-3 justify-center"
+              style="background-color: #2caea9; color: white; padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; border: none;">
         {{ bookingLoading ? 'Processing...' : 'Secure Session' }}
       </button>
     </footer>

@@ -20,15 +20,15 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
 
     List<Doctor> findByStatus(UserStatus status);
 
-    @Query("SELECT d FROM Doctor d WHERE d.speciality.id = :specialityId AND d.status = 'ACTIVE'")
+    @Query("SELECT d FROM Doctor d WHERE d.speciality.id = :specialityId AND d.status = org.ayoub.docline.model.enums.UserStatus.ACTIVE AND d.isActivated = true")
     List<Doctor> findBySpecialityId(@Param("specialityId") Integer specialityId);
 
-    @Query("SELECT d FROM Doctor d WHERE d.city.id = :cityId AND d.status = 'ACTIVE'")
+    @Query("SELECT d FROM Doctor d WHERE d.city.id = :cityId AND d.status = org.ayoub.docline.model.enums.UserStatus.ACTIVE AND d.isActivated = true")
     List<Doctor> findByCityId(@Param("cityId") Integer cityId);
 
-    @Query("SELECT d FROM Doctor d WHERE d.status = 'ACTIVE'")
+    @Query("SELECT d FROM Doctor d WHERE d.status = org.ayoub.docline.model.enums.UserStatus.ACTIVE AND d.isActivated = true")
     List<Doctor> findActiveDoctors();
 
-    @Query("SELECT d FROM Doctor d WHERE (:cityId IS NULL OR d.city.id = :cityId) AND (:specialityId IS NULL OR d.speciality.id = :specialityId) AND d.status = 'ACTIVE'")
+    @Query("SELECT d FROM Doctor d WHERE (:cityId IS NULL OR d.city.id = :cityId) AND (:specialityId IS NULL OR d.speciality.id = :specialityId) AND d.status = org.ayoub.docline.model.enums.UserStatus.ACTIVE AND d.isActivated = true")
     Page<Doctor> findAllByFilters(@Param("cityId") Integer cityId, @Param("specialityId") Integer specialityId, Pageable pageable);
 }

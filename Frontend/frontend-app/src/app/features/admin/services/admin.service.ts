@@ -18,6 +18,7 @@ export interface Patient {
     insuranceProvider: string;
     insuranceNumber: string;
     hasInsurance: boolean;
+    status: string;
     // Medical history
     pastIllnesses: string;
     surgeries: string;
@@ -120,18 +121,22 @@ export class AdminService {
     }
 
     updateCity(id: number, city: City): Observable<string> {
-        return this.http.put<string>(`${this.apiUrl}/cities/${id}`, city);
+        return this.http.put(`${this.apiUrl}/cities/${id}`, city, { responseType: 'text' });
     }
 
     deleteCity(id: number): Observable<string> {
-        return this.http.delete<string>(`${this.apiUrl}/cities/${id}`);
+        return this.http.delete(`${this.apiUrl}/cities/${id}`, { responseType: 'text' });
     }
 
     updateSpecialty(id: number, specialty: Specialty): Observable<string> {
-        return this.http.put<string>(`${this.apiUrl}/specialities/${id}`, specialty);
+        return this.http.put(`${this.apiUrl}/specialities/${id}`, specialty, { responseType: 'text' });
     }
 
     deleteSpecialty(id: number): Observable<string> {
-        return this.http.delete<string>(`${this.apiUrl}/specialities/${id}`);
+        return this.http.delete(`${this.apiUrl}/specialities/${id}`, { responseType: 'text' });
+    }
+
+    suspendPatient(patientId: number): Observable<string> {
+        return this.http.put(`${this.apiUrl}/patients/${patientId}/suspend`, {}, { responseType: 'text' });
     }
 }

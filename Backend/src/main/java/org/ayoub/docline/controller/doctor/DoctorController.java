@@ -5,7 +5,6 @@ import org.ayoub.docline.model.dto.AppointmentResponseDto;
 import org.ayoub.docline.model.dto.DoctorProfileDto;
 import org.ayoub.docline.model.dto.MedicalReportDto;
 import org.ayoub.docline.model.dto.UnavailabilityDto;
-import org.ayoub.docline.model.entity.Doctor;
 import org.ayoub.docline.model.entity.Unavailability;
 import org.ayoub.docline.service.DoctorService;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +42,7 @@ public class DoctorController {
 
     @PutMapping("/profile")
     @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
-    public ResponseEntity<Doctor> updateProfile(@RequestBody DoctorProfileDto profileDto) {
+    public ResponseEntity<DoctorProfileDto> updateProfile(@RequestBody DoctorProfileDto profileDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
 

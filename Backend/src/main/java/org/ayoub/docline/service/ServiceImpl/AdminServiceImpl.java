@@ -11,13 +11,11 @@ import org.ayoub.docline.model.entity.City;
 import org.ayoub.docline.model.entity.Doctor;
 import org.ayoub.docline.model.entity.Patient;
 import org.ayoub.docline.model.entity.Specialty;
-import org.ayoub.docline.model.entity.User;
-import org.ayoub.docline.model.enums.Role;
 import org.ayoub.docline.model.enums.UserStatus;
 import org.ayoub.docline.repository.CityRepository;
 import org.ayoub.docline.repository.DoctorRepository;
+import org.ayoub.docline.repository.PatientRepository;
 import org.ayoub.docline.repository.SpecialtyRepository;
-import org.ayoub.docline.repository.UserRepository;
 
 
 import org.ayoub.docline.service.AdminService;
@@ -33,17 +31,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
 
-    private final UserRepository userRepository;
     private final DoctorRepository doctorRepository;
+    private final PatientRepository patientRepository;
     private final CityRepository cityRepository;
     private final SpecialtyRepository specialtyRepository;
 
 
     @Override
     public List<PatientProfileDto> getAllPatients() {
-        return userRepository.findAllByRole(Role.ROLE_PATIENT).stream()
-                .filter(user -> user instanceof Patient)
-                .map(user -> mapToPatientDto((Patient) user))
+        return patientRepository.findAll().stream()
+                .map(this::mapToPatientDto)
                 .collect(Collectors.toList());
     }
 
@@ -97,6 +94,22 @@ public class AdminServiceImpl implements AdminService {
             doctor.setIsActivated(false);
         }
         doctorRepository.save(doctor);
+    }
+
+    @Override
+    @Transactional
+    public void suspendPatient(Integer patientId) {
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        if (Boolean.TRUE.equals(patient.getIsSuspended())) {
+            patient.setIsSuspended(false);
+            patient.setIsActivated(true);
+        } else {
+            patient.setIsSuspended(true);
+            patient.setIsActivated(false);
+        }
+        patientRepository.save(patient);
     }
 
     @Override
@@ -212,7 +225,7 @@ public class AdminServiceImpl implements AdminService {
                 .insuranceProvider(patient.getInsuranceProvider())
                 .insuranceNumber(patient.getInsuranceNumber())
                 .hasInsurance(patient.getHasInsurance())
-                // Basic info is enough for the list, can add more if needed
+                .status(Boolean.TRUE.equals(patient.getIsSuspended()) ? "SUSPENDED" : "ACTIVE")
                 .build();
     }
 

@@ -282,7 +282,10 @@ export class DoctorsComponent implements OnInit {
                 if (!Array.isArray(slots)) {
                     this.availableSlots = [];
                     this.slotsLoading = false;
-                    alert('⚠️ Unexpected response format');
+                    this.notificationService.error(
+                        'Response Error',
+                        'Unexpected response format from server'
+                    );
                     this.cdr.detectChanges();
                     return;
                 }
@@ -323,7 +326,11 @@ export class DoctorsComponent implements OnInit {
                 console.error('Error loading slots:', err);
                 this.availableSlots = [];
                 this.slotsLoading = false;
-                alert('❌ Failed to load slots: ' + (err.error?.message || err.message));
+                const errorMsg = err.error?.message || err.message || 'Please try again';
+                this.notificationService.error(
+                    'Failed to Load Slots',
+                    errorMsg
+                );
                 this.cdr.detectChanges();
             }
         });
@@ -331,7 +338,10 @@ export class DoctorsComponent implements OnInit {
 
     bookAppointment(): void {
         if (!this.bookingData.selectedDate || !this.bookingData.selectedTime || !this.bookingData.reason) {
-            alert('Please fill in all fields');
+            this.notificationService.warning(
+                'Incomplete Form',
+                'Please fill in all fields before submitting'
+            );
             return;
         }
 

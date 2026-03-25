@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService, City } from '../services/admin.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
     selector: 'app-admin-cities',
@@ -18,11 +19,13 @@ export class AdminCitiesComponent implements OnInit {
 
     loading = true;
     error = '';
-    message = '';
-    messageType: 'success' | 'error' = 'success';
     addingCity = false;
 
-    constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) { }
+    constructor(
+        private adminService: AdminService,
+        private cdr: ChangeDetectorRef,
+        private notificationService: NotificationService
+    ) { }
 
     ngOnInit(): void {
         this.loadCities();
@@ -48,7 +51,7 @@ export class AdminCitiesComponent implements OnInit {
 
     addCity(): void {
         if (!this.newCityName.trim()) {
-            this.showMessage('❌ Please enter a city name', 'error');
+            this.notificationService.warning('Invalid Input', 'Please enter a city name');
             return;
         }
 
@@ -61,13 +64,13 @@ export class AdminCitiesComponent implements OnInit {
                 this.newCityName = '';
                 this.addingCity = false;
                 this.cdr.detectChanges();
-                this.showMessage('✅ City added successfully!', 'success');
+                this.notificationService.success('City Added', 'City has been added successfully');
             },
             error: (err) => {
                 console.error('Error adding city:', err);
                 this.addingCity = false;
                 this.cdr.detectChanges();
-                this.showMessage('❌ Failed to add city', 'error');
+                this.notificationService.error('Failed', 'Failed to add city');
             }
         });
     }
@@ -86,7 +89,7 @@ export class AdminCitiesComponent implements OnInit {
 
     saveEdit(city: City): void {
         if (!this.editingName.trim()) {
-            this.showMessage('❌ City name cannot be empty', 'error');
+            this.notificationService.warning('Invalid Input', 'City name cannot be empty');
             return;
         }
 
@@ -96,12 +99,12 @@ export class AdminCitiesComponent implements OnInit {
                 city.cityName = this.editingName;
                 this.editingId = null;
                 this.cdr.detectChanges();
-                this.showMessage('✅ City updated successfully', 'success');
+                this.notificationService.success('City Updated', 'City has been updated successfully');
             },
             error: (err) => {
                 console.error('Error updating city:', err);
                 this.cdr.detectChanges();
-                this.showMessage('❌ Failed to update city', 'error');
+                this.notificationService.error('Failed', 'Failed to update city');
             }
         });
     }
@@ -115,25 +118,14 @@ export class AdminCitiesComponent implements OnInit {
                         this.cities.splice(index, 1);
                     }
                     this.cdr.detectChanges();
-                    this.showMessage('✅ City deleted successfully', 'success');
+                    this.notificationService.success('City Deleted', 'City has been deleted successfully');
                 },
                 error: (err) => {
                     console.error('Error deleting city:', err);
                     this.cdr.detectChanges();
-                    this.showMessage('❌ Failed to delete city', 'error');
+                    this.notificationService.error('Failed', 'Failed to delete city');
                 }
             });
         }
     }
-
-    private showMessage(msg: string, type: 'success' | 'error'): void {
-        this.message = msg;
-        this.messageType = type;
-        this.cdr.detectChanges();
-        setTimeout(() => {
-            this.message = '';
-            this.cdr.detectChanges();
-        }, 4000);
-    }
 }
-

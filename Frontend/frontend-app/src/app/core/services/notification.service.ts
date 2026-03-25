@@ -21,19 +21,23 @@ export class NotificationService {
 
   show(notification: Omit<Notification, 'id'>) {
     const id = Math.random().toString(36).substr(2, 9);
+    const duration = notification.duration ?? 4000;
     const newNotification: Notification = {
       id,
       ...notification,
-      duration: notification.duration || 4000
+      duration
     };
 
-    const current = this.notifications$.value;
-    this.notifications$.next([...current, newNotification]);
+    // Use setTimeout to avoid ExpressionChangedAfterItHasBeenCheckedError
+    setTimeout(() => {
+      const current = this.notifications$.value;
+      this.notifications$.next([...current, newNotification]);
+    });
 
-    if (newNotification.duration > 0) {
+    if (duration > 0) {
       setTimeout(() => {
         this.remove(id);
-      }, newNotification.duration);
+      }, duration);
     }
 
     return id;

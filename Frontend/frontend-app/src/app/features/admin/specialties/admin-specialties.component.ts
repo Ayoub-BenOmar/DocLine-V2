@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService, Specialty } from '../services/admin.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
     selector: 'app-admin-specialties',
@@ -18,11 +19,13 @@ export class AdminSpecialtiesComponent implements OnInit {
 
     loading = true;
     error = '';
-    message = '';
-    messageType: 'success' | 'error' = 'success';
     addingSpecialty = false;
 
-    constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) { }
+    constructor(
+        private adminService: AdminService,
+        private cdr: ChangeDetectorRef,
+        private notificationService: NotificationService
+    ) { }
 
     ngOnInit(): void {
         this.loadSpecialties();
@@ -48,7 +51,7 @@ export class AdminSpecialtiesComponent implements OnInit {
 
     addSpecialty(): void {
         if (!this.newSpecialtyName.trim()) {
-            this.showMessage('❌ Please enter a specialty name', 'error');
+            this.notificationService.warning('Invalid Input', 'Please enter a specialty name');
             return;
         }
 
@@ -61,13 +64,13 @@ export class AdminSpecialtiesComponent implements OnInit {
                 this.newSpecialtyName = '';
                 this.addingSpecialty = false;
                 this.cdr.detectChanges();
-                this.showMessage('✅ Specialty added successfully!', 'success');
+                this.notificationService.success('Specialty Added', 'Specialty has been added successfully');
             },
             error: (err) => {
                 console.error('Error adding specialty:', err);
                 this.addingSpecialty = false;
                 this.cdr.detectChanges();
-                this.showMessage('❌ Failed to add specialty', 'error');
+                this.notificationService.error('Failed', 'Failed to add specialty');
             }
         });
     }
@@ -86,7 +89,7 @@ export class AdminSpecialtiesComponent implements OnInit {
 
     saveEdit(specialty: Specialty): void {
         if (!this.editingName.trim()) {
-            this.showMessage('❌ Specialty name cannot be empty', 'error');
+            this.notificationService.warning('Invalid Input', 'Specialty name cannot be empty');
             return;
         }
 
@@ -96,12 +99,12 @@ export class AdminSpecialtiesComponent implements OnInit {
                 specialty.specialiteName = this.editingName;
                 this.editingId = null;
                 this.cdr.detectChanges();
-                this.showMessage('✅ Specialty updated successfully', 'success');
+                this.notificationService.success('Specialty Updated', 'Specialty has been updated successfully');
             },
             error: (err) => {
                 console.error('Error updating specialty:', err);
                 this.cdr.detectChanges();
-                this.showMessage('❌ Failed to update specialty', 'error');
+                this.notificationService.error('Failed', 'Failed to update specialty');
             }
         });
     }
@@ -115,25 +118,14 @@ export class AdminSpecialtiesComponent implements OnInit {
                         this.specialties.splice(index, 1);
                     }
                     this.cdr.detectChanges();
-                    this.showMessage('✅ Specialty deleted successfully', 'success');
+                    this.notificationService.success('Specialty Deleted', 'Specialty has been deleted successfully');
                 },
                 error: (err) => {
                     console.error('Error deleting specialty:', err);
                     this.cdr.detectChanges();
-                    this.showMessage('❌ Failed to delete specialty', 'error');
+                    this.notificationService.error('Failed', 'Failed to delete specialty');
                 }
             });
         }
     }
-
-    private showMessage(msg: string, type: 'success' | 'error'): void {
-        this.message = msg;
-        this.messageType = type;
-        this.cdr.detectChanges();
-        setTimeout(() => {
-            this.message = '';
-            this.cdr.detectChanges();
-        }, 4000);
-    }
 }
-
