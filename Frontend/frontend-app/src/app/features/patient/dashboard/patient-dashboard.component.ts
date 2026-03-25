@@ -27,15 +27,12 @@ export class PatientDashboardComponent implements OnInit {
         this.loading = true;
         this.cdr.detectChanges();
 
-        // Load appointments from backend
         this.patientService.getAppointments().subscribe({
             next: (appointments) => {
                 console.log('Dashboard appointments loaded:', appointments);
                 const now = new Date();
 
-                // Parse dates for accurate comparison if needed, or use string comparison if ISO format
 
-                // Categorize appointments
                 const allUpcoming = appointments.filter((apt: any) =>
                     new Date(apt.dateTime) >= now && apt.status !== 'COMPLETED' && apt.status !== 'CANCELLED'
                 );
@@ -44,9 +41,8 @@ export class PatientDashboardComponent implements OnInit {
                     new Date(apt.dateTime) < now || apt.status === 'COMPLETED' || apt.status === 'CANCELLED'
                 );
 
-                // Set counts and display lists
                 this.upcomingCount = allUpcoming.length;
-                this.upcomingAppointments = allUpcoming.slice(0, 3); // Only show top 3 next
+                this.upcomingAppointments = allUpcoming.slice(0, 3);
                 this.totalAppointments = appointments.length;
 
                 this.loading = false;

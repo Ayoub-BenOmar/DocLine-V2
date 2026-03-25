@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.ayoub.docline.model.entity.Doctor;
-import org.ayoub.docline.model.entity.Patient;
 import org.ayoub.docline.model.enums.AppointmentStatus;
 
 import java.time.LocalDateTime;

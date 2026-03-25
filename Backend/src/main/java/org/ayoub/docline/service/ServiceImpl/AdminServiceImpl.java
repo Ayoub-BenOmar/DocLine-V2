@@ -182,8 +182,6 @@ public class AdminServiceImpl implements AdminService {
         if (!cityRepository.existsById(id)) {
             throw new IllegalArgumentException("City not found");
         }
-        // Assuming cascade delete is handled or not required for simple deletion logic
-        // If doctors/patients depend on it, we might need more logic or handle constraints
         cityRepository.deleteById(id);
     }
 

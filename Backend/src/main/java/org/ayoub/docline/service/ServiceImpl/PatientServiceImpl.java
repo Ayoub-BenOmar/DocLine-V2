@@ -83,21 +83,18 @@ public class PatientServiceImpl implements PatientService {
     public List<TimeSlotDto> getAvailableSlots(Integer doctorId, LocalDate date) {
         List<TimeSlotDto> slots = new ArrayList<>();
 
-        // 1. Basic Business Rule: Mon-Fri, 09:00 - 12:00
         if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
-            return slots; // Empty list for weekends
+            return slots;
         }
 
         LocalTime startTime = LocalTime.of(9, 0);
         LocalTime endTime = LocalTime.of(12, 0);
 
-        // 2. Check Unavailability (Holidays/Sick) using optimized query
         List<Unavailability> unavailabilities = unavailabilityRepository.findByDoctorIdAndDate(doctorId, date);
         if (!unavailabilities.isEmpty()) {
-            return slots; // Empty list if doctor is on holiday/sick leave for this date
+            return slots;
         }
 
-        // 3. Get Existing Appointments
         LocalDateTime dayStart = date.atStartOfDay();
         LocalDateTime dayEnd = date.atTime(LocalTime.MAX);
 

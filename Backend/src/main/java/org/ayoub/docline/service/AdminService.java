@@ -18,7 +18,6 @@ public interface AdminService {
     void suspendDoctor(Integer doctorId);
     void suspendPatient(Integer patientId);
 
-    // City & Specialty Management
     CityDto addCity(CityDto cityDto);
     List<CityDto> getAllCities();
     SpecialtyDto addSpecialty(SpecialtyDto specialtyDto);
@@ -30,7 +29,6 @@ public interface AdminService {
     void updateSpecialty(Integer id, SpecialtyDto specialtyDto);
     void deleteSpecialty(Integer id);
 
-    // Statistics
     List<CityStatisticDto> getCityStatistics();
     List<SpecialtyStatisticDto> getSpecialtyStatistics();
 

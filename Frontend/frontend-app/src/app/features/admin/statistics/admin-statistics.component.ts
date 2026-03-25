@@ -44,7 +44,6 @@ export class AdminStatisticsComponent implements OnInit {
         this.specialtyStatsLoaded = false;
         this.cdr.detectChanges();
 
-        // Load all cities and specialties
         this.adminService.getAllCities().subscribe({
             next: (cities) => {
                 this.cities = cities;

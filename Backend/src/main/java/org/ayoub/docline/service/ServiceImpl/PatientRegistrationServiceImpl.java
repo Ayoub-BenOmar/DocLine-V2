@@ -55,7 +55,7 @@ public class PatientRegistrationServiceImpl implements UserRegistrationService {
             patient.setCity(city);
         }
 
-        patient.setIsActivated(true); // Patients are auto-activated
+        patient.setIsActivated(true);
 
         return patientRepository.save(patient);
     }

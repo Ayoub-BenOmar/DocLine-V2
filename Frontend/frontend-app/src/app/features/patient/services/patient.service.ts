@@ -15,7 +15,6 @@ export interface AppointmentResponseDto {
     doctorNote: string;
     medicalReportDate: string;
 
-    // Patient Medical History
     patientBloodType?: string;
     patientPastIllnesses?: string;
     patientSurgeries?: string;
@@ -31,22 +30,18 @@ export class PatientService {
 
     constructor(private http: HttpClient) { }
 
-    // Get patient profile
     getProfile(): Observable<any> {
         return this.http.get(`${this.apiUrl}/profile`);
     }
 
-    // Update patient profile
     updateProfile(data: any): Observable<any> {
         return this.http.put(`${this.apiUrl}/profile`, data);
     }
 
-    // Get patient appointments
     getAppointments(): Observable<AppointmentResponseDto[]> {
         return this.http.get<AppointmentResponseDto[]>(`${this.apiUrl}/appointments`);
     }
 
-    // Search doctors
     searchDoctors(cityId?: number, specialityId?: number, name?: string): Observable<any[]> {
         let params = '';
         if (cityId) params += `cityId=${cityId}&`;
@@ -56,29 +51,24 @@ export class PatientService {
         return this.http.get<any[]>(`${this.apiUrl}/doctors?${params}`);
     }
 
-    // Get doctor available slots
     getDoctorSlots(doctorId: number, date: string): Observable<any[]> {
         const url = `${this.apiUrl}/doctors/${doctorId}/slots?date=${date}`;
         console.log('Calling getDoctorSlots - URL:', url);
         return this.http.get<any[]>(url);
     }
 
-    // Get doctor unavailability
     getDoctorUnavailability(doctorId: number): Observable<any[]> {
         return this.http.get<any[]>(`${this.apiUrl}/doctors/${doctorId}/unavailability`);
     }
 
-    // Book appointment
     bookAppointment(data: any): Observable<any> {
         return this.http.post(`${this.apiUrl}/appointments`, data);
     }
 
-    // Cancel appointment
     cancelAppointment(appointmentId: number): Observable<string> {
         return this.http.put(`${this.apiUrl}/appointments/${appointmentId}/cancel`, {}, { responseType: 'text' });
     }
 
-    // Reschedule appointment
     rescheduleAppointment(appointmentId: number, data: { dateTime: string; reason: string }): Observable<any> {
         return this.http.put(`${this.apiUrl}/appointments/${appointmentId}/reschedule`, data);
     }

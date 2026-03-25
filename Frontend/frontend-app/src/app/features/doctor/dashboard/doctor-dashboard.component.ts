@@ -35,7 +35,6 @@ export class DoctorDashboardComponent implements OnInit {
   showReportModal = false;
   loading = true;
 
-  // Statistics for the new grid
   totalAppointments = 0;
   pendingCount = 0;
   completedCount = 0;
@@ -110,7 +109,6 @@ export class DoctorDashboardComponent implements OnInit {
   }
 
   addUnavailability(): void {
-    // Frontend validation
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const startDate = new Date(this.newUnavailability.startDate);
@@ -143,7 +141,6 @@ export class DoctorDashboardComponent implements OnInit {
   openCompleteModal(appointment: AppointmentResponseDto): void {
     this.selectedAppointment = appointment;
     this.showReportModal = true;
-    // Reset report form
     this.medicalReport = {
       bloodType: '',
       pastIllnesses: '',

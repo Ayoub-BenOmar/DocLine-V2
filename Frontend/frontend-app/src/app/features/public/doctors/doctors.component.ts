@@ -33,10 +33,8 @@ export class DoctorsComponent implements OnInit {
     isAuthenticated = false;
     userRole: string | null = null;
 
-    // Selection for Sidebar
     viewedDoctor: Doctor | null = null;
 
-    // Booking Modal
     showBookingModal = false;
     selectedDoctor: any = null;
     availableSlots: any[] = [];
@@ -66,7 +64,6 @@ export class DoctorsComponent implements OnInit {
 
         console.log('[PublicDoctors] Loading data...');
 
-        // Load cities, specialties, and doctors in parallel
         forkJoin({
             cities: this.publicService.getAllCities(),
             specialties: this.publicService.getAllSpecialties(),
@@ -157,7 +154,6 @@ export class DoctorsComponent implements OnInit {
             return;
         }
 
-        // Open booking modal
         this.openBookingModal(doctor);
     }
 
@@ -168,7 +164,6 @@ export class DoctorsComponent implements OnInit {
         this.resetBookingForm();
         this.doctorUnavailabilities = [];
 
-        // Fetch Unavailability
         this.patientService.getDoctorUnavailability(doctor.id).subscribe({
             next: (data) => {
                 this.doctorUnavailabilities = data;
@@ -199,11 +194,9 @@ export class DoctorsComponent implements OnInit {
         this.availableSlots = [];
     }
 
-    // Modal Logic & Helpers
     getMinDate(): string {
         const today = new Date();
         const dayOfWeek = today.getDay();
-        // If Saturday (6) or Sunday (0), move to next Monday
         if (dayOfWeek === 0) today.setDate(today.getDate() + 1);
         else if (dayOfWeek === 6) today.setDate(today.getDate() + 2);
         return today.toISOString().split('T')[0];
@@ -220,14 +213,13 @@ export class DoctorsComponent implements OnInit {
 
     isWeekday(dateStr: string): boolean {
         const date = new Date(dateStr);
-        const dayOfWeek = date.getUTCDay(); // Use UTC day to avoid timezone shifts
+        const dayOfWeek = date.getUTCDay();
         return dayOfWeek >= 1 && dayOfWeek <= 5;
     }
 
     onDateSelected(): void {
         if (!this.bookingData.selectedDate) return;
 
-        // 1. Check Weekday
         if (!this.isWeekday(this.bookingData.selectedDate)) {
             this.notificationService.warning(
                 'Invalid Date',
@@ -239,16 +231,13 @@ export class DoctorsComponent implements OnInit {
             return;
         }
 
-        // 2. Check Doctor Unavailability (Holidays/Emergency)
         const selectedDateStr = this.bookingData.selectedDate;
 
         const isUnavailable = this.doctorUnavailabilities.some((u: any) => {
-            // Handle if startDate/endDate are strings (YYYY-MM-DD)
             if (typeof u.startDate === 'string' && typeof u.endDate === 'string') {
                 return selectedDateStr >= u.startDate && selectedDateStr <= u.endDate;
             }
 
-            // Fallback if they are timestamps or other formats
             const start = new Date(u.startDate);
             start.setHours(0,0,0,0);
             const end = new Date(u.endDate);
@@ -271,7 +260,6 @@ export class DoctorsComponent implements OnInit {
             return;
         }
 
-        // 3. Fetch Slots
         this.slotsLoading = true;
         this.availableSlots = [];
         this.bookingData.selectedTime = '';
@@ -290,14 +278,12 @@ export class DoctorsComponent implements OnInit {
                     return;
                 }
 
-                // Filter and format only 9:00 AM - 12:00 PM slots
                 this.availableSlots = slots
                     .map((slot: any) => {
                         const startTime = new Date(slot.start).toLocaleTimeString('en-US', {
                             hour: '2-digit', minute: '2-digit', hour12: true
                         });
                         console.log('Processing slot:', slot);
-                        // Check for 'available' or 'isAvailable' property
                         const isSlotAvailable = slot.available !== undefined ? slot.available : slot.isAvailable;
 
                         return {
@@ -314,9 +300,6 @@ export class DoctorsComponent implements OnInit {
                     });
 
                 if (this.availableSlots.length === 0) {
-                    // This case usually happens if all slots are filtered out or none returned.
-                    // If backend returns booked slots as unavailable, they should appear here but disabled.
-                    // If the list is truly empty, maybe it's fully booked or something else.
                     console.log('No slots found for date:', this.bookingData.selectedDate);
                 }
                 this.slotsLoading = false;
@@ -348,14 +331,12 @@ export class DoctorsComponent implements OnInit {
         this.bookingLoading = true;
         this.cdr.detectChanges();
 
-        // Use exact start time from slot if available
         const selectedSlot = this.availableSlots.find((slot: any) => slot.time === this.bookingData.selectedTime);
         let dateTimeStr: string;
 
         if (selectedSlot && selectedSlot.start) {
             dateTimeStr = selectedSlot.start;
         } else {
-            // Fallback parsing
             const timeRegex = /(\d+):(\d+)\s*(AM|PM)/i;
             const match = this.bookingData.selectedTime.match(timeRegex);
             let hours = parseInt(match![1]);
@@ -384,7 +365,6 @@ export class DoctorsComponent implements OnInit {
                 );
                 this.closeBookingModal();
                 this.cdr.detectChanges();
-                // Optionally refresh something?
             },
             error: (err) => {
                 console.error('Error booking appointment:', err);

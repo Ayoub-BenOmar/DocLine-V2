@@ -28,7 +28,6 @@ export class NotificationService {
       duration
     };
 
-    // Use setTimeout to avoid ExpressionChangedAfterItHasBeenCheckedError
     setTimeout(() => {
       const current = this.notifications$.value;
       this.notifications$.next([...current, newNotification]);

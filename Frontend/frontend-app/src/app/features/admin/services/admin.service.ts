@@ -19,7 +19,6 @@ export interface Patient {
     insuranceNumber: string;
     hasInsurance: boolean;
     status: string;
-    // Medical history
     pastIllnesses: string;
     surgeries: string;
     allergies: string;

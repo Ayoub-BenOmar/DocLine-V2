@@ -52,7 +52,6 @@ export class AuthService {
             localStorage.removeItem('user_email');
             localStorage.removeItem('user_name');
         }
-        // Use setTimeout to ensure state is cleared before navigation
         setTimeout(() => {
             this.router.navigate(['/']);
         }, 0);

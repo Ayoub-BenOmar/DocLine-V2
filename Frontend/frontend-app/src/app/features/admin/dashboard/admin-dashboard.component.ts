@@ -37,7 +37,6 @@ export class AdminDashboardComponent implements OnInit {
         this.loadingStats = true;
         this.cdr.detectChanges();
 
-        // Use forkJoin to fetch all necessary data independently in case the dashboard endpoint is missing or failing
         forkJoin({
             doctors: this.adminService.getAllDoctors(),
             patients: this.adminService.getAllPatients(),
@@ -61,7 +60,6 @@ export class AdminDashboardComponent implements OnInit {
             error: (err) => {
                 console.error('Error fetching dashboard stats:', err);
 
-                // Fallback to the dashboard endpoint if forkJoin somehow fails
                 this.adminService.getDashboardStatistics().subscribe({
                     next: (data) => {
                         this.stats = data;
@@ -81,7 +79,7 @@ export class AdminDashboardComponent implements OnInit {
     approveDoctor(doctorId: number): void {
         this.adminService.approveDoctor(doctorId).subscribe({
             next: () => {
-                this.loadStats(); // Reload to update both count and pending list
+                this.loadStats();
             },
             error: (err) => console.error('Error approving doctor:', err)
         });

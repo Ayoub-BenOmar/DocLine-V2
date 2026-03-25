@@ -9,7 +9,7 @@ export interface DoctorProfileDto {
   phone: string;
   profilePic: string;
   cityId: number;
-  specialityId?: number; // Optional as it is not updated
+  specialityId?: number;
   fees: number;
   bio: string;
   officeAddress: string;
@@ -42,7 +42,6 @@ export interface AppointmentResponseDto {
   doctorNote: string;
   medicalReportDate: string;
 
-  // Patient Medical History
   patientBloodType?: string;
   patientPastIllnesses?: string;
   patientSurgeries?: string;

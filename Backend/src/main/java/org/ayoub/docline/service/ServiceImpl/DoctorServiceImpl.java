@@ -44,17 +44,14 @@ public class DoctorServiceImpl implements DoctorService {
         LocalDate startDate = unavailabilityDto.getStartDate();
         LocalDate endDate = unavailabilityDto.getEndDate();
 
-        // Validate: start date should not be in the past
         if (startDate.isBefore(today)) {
             throw new IllegalArgumentException("Start date cannot be in the past");
         }
 
-        // Validate: end date should not be before start date
         if (endDate.isBefore(startDate)) {
             throw new IllegalArgumentException("End date cannot be before start date");
         }
 
-        // Check for existing pending appointments in the date range
         LocalDateTime rangeStart = startDate.atStartOfDay();
         LocalDateTime rangeEnd = endDate.plusDays(1).atStartOfDay();
 
@@ -152,19 +149,16 @@ public class DoctorServiceImpl implements DoctorService {
             throw new IllegalArgumentException("This appointment does not belong to you");
         }
 
-        // Update Appointment Status and Note
         appointment.setStatus(AppointmentStatus.COMPLETED);
         appointment.setDoctorNote(reportDto.getDoctorNote());
         appointment.setMedicalReportDate(LocalDateTime.now());
         Appointment savedAppointment = appointmentRepository.save(appointment);
 
-        // Update Patient Medical Information
         Patient patient = appointment.getPatient();
         if (reportDto.getBloodType() != null && !reportDto.getBloodType().isEmpty()) {
             try {
                 patient.setBloodType(org.ayoub.docline.model.enums.BloodType.valueOf(reportDto.getBloodType()));
             } catch (IllegalArgumentException e) {
-                // Ignore invalid
             }
         }
         if (reportDto.getPastIllnesses() != null) patient.setPastIllnesses(reportDto.getPastIllnesses());
