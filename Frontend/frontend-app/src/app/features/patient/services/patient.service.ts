@@ -71,5 +71,15 @@ export class PatientService {
     bookAppointment(data: any): Observable<any> {
         return this.http.post(`${this.apiUrl}/appointments`, data);
     }
+
+    // Cancel appointment
+    cancelAppointment(appointmentId: number): Observable<any> {
+        return this.http.put(`${this.apiUrl}/appointments/${appointmentId}/cancel`, {});
+    }
+
+    // Reschedule appointment
+    rescheduleAppointment(appointmentId: number, data: { dateTime: string; reason: string }): Observable<any> {
+        return this.http.put(`${this.apiUrl}/appointments/${appointmentId}/reschedule`, data);
+    }
 }
 
