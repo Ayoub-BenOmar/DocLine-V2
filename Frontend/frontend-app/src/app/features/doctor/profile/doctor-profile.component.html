@@ -24,7 +24,7 @@
       <div class="admin-card text-center">
         <div class="relative group inline-block mb-6">
           <div class="absolute inset-0 bg-[#2caea9] rounded-full blur opacity-10 group-hover:opacity-30 transition-opacity"></div>
-          <img [src]="profile?.profilePic || '/doctor profile.png'"
+          <img [src]="profile.profilePic || '/doctor profile.png'"
             alt="Avatar" class="h-40 w-40 rounded-full object-cover border-4 border-[#30363d] relative z-10 shadow-2xl transition-transform group-hover:scale-105">
           <div class="absolute bottom-2 right-2 bg-[#2caea9] text-white p-2.5 rounded-2xl cursor-pointer hover:bg-[#238f8a] shadow-xl z-20 border-4 border-[#161b22]">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -34,8 +34,8 @@
           </div>
         </div>
  
-        <h2 class="text-2xl font-black text-white">Dr. {{ profile?.name }} {{ profile?.lastName }}</h2>
-        <p class="text-[#2caea9] font-bold text-xs uppercase tracking-widest mt-1 mb-8">{{ profile?.email }}</p>
+        <h2 class="text-2xl font-black text-white">Dr. {{ profile.name }} {{ profile.lastName }}</h2>
+        <p class="text-[#2caea9] font-bold text-xs uppercase tracking-widest mt-1 mb-8">{{ profile.email }}</p>
  
         <div class="text-left py-6 border-t border-[#30363d] space-y-6">
           <div class="form-group">

@@ -62,6 +62,7 @@ public class AuthServiceImpl implements AuthService {
                 .name(user.getName())
                 .lastName(user.getLastName())
                 .userId(user.getId())
+                .isActivated(user.getIsActivated())
                 .message("User authenticated successfully")
                 .build();
     }

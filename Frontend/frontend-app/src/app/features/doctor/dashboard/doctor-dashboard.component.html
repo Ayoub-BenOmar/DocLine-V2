@@ -24,7 +24,7 @@
     </div>
     <div class="stat-item-card">
       <span class="stat-item-label">Consultation Fee</span>
-      <span class="stat-item-value accent">{{ profile?.fees }}</span>
+      <span class="stat-item-value accent">{{ profile.fees }}</span>
       <span class="text-[10px] text-slate-500 font-bold uppercase mt-[-4px]">MAD Per Visit</span>
     </div>
     <div class="stat-item-card">
@@ -200,8 +200,8 @@
 
     <div class="modal-body">
       <div class="bg-slate-700/50 rounded-lg p-4 mb-6 border border-slate-600">
-        <p class="text-sm text-slate-300"><span class="font-medium">Patient:</span> {{ selectedAppointment?.patientName }}</p>
-        <p class="text-sm text-slate-300"><span class="font-medium">Date:</span> {{ selectedAppointment?.dateTime | date:'medium' }}</p>
+        <p class="text-sm text-slate-300"><span class="font-medium">Patient:</span> {{ selectedAppointment.patientName }}</p>
+        <p class="text-sm text-slate-300"><span class="font-medium">Date:</span> {{ selectedAppointment.dateTime | date:'medium' }}</p>
       </div>
 
       <form (ngSubmit)="submitReport()" class="admin-form">

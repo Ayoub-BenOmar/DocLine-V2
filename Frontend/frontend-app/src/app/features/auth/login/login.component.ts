@@ -18,6 +18,7 @@ export class LoginComponent {
     loading = false;
     errorMessage = '';
     currentBenefitIndex = 0;
+    showPendingModal = false;
 
     benefits = [
       {
@@ -65,6 +66,11 @@ export class LoginComponent {
         this.currentBenefitIndex = index;
     }
 
+    closePendingModal(): void {
+        this.showPendingModal = false;
+        this.authService.logout();
+    }
+
     onLogin(): void {
         if (!this.email || !this.password) {
             this.errorMessage = 'Please fill in all fields!';
@@ -82,6 +88,12 @@ export class LoginComponent {
             next: (response: any) => {
                 this.loading = false;
                 this.cdr.detectChanges();
+
+                if (response.role === 'ROLE_DOCTOR' && !response.isActivated) {
+                    this.showPendingModal = true;
+                    this.cdr.detectChanges();
+                    return;
+                }
 
                 if (response.role === 'ROLE_ADMIN') {
                     this.router.navigate(['/admin/dashboard']);

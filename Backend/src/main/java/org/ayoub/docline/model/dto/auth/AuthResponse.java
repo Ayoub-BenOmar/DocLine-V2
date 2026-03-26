@@ -14,4 +14,5 @@ public class AuthResponse {
     private String lastName;
     private Integer userId;
     private String message;
+    private Boolean isActivated;
 }

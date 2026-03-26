@@ -28,6 +28,7 @@ export class RegisterComponent implements OnInit {
   medicalLicence: string = '';
   cities: any[] = [];
   specialities: any[] = [];
+  showDoctorPendingModal: boolean = false;
 
   benefits = [
     {
@@ -131,7 +132,15 @@ export class RegisterComponent implements OnInit {
         this.loading = false;
         this.cdr.detectChanges();
         console.log('Registration successful:', response);
-        this.router.navigate(['/auth/login']);
+        
+        if (response.role === 'ROLE_DOCTOR' || this.userRole === 'doctor') {
+          console.log('Showing doctor pending modal');
+          this.showDoctorPendingModal = true;
+          this.cdr.detectChanges();
+        } else {
+          console.log('Navigating to login');
+          this.router.navigate(['/auth/login']);
+        }
       },
       error: (err) => {
         this.loading = false;
@@ -139,6 +148,11 @@ export class RegisterComponent implements OnInit {
         console.error('Registration failed:', err);
       }
     });
+  }
+
+  closeModalAndNavigate(): void {
+    this.showDoctorPendingModal = false;
+    this.router.navigate(['/auth/login']);
   }
 
   selectBenefit(index: number): void {
