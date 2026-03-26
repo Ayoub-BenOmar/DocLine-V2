@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Frontend/frontend-app/public/logo.png" alt="DocLine Logo" width="200"/>
+  <img src="Frontend/frontend-app/public/DocLine_Logo.png" alt="DocLine Logo" width="200"/>
 </p>
 
 <h1 align="center">DocLine</h1>
@@ -291,5 +291,5 @@ This project is licensed under the MIT License.
 ---
 
 <p align="center">
-  Made with ❤️ for healthcare in Morocco
+  Made by Ayoub Ben Omar
 </p>
