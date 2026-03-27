@@ -1,11 +1,7 @@
 package org.ayoub.docline.service;
 
-import org.ayoub.docline.model.dto.CityDto;
-import org.ayoub.docline.model.dto.SpecialtyDto;
-import org.ayoub.docline.model.dto.DoctorListingDto;
-import org.ayoub.docline.model.dto.PatientProfileDto;
-import org.ayoub.docline.model.dto.CityStatisticDto;
-import org.ayoub.docline.model.dto.SpecialtyStatisticDto;
+import org.ayoub.docline.model.dto.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 

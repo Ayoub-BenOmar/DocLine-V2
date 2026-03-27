@@ -27,11 +27,7 @@ public class PublicDataController {
     private final PatientService patientService;
 
     @GetMapping("/doctors")
-    public ResponseEntity<Page<DoctorListingDto>> getAllDoctors(
-            @RequestParam(required = false) Integer cityId,
-            @RequestParam(required = false) Integer specialityId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<DoctorListingDto>> getAllDoctors(@RequestParam(required = false) Integer cityId, @RequestParam(required = false) Integer specialityId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(patientService.getAllDoctorsPaginated(cityId, specialityId, page, size));
     }
 

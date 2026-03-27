@@ -15,16 +15,12 @@ public interface PatientService {
     Page<DoctorListingDto> getAllDoctorsPaginated(Integer cityId, Integer specialityId, int page, int size);
     List<DoctorListingDto> searchDoctors(Integer cityId, Integer specialityId, String name);
     List<TimeSlotDto> getAvailableSlots(Integer doctorId, LocalDate date);
-
     DoctorListingDto getDoctorById(Integer doctorId);
     List<org.ayoub.docline.model.entity.Unavailability> getDoctorUnavailability(Integer doctorId);
-
     AppointmentResponseDto bookAppointment(AppointmentRequestDto requestDto, String patientEmail);
     List<AppointmentResponseDto> getPatientAppointments(String email);
-
     PatientProfileDto getPatientProfile(String email);
     PatientProfileDto updatePatientProfile(String email, PatientProfileUpdateDto updateDto);
-
     void cancelAppointment(Integer appointmentId, String patientEmail);
     AppointmentResponseDto rescheduleAppointment(Integer appointmentId, AppointmentRequestDto rescheduleDto, String patientEmail);
 }

@@ -1,10 +1,13 @@
 package org.ayoub.docline.repository;
 
+import org.ayoub.docline.model.dto.AppointmentResponseDto;
 import org.ayoub.docline.model.entity.Appointment;
+import org.ayoub.docline.model.entity.Doctor;
 import org.ayoub.docline.model.enums.AppointmentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

@@ -50,6 +50,6 @@ public class Doctor extends User {
 
     public Doctor() {
         this.setRole(Role.ROLE_DOCTOR);
-        this.setIsActivated(false); // Doctors need admin approval
+        this.setIsActivated(false);
     }
 }

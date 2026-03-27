@@ -6,6 +6,7 @@ import org.ayoub.docline.model.dto.auth.AuthResponse;
 import org.ayoub.docline.model.dto.auth.RegisterRequest;
 import org.ayoub.docline.service.AuthService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +35,7 @@ public class AuthController {
     }
 
     @org.springframework.web.bind.annotation.GetMapping("/me")
-    public ResponseEntity<?> getCurrentUser(org.springframework.security.core.Authentication authentication) {
+    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
         if (authentication == null) {
             return ResponseEntity.status(401).body("Not authenticated");
         }

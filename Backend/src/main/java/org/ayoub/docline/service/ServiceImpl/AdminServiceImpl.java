@@ -1,29 +1,20 @@
 package org.ayoub.docline.service.ServiceImpl;
 
 import lombok.RequiredArgsConstructor;
-import org.ayoub.docline.model.dto.CityDto;
-import org.ayoub.docline.model.dto.DoctorListingDto;
-import org.ayoub.docline.model.dto.PatientProfileDto;
-import org.ayoub.docline.model.dto.SpecialtyDto;
-import org.ayoub.docline.model.dto.CityStatisticDto;
-import org.ayoub.docline.model.dto.SpecialtyStatisticDto;
-import org.ayoub.docline.model.entity.City;
-import org.ayoub.docline.model.entity.Doctor;
-import org.ayoub.docline.model.entity.Patient;
-import org.ayoub.docline.model.entity.Specialty;
+import org.ayoub.docline.model.dto.*;
+import org.ayoub.docline.model.entity.*;
 import org.ayoub.docline.model.enums.UserStatus;
-import org.ayoub.docline.repository.CityRepository;
-import org.ayoub.docline.repository.DoctorRepository;
-import org.ayoub.docline.repository.PatientRepository;
-import org.ayoub.docline.repository.SpecialtyRepository;
+import org.ayoub.docline.repository.*;
 
 
 import org.ayoub.docline.service.AdminService;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +26,7 @@ public class AdminServiceImpl implements AdminService {
     private final PatientRepository patientRepository;
     private final CityRepository cityRepository;
     private final SpecialtyRepository specialtyRepository;
+    private final AppointmentRepository appointmentRepository;
 
 
     @Override
@@ -262,6 +254,4 @@ public class AdminServiceImpl implements AdminService {
                         .build())
                 .collect(Collectors.toList());
     }
-
-
 }

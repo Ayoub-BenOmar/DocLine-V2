@@ -1,9 +1,7 @@
 package org.ayoub.docline.controller.patient;
 
 import lombok.RequiredArgsConstructor;
-import org.ayoub.docline.model.dto.AppointmentRequestDto;
-import org.ayoub.docline.model.dto.AppointmentResponseDto;
-import org.ayoub.docline.model.dto.DoctorListingDto;
+import org.ayoub.docline.model.dto.*;
 
 import org.ayoub.docline.model.entity.Unavailability;
 import org.ayoub.docline.service.PatientService;
@@ -13,7 +11,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/patient")
@@ -23,10 +25,7 @@ public class PatientController {
     private final PatientService patientService;
 
     @GetMapping("/doctors")
-    public ResponseEntity<List<DoctorListingDto>> searchDoctors(
-            @RequestParam(required = false) Integer cityId,
-            @RequestParam(required = false) Integer specialityId,
-            @RequestParam(required = false) String name) {
+    public ResponseEntity<List<DoctorListingDto>> searchDoctors(@RequestParam(required = false) Integer cityId,@RequestParam(required = false) Integer specialityId,@RequestParam(required = false) String name) {
         return ResponseEntity.ok(patientService.searchDoctors(cityId, specialityId, name));
     }
 
@@ -41,18 +40,16 @@ public class PatientController {
     }
 
     @GetMapping("/doctors/{id}/slots")
-    public ResponseEntity<?> getDoctorSlots(
-            @PathVariable Integer id,
-            @RequestParam String date) {
+    public ResponseEntity<?> getDoctorSlots(@PathVariable Integer id, @RequestParam String date) {
         try {
-            return ResponseEntity.ok(patientService.getAvailableSlots(id, java.time.LocalDate.parse(date)));
-        } catch (java.time.format.DateTimeParseException e) {
-            java.util.Map<String, String> error = new java.util.HashMap<>();
+            return ResponseEntity.ok(patientService.getAvailableSlots(id, LocalDate.parse(date)));
+        } catch (DateTimeParseException e) {
+            Map<String, String> error = new HashMap<>();
             error.put("message", "Invalid date format. Use YYYY-MM-DD");
             return ResponseEntity.badRequest().body(error);
         } catch (Exception e) {
             e.printStackTrace();
-            java.util.Map<String, String> error = new java.util.HashMap<>();
+            Map<String, String> error = new HashMap<>();
             error.put("message", "Error fetching slots: " + e.getMessage());
             return ResponseEntity.internalServerError().body(error);
         }
@@ -76,7 +73,7 @@ public class PatientController {
     }
     @GetMapping("/profile")
     @PreAuthorize("hasAuthority('ROLE_PATIENT')")
-    public ResponseEntity<org.ayoub.docline.model.dto.PatientProfileDto> getProfile() {
+    public ResponseEntity<PatientProfileDto> getProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
         return ResponseEntity.ok(patientService.getPatientProfile(currentPrincipalName));
@@ -84,7 +81,7 @@ public class PatientController {
 
     @PutMapping("/profile")
     @PreAuthorize("hasAuthority('ROLE_PATIENT')")
-    public ResponseEntity<org.ayoub.docline.model.dto.PatientProfileDto> updateProfile(@RequestBody org.ayoub.docline.model.dto.PatientProfileUpdateDto updateDto) {
+    public ResponseEntity<PatientProfileDto> updateProfile(@RequestBody PatientProfileUpdateDto updateDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
         return ResponseEntity.ok(patientService.updatePatientProfile(currentPrincipalName, updateDto));
@@ -101,9 +98,7 @@ public class PatientController {
 
     @PutMapping("/appointments/{id}/reschedule")
     @PreAuthorize("hasAuthority('ROLE_PATIENT')")
-    public ResponseEntity<AppointmentResponseDto> rescheduleAppointment(
-            @PathVariable Integer id,
-            @RequestBody AppointmentRequestDto rescheduleDto) {
+    public ResponseEntity<AppointmentResponseDto> rescheduleAppointment(@PathVariable Integer id, @RequestBody AppointmentRequestDto rescheduleDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
 

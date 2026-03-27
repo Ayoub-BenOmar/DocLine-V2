@@ -28,5 +28,5 @@ public class Unavailability {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    private String reason; // e.g., "Holiday", "Sick"
+    private String reason;
 }
